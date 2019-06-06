@@ -1,20 +1,20 @@
 package com.pem.mensa_app.models.mensa;
 
 public enum Occupancy{
-    GREEN_LOW("1"),
-    GREEN_HIGH("2"),
-    YELLOW_LOW("3"),
-    YELLOW_HIGH("4"),
-    RED("5");
+    GREEN_LOW(1),
+    GREEN_HIGH(2),
+    YELLOW_LOW(3),
+    YELLOW_HIGH(4),
+    RED(5);
 
-    private String occupancyString;
+    private int occupancy;
 
-    Occupancy(String occupancyString){
-        this.occupancyString = occupancyString;
+    Occupancy(int occupancyString){
+        this.occupancy = occupancyString;
     }
 
-    public String getOccupancyString() {
-        return occupancyString;
+    public int getOccupancy() {
+        return occupancy;
     }
 
     public static Occupancy fromInt(int level) {
