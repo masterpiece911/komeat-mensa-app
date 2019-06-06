@@ -20,6 +20,7 @@ public enum Occupancy{
 
     public static Occupancy fromInt(int level) {
         switch(level){
+            case 0: return Occupancy.UNAVAILABLE;
             case 1: return Occupancy.GREEN_LOW;
             case 2: return Occupancy.GREEN_HIGH;
             case 3: return Occupancy.YELLOW_LOW;
