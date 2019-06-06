@@ -18,4 +18,51 @@ public class Mensa {
         this.longitude = longitude;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public Occupancy getOccupancy() {
+        return occupancy;
+    }
+
+    public void setOccupancy(Occupancy occupancy) {
+        this.occupancy = occupancy;
+    }
+
+    public RestaurantType getType() {
+        return type;
+    }
+
+    public void setType(RestaurantType type) {
+        this.type = type;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
 }
