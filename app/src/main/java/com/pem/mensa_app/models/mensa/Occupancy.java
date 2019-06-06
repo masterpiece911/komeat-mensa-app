@@ -14,7 +14,7 @@ public enum Occupancy{
         this.occupancy = occupancyString;
     }
 
-    public int getOccupancy() {
+    public int toInt() {
         return occupancy;
     }
 
