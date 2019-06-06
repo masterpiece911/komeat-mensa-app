@@ -1,6 +1,7 @@
 package com.pem.mensa_app.models.mensa;
 
 public enum Occupancy{
+    UNAVAILABLE(0),
     GREEN_LOW(1),
     GREEN_HIGH(2),
     YELLOW_LOW(3),
