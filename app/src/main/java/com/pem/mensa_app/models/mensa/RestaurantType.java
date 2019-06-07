@@ -12,6 +12,10 @@ public enum RestaurantType{
         this.typeName = typeName;
     }
 
+    public String toString() {
+        return typeName;
+    }
+
     public static RestaurantType fromString(String typeName) {
         switch(typeName){
             case "mensa": return RestaurantType.MENSA;
