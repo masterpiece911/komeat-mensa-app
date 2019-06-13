@@ -29,4 +29,8 @@ public enum Occupancy{
             default: throw new IllegalArgumentException("invalid occupancy level");
         }
     }
+
+    public static Occupancy fromDouble(double level) {
+        return fromInt((int) level);
+    }
 }
