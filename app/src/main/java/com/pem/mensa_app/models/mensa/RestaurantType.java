@@ -17,7 +17,7 @@ public enum RestaurantType{
     }
 
     public static RestaurantType fromString(String typeName) {
-        switch(typeName){
+        switch(typeName.toLowerCase()){
             case "mensa": return RestaurantType.MENSA;
             case "stucafe": return RestaurantType.STUCAFE;
             case "stulounge": return RestaurantType.STULOUNGE;
