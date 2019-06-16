@@ -1,16 +1,13 @@
 package com.pem.mensa_app;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
@@ -18,8 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.pem.mensa_app.models.mensa.Mensa;
 import com.pem.mensa_app.models.mensa.VisibilityPreference;
-
-import java.util.LinkedList;
 
 public class MensaListAdapter extends ListAdapter<Mensa, MensaListAdapter.MensaViewHolder> {
 
@@ -116,8 +111,6 @@ public class MensaListAdapter extends ListAdapter<Mensa, MensaListAdapter.MensaV
         }
     }
 
-    private LinkedList<Mensa> items;
-
     public MensaListAdapter(Context context, ItemButtonsListener listener) {
         super(DIFF_CALLBACK);
         this.context = context;
@@ -141,7 +134,7 @@ public class MensaListAdapter extends ListAdapter<Mensa, MensaListAdapter.MensaV
 
     @Override
     public int getItemViewType(int position) {
-        return R.layout.mensa_list_item; //TODO: return the view type
+        return R.layout.mensa_list_item;
     }
 
     @NonNull

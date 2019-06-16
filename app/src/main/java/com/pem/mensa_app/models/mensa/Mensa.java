@@ -12,7 +12,7 @@ public class Mensa {
     private VisibilityPreference visibility;
     private double latitude;
     private double longitude;
-    private double distance;
+    private double distance = -1;
 
     public Mensa(String uID, String name, String address, Occupancy occupancy, RestaurantType type, double latitude, double longitude) {
         this.uID = uID;
@@ -22,7 +22,6 @@ public class Mensa {
         this.type = type;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.distance = -1;
     }
 
     public Mensa() {
