@@ -17,7 +17,7 @@
             android:name=".LocationRequestActivity"
             android:theme="@style/AppFullScreenTheme"
             ></activity>
-        <activity android:name=".MealDetailActivity" />
+        <activity android:name=".meal_detail_activity.MealDetailActivity"></activity>
         <activity android:name=".MensaMealListActivity" />
         <activity android:name=".MensaListActivity">
             <intent-filter>
