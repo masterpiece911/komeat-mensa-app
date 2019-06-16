@@ -48,7 +48,7 @@ public class MensaListModel extends AndroidViewModel {
     private static final String PREFERENCES_WAS_DISTANCE_BEFORE = "permission_location_before";
 
     private final MutableLiveData<LinkedList<Mensa>> mensaData = new MutableLiveData<>();
-    private final LocationSettingManager gpsEnabled;
+
 
     private final Comparator<Mensa> distanceComparator = new Comparator<Mensa>() {
         @Override
@@ -105,7 +105,7 @@ public class MensaListModel extends AndroidViewModel {
 
         sortingStrategy = SortingStrategy.OCCUPANCY;
 
-        gpsEnabled = new LocationSettingManager(application);
+
 
         loadMensaData();
     }
