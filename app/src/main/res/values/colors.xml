@@ -3,4 +3,10 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+
+    <color name="stucafeorange">#F18800</color>
+    <color name="mensagreen">#76AD40</color>
+    <color name="stubistropink">#B90748</color>
+    <color name="stuwerkblue">#00548E</color>
+    <color name="stuloungebrown">#5D2F00</color>
 </resources>

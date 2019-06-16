@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">mensa-app</string>
+    <string name="location_request">This app requires the use of location data to verify your position. Please enable location permissions using the button below, and make sure location is turned on.</string>
+    <string name="location_setting_missing">This app requires the use of location data to verify your position. Please turn on location in your settings.</string>
+    <string name="location_permission_missing">This app requires the use of location data to verify your position. Please grant location permissions using the button below.</string>
+
 </resources>
