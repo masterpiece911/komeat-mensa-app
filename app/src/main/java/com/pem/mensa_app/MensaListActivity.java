@@ -13,6 +13,7 @@ import android.os.Looper;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,6 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
@@ -60,6 +62,8 @@ public class MensaListActivity extends AppCompatActivity {
             Pair.create("mensa", "Mensa")
     );
 
+    private RadioGroup mSortingPicker;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,14 +82,51 @@ public class MensaListActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(false);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 1, RecyclerView.VERTICAL, false));
 
-        viewModel.getMensaData().observe(this, new Observer<LinkedList<Mensa>>() {
+        mRequestingLocationUpdates = false;
+
+        mSortingPicker = findViewById(R.id.sorting_picker);
+        switch(viewModel.getSortingStrategy()){
+            case DISTANCE:
+                mSortingPicker.check(R.id.distance_sorting_rb); break;
+            case OCCUPANCY:
+                mSortingPicker.check(R.id.occupancy_sorting_rb); break;
+            case ALPHABETICALLY:
+                mSortingPicker.check(R.id.lexigraphical_sorting_rb); break;
+        }
+        mSortingPicker.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onChanged(LinkedList<Mensa> mensas) {
-                adapter.submitList(mensas);
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch(checkedId){
+                    case R.id.distance_sorting_rb:
+                        viewModel.setSortingStrategy(MensaListModel.SortingStrategy.DISTANCE);
+                        mRequestingLocationUpdates = true;
+                        if (checkPermissions()) {
+                            startLocationUpdates();
+                        }
+                        break;
+                    case R.id.occupancy_sorting_rb:
+                        viewModel.setSortingStrategy(MensaListModel.SortingStrategy.OCCUPANCY);
+                        mRequestingLocationUpdates = false;
+                        stopLocationUpdates();
+                        break;
+                    case R.id.lexigraphical_sorting_rb:
+                        viewModel.setSortingStrategy(MensaListModel.SortingStrategy.ALPHABETICALLY);
+                        mRequestingLocationUpdates = false;
+                        stopLocationUpdates();
+                        break;
+                }
             }
         });
 
-        mRequestingLocationUpdates = false;
+        viewModel.getMensaData().observe(this, new Observer<LinkedList<Mensa>>() {
+            @Override
+            public void onChanged(LinkedList<Mensa> mensas) {
+                adapter.submitList(new LinkedList<>(mensas));
+                adapter.notifyDataSetChanged();
+                recyclerView.getLayoutManager().scrollToPosition(0);
+            }
+        });
+
         mLastUpdateTime = "";
 
         // Update values using data stored in the Bundle.
@@ -129,6 +170,7 @@ public class MensaListActivity extends AppCompatActivity {
     private final static String KEY_REQUESTING_LOCATION_UPDATES = "requesting-location-updates";
     private final static String KEY_LOCATION = "location";
     private final static String KEY_LAST_UPDATED_TIME_STRING = "last-updated-time-string";
+    private final static String KEY_SORTING_STRATEGY = "sorting-strategy";
 
     private FusedLocationProviderClient mFusedLocationClient;
 
@@ -167,6 +209,10 @@ public class MensaListActivity extends AppCompatActivity {
             if (savedInstanceState.keySet().contains(KEY_LAST_UPDATED_TIME_STRING)) {
                 mLastUpdateTime = savedInstanceState.getString(KEY_LAST_UPDATED_TIME_STRING);
             }
+
+            if (savedInstanceState.keySet().contains(KEY_SORTING_STRATEGY)) {
+                mSortingPicker.check(savedInstanceState.getInt(KEY_SORTING_STRATEGY));
+            }
 //            updateUI();
         }
     }
@@ -187,7 +233,13 @@ public class MensaListActivity extends AppCompatActivity {
 
                 mCurrentLocation = locationResult.getLastLocation();
                 mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
-//                updateLocationUI();
+                viewModel.setLocation(mCurrentLocation);
+            }
+
+            @Override
+            public void onLocationAvailability(LocationAvailability locationAvailability) {
+                super.onLocationAvailability(locationAvailability);
+                viewModel.perishLocations();
             }
         };
     }
@@ -292,10 +344,9 @@ public class MensaListActivity extends AppCompatActivity {
         if (mRequestingLocationUpdates && checkPermissions()) {
             startLocationUpdates();
         } else if (!checkPermissions()) {
-            requestPermissions();
+            locationAvailabilityRequest();
         }
 
-//        updateUI();
     }
 
     @Override
@@ -313,7 +364,17 @@ public class MensaListActivity extends AppCompatActivity {
         savedInstanceState.putBoolean(KEY_REQUESTING_LOCATION_UPDATES, mRequestingLocationUpdates);
         savedInstanceState.putParcelable(KEY_LOCATION, mCurrentLocation);
         savedInstanceState.putString(KEY_LAST_UPDATED_TIME_STRING, mLastUpdateTime);
+        savedInstanceState.putInt(KEY_SORTING_STRATEGY, mSortingPicker.getCheckedRadioButtonId());
         super.onSaveInstanceState(savedInstanceState);
+    }
+
+    private void locationAvailabilityRequest() {
+        Intent intent = new Intent(MensaListActivity.this, LocationRequestActivity.class);
+        intent
+                .setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+                .setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        startActivity(intent);
+
     }
 
     /**
