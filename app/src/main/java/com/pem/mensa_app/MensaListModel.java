@@ -50,6 +50,7 @@ public class MensaListModel extends AndroidViewModel {
 
     private final MutableLiveData<LinkedList<Mensa>> mensaData = new MutableLiveData<>();
 
+
     private final Comparator<Mensa> distanceComparator = new Comparator<Mensa>() {
         @Override
         public int compare(Mensa o1, Mensa o2) {
