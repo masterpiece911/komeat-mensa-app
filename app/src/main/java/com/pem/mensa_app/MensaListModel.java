@@ -79,8 +79,6 @@ public class MensaListModel extends AndroidViewModel {
     private SharedPreferences preferences;
     private LinkedList<String> favoritedItemIds;
     private LinkedList<String> hiddenItemIds;
-    private boolean hasAskedLocationPermissionBefore;
-    private boolean sortingStrategyWasDistance;
 
     private Location location;
 
@@ -100,12 +98,10 @@ public class MensaListModel extends AndroidViewModel {
             hiddenItemIds = new LinkedList<>();
         }
 
-        hasAskedLocationPermissionBefore = preferences.getBoolean(PREFERENCES_PREVIOUSLY_ASKED_LOCATION_PERMISSION, false);
-        sortingStrategyWasDistance = preferences.getBoolean(PREFERENCES_WAS_DISTANCE_BEFORE, false);
+//        hasAskedLocationPermissionBefore = preferences.getBoolean(PREFERENCES_PREVIOUSLY_ASKED_LOCATION_PERMISSION, false);
+//        sortingStrategyWasDistance = preferences.getBoolean(PREFERENCES_WAS_DISTANCE_BEFORE, false);
 
         sortingStrategy = SortingStrategy.OCCUPANCY;
-
-        gpsEnabled = new LocationSettingManager(application);
 
         loadMensaData();
     }
@@ -120,9 +116,9 @@ public class MensaListModel extends AndroidViewModel {
         double longitude = location.getLongitude();
 
         this.location = location;
-        if(sortingStrategyWasDistance) {
-            setSortingStrategy(SortingStrategy.DISTANCE);
-        }
+//        if(sortingStrategyWasDistance) {
+//            setSortingStrategy(SortingStrategy.DISTANCE);
+//        }
 
         if (getMensaData().getValue() != null) {
             LinkedList<Mensa> fList = new LinkedList<>();
@@ -131,12 +127,22 @@ public class MensaListModel extends AndroidViewModel {
                         fItem.getLatitude(), fItem.getLongitude()));
                 fList.add(fItem);
             }
-            mensaData.postValue(fList);
+            sortMensaData(fList);
         }
+    }
+
+    public void perishLocations() {
+        this.location = null;
+
     }
 
     public void setSortingStrategy(SortingStrategy sortingStrategy) {
         this.sortingStrategy = sortingStrategy;
+        sortMensaData(mensaData.getValue());
+    }
+
+    public SortingStrategy getSortingStrategy() {
+        return sortingStrategy;
     }
 
     public void visibilityChanged(Mensa changedItem, VisibilityPreference newVisibility) {
@@ -170,20 +176,6 @@ public class MensaListModel extends AndroidViewModel {
         sortMensaData(newData);
     }
 
-    public void locationPreferencesAsked() {
-        this.hasAskedLocationPermissionBefore = true;
-        preferences.edit().putBoolean(PREFERENCES_PREVIOUSLY_ASKED_LOCATION_PERMISSION, hasAskedLocationPermissionBefore).apply();
-    }
-
-    public void locationPermissionsGranted() {
-        this.hasAskedLocationPermissionBefore = false;
-        preferences.edit().putBoolean(PREFERENCES_PREVIOUSLY_ASKED_LOCATION_PERMISSION, hasAskedLocationPermissionBefore).apply();
-    }
-
-    public boolean hasAskedLocationPermissionBefore() {
-        return hasAskedLocationPermissionBefore;
-    }
-
     private void loadMensaData() {
         FirebaseFirestore.getInstance()
                 .collection(COLLECTION_IDENTIFIER)
@@ -201,6 +193,7 @@ public class MensaListModel extends AndroidViewModel {
                             for (QueryDocumentSnapshot snapshot : snapshots) {
                                 if (snapshot.get("name") != null) {
                                     mensaItem = getMensaFromSnapshot(snapshot);
+                                    if (mensaItem == null) {continue;}
 
                                     if(location != null) {
                                         mensaItem.setDistance(
@@ -226,7 +219,8 @@ public class MensaListModel extends AndroidViewModel {
 
                     private Mensa getMensaFromSnapshot(QueryDocumentSnapshot snapshot) {
                         Mensa mensaItem;
-                        Map<String, Object> data = snapshot.getData();
+
+                        try {
                         mensaItem = new Mensa();
                         mensaItem.setName(snapshot.getString("name"));
                         mensaItem.setAddress(snapshot.getString("address"));
@@ -235,6 +229,9 @@ public class MensaListModel extends AndroidViewModel {
                         mensaItem.setuID(snapshot.getId());
                         mensaItem.setType(RestaurantType.fromString(snapshot.getString("type")));
                         mensaItem.setOccupancy(Occupancy.fromDouble(snapshot.getDouble("occupancy")));
+                        } catch (NullPointerException e) {
+                            mensaItem = null;
+                        }
 
 
                         return mensaItem;
