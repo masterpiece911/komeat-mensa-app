@@ -37,7 +37,8 @@ public class MensaListModel extends AndroidViewModel {
 
     public enum SortingStrategy {
         DISTANCE,
-        OCCUPANCY
+        OCCUPANCY,
+        ALPHABETICALLY
     }
 
     private static final String TAG = "MensaListModel";
@@ -48,7 +49,6 @@ public class MensaListModel extends AndroidViewModel {
     private static final String PREFERENCES_WAS_DISTANCE_BEFORE = "permission_location_before";
 
     private final MutableLiveData<LinkedList<Mensa>> mensaData = new MutableLiveData<>();
-    private final LocationSettingManager gpsEnabled;
 
     private final Comparator<Mensa> distanceComparator = new Comparator<Mensa>() {
         @Override
@@ -73,6 +73,13 @@ public class MensaListModel extends AndroidViewModel {
                     return o1.getName().compareTo(o2.getName());
                 } else return occupancyResult;
             } else return visibilityResult;
+        }
+    };
+
+    private final Comparator<Mensa> lexigraphicalComparator = new Comparator<Mensa>() {
+        @Override
+        public int compare(Mensa o1, Mensa o2) {
+            return o1.getName().compareTo(o2.getName());
         }
     };
 
@@ -221,14 +228,14 @@ public class MensaListModel extends AndroidViewModel {
                         Mensa mensaItem;
 
                         try {
-                        mensaItem = new Mensa();
-                        mensaItem.setName(snapshot.getString("name"));
-                        mensaItem.setAddress(snapshot.getString("address"));
-                        mensaItem.setLatitude(snapshot.getGeoPoint("location").getLatitude());
-                        mensaItem.setLongitude(snapshot.getGeoPoint("location").getLongitude());
-                        mensaItem.setuID(snapshot.getId());
-                        mensaItem.setType(RestaurantType.fromString(snapshot.getString("type")));
-                        mensaItem.setOccupancy(Occupancy.fromDouble(snapshot.getDouble("occupancy")));
+                            mensaItem = new Mensa();
+                            mensaItem.setName(snapshot.getString("name"));
+                            mensaItem.setAddress(snapshot.getString("address"));
+                            mensaItem.setLatitude(snapshot.getGeoPoint("location").getLatitude());
+                            mensaItem.setLongitude(snapshot.getGeoPoint("location").getLongitude());
+                            mensaItem.setuID(snapshot.getId());
+                            mensaItem.setType(RestaurantType.fromString(snapshot.getString("type")));
+                            mensaItem.setOccupancy(Occupancy.fromDouble(snapshot.getDouble("occupancy")));
                         } catch (NullPointerException e) {
                             mensaItem = null;
                         }
@@ -246,8 +253,10 @@ public class MensaListModel extends AndroidViewModel {
                 comparator = distanceComparator; break;
             case OCCUPANCY:
                 comparator = occupancyComparator; break;
+            case ALPHABETICALLY:
+                comparator = lexigraphicalComparator; break;
             default:
-                comparator = occupancyComparator;
+                comparator = lexigraphicalComparator;
         }
         Collections.sort(items, comparator);
         mensaData.postValue(items);
