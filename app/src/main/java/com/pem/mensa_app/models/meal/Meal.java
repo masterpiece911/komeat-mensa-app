@@ -15,11 +15,11 @@ public class Meal {
 
     private final String name;
 
-    private final Float price;
+    private final Double price;
 
     private final List<Ingredient> ingredients;
 
-    public Meal(String name, Float price, List<Ingredient> ingredients) {
+    public Meal(String name, Double price, List<Ingredient> ingredients) {
         this.name = name;
         this.price = price;
         this.ingredients = ingredients;
@@ -29,7 +29,7 @@ public class Meal {
         return name;
     }
 
-    public Float getPrice() {
+    public Double getPrice() {
         return price;
     }
 

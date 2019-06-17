@@ -37,7 +37,7 @@ public class MealListAdapter extends RecyclerView.Adapter<MealListAdapter.MealVi
         Meal currentItem = mMealList.get(position);
 
         String dishesName = currentItem.getName();
-        Float dishesPrice =currentItem.getPrice();
+        Double dishesPrice =currentItem.getPrice();
 
         holder.mTextViewName.setText(dishesName);
         holder.mTextViewPrice.setText("Price: "+dishesPrice);
@@ -45,7 +45,8 @@ public class MealListAdapter extends RecyclerView.Adapter<MealListAdapter.MealVi
 
     @Override
     public int getItemCount() {
-        return mMealList.size();
+
+       return mMealList.size();
     }
 
 
