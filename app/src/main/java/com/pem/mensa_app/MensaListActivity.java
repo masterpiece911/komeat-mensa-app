@@ -106,11 +106,13 @@ public class MensaListActivity extends AppCompatActivity {
                         break;
                     case R.id.occupancy_sorting_rb:
                         viewModel.setSortingStrategy(MensaListModel.SortingStrategy.OCCUPANCY);
+                        viewModel.perishLocations();
                         mRequestingLocationUpdates = false;
                         stopLocationUpdates();
                         break;
                     case R.id.lexigraphical_sorting_rb:
                         viewModel.setSortingStrategy(MensaListModel.SortingStrategy.ALPHABETICALLY);
+                        viewModel.perishLocations();
                         mRequestingLocationUpdates = false;
                         stopLocationUpdates();
                         break;
