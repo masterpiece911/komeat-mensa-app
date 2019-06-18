@@ -1,4 +1,4 @@
-package com.pem.mensa_app;
+package com.pem.mensa_app.mensa_list_activity;
 
 import android.app.Application;
 import android.content.SharedPreferences;

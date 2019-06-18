@@ -1,4 +1,4 @@
-package com.pem.mensa_app;
+package com.pem.mensa_app.mensa_list_activity;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.pem.mensa_app.R;
 import com.pem.mensa_app.models.mensa.Mensa;
 import com.pem.mensa_app.models.mensa.VisibilityPreference;
 

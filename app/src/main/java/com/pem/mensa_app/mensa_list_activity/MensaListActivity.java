@@ -1,4 +1,4 @@
-package com.pem.mensa_app;
+package com.pem.mensa_app.mensa_list_activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -42,6 +42,8 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
+import com.pem.mensa_app.BuildConfig;
+import com.pem.mensa_app.R;
 import com.pem.mensa_app.models.mensa.Mensa;
 import com.pem.mensa_app.models.mensa.VisibilityPreference;
 

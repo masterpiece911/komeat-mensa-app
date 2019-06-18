@@ -14,12 +14,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".LocationRequestActivity"
+            android:name=".mensa_list_activity.LocationRequestActivity"
             android:theme="@style/AppFullScreenTheme"
             ></activity>
         <activity android:name=".meal_detail_activity.MealDetailActivity"></activity>
         <activity android:name=".MensaMealListActivity" />
-        <activity android:name=".MensaListActivity">
+        <activity android:name=".mensa_list_activity.MensaListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

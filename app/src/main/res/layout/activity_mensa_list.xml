@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MensaListActivity">
+    tools:context=".mensa_list_activity.MensaListActivity">
 
     <RadioGroup
         android:id="@+id/sorting_picker"

@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LocationRequestActivity">
+    tools:context=".mensa_list_activity.LocationRequestActivity">
 
     <View
         android:id="@+id/blue"
