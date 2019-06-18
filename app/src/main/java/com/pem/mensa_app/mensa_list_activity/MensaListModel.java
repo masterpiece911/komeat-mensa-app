@@ -24,10 +24,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.pem.mensa_app.models.mensa.Mensa;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
-import java.util.Map;
 
 import javax.annotation.Nullable;
 
@@ -45,50 +42,11 @@ public class MensaListModel extends AndroidViewModel {
     private static final String COLLECTION_IDENTIFIER = "Mensa";
     private static final String PREFERENCES_FAVORITES_IDENTIFIER = "mensa_favorites";
     private static final String PREFERENCES_HIDDEN_IDENTIFIER = "mensa_hidden";
-    private static final String PREFERENCES_PREVIOUSLY_ASKED_LOCATION_PERMISSION = "permission_location_asked";
-    private static final String PREFERENCES_WAS_DISTANCE_BEFORE = "permission_location_before";
 
     private final MutableLiveData<LinkedList<Mensa>> mensaData = new MutableLiveData<>();
 
-
-    private final Comparator<Mensa> distanceComparator = new Comparator<Mensa>() {
-        @Override
-        public int compare(Mensa o1, Mensa o2) {
-            int visibilityResult = Integer.compare(o1.getVisibility().ordinal(), o2.getVisibility().ordinal());
-            if (visibilityResult == 0) {
-                int distanceResult = Double.compare(o1.getDistance(), o2.getDistance());
-                if (distanceResult == 0) {
-                    return o1.getName().compareTo(o2.getName());
-                } else return distanceResult;
-            } else return visibilityResult;
-        }
-    };
-
-    private final Comparator<Mensa> occupancyComparator = new Comparator<Mensa>() {
-        @Override
-        public int compare(Mensa o1, Mensa o2) {
-            int visibilityResult = Integer.compare(o1.getVisibility().ordinal(), o2.getVisibility().ordinal());
-            if (visibilityResult == 0) {
-                int occupancyResult = Double.compare(o1.getOccupancy().toInt(), o2.getOccupancy().toInt());
-                if (occupancyResult == 0) {
-                    return o1.getName().compareTo(o2.getName());
-                } else return occupancyResult;
-            } else return visibilityResult;
-        }
-    };
-
-    private final Comparator<Mensa> lexigraphicalComparator = new Comparator<Mensa>() {
-        @Override
-        public int compare(Mensa o1, Mensa o2) {
-            int visibilityResult = Integer.compare(o1.getVisibility().ordinal(), o2.getVisibility().ordinal());
-            if (visibilityResult == 0) {
-                return o1.getName().compareTo(o2.getName());
-            } else return visibilityResult;
-        }
-    };
-
     private SharedPreferences preferences;
-    private LinkedList<String> favoritedItemIds;
+    private LinkedList<String> favouriteItemIds;
     private LinkedList<String> hiddenItemIds;
 
     private Location location;
@@ -98,9 +56,9 @@ public class MensaListModel extends AndroidViewModel {
         preferences = PreferenceManager.getDefaultSharedPreferences(application);
 
         try {
-            favoritedItemIds = new LinkedList<>(Arrays.asList(preferences.getString(PREFERENCES_FAVORITES_IDENTIFIER, "").split(",")));
+            favouriteItemIds = new LinkedList<>(Arrays.asList(preferences.getString(PREFERENCES_FAVORITES_IDENTIFIER, "").split(",")));
         } catch (NullPointerException e) {
-            favoritedItemIds = new LinkedList<>();
+            favouriteItemIds = new LinkedList<>();
         }
 
         try {
@@ -109,19 +67,16 @@ public class MensaListModel extends AndroidViewModel {
             hiddenItemIds = new LinkedList<>();
         }
 
-//        hasAskedLocationPermissionBefore = preferences.getBoolean(PREFERENCES_PREVIOUSLY_ASKED_LOCATION_PERMISSION, false);
-//        sortingStrategyWasDistance = preferences.getBoolean(PREFERENCES_WAS_DISTANCE_BEFORE, false);
-
         sortingStrategy = SortingStrategy.OCCUPANCY;
 
         loadMensaData();
     }
 
-    public LiveData<LinkedList<Mensa>> getMensaData() {
+    LiveData<LinkedList<Mensa>> getMensaData() {
         return mensaData;
     }
 
-    public void setLocation(Location location) {
+    void setLocation(Location location) {
 
         double latitude = location.getLatitude();
         double longitude = location.getLongitude();
@@ -138,31 +93,31 @@ public class MensaListModel extends AndroidViewModel {
                         fItem.getLatitude(), fItem.getLongitude()));
                 fList.add(fItem);
             }
-            sortMensaData(fList);
+            submitToSort(mensaData.getValue());
         }
     }
 
-    public void perishLocations() {
+    void perishLocations() {
         this.location = null;
 
     }
 
-    public void setSortingStrategy(SortingStrategy sortingStrategy) {
+    void setSortingStrategy(SortingStrategy sortingStrategy) {
         this.sortingStrategy = sortingStrategy;
-        sortMensaData(mensaData.getValue());
+        submitToSort(mensaData.getValue());
     }
 
-    public SortingStrategy getSortingStrategy() {
+    SortingStrategy getSortingStrategy() {
         return sortingStrategy;
     }
 
-    public void visibilityChanged(Mensa changedItem, VisibilityPreference newVisibility) {
+    void visibilityChanged(Mensa changedItem, VisibilityPreference newVisibility) {
         LinkedList<Mensa> newData = getMensaData().getValue();
         switch (changedItem.getVisibility()){
             case HIDDEN:
                 hiddenItemIds.remove(changedItem.getuID());
             case FAVORITE:
-                favoritedItemIds.remove(changedItem.getuID());
+                favouriteItemIds.remove(changedItem.getuID());
         }
         int index = newData.indexOf(changedItem);
 
@@ -171,12 +126,12 @@ public class MensaListModel extends AndroidViewModel {
             case HIDDEN:
                 hiddenItemIds.add(changedItem.getuID());
             case FAVORITE:
-                favoritedItemIds.add(changedItem.getuID());
+                favouriteItemIds.add(changedItem.getuID());
         }
 
 
         String hiddenIdsString = TextUtils.join(",", hiddenItemIds.toArray(new String[0]));
-        String favoritesIdsString = TextUtils.join(",", favoritedItemIds.toArray(new String[0]));
+        String favoritesIdsString = TextUtils.join(",", favouriteItemIds.toArray(new String[0]));
         preferences.edit()
                 .putString(PREFERENCES_HIDDEN_IDENTIFIER, hiddenIdsString)
                 .putString(PREFERENCES_FAVORITES_IDENTIFIER, favoritesIdsString)
@@ -184,7 +139,7 @@ public class MensaListModel extends AndroidViewModel {
 
         newData.remove(index);
         newData.add(changedItem);
-        sortMensaData(newData);
+        submitToSort(newData);
     }
 
     private void loadMensaData() {
@@ -214,7 +169,7 @@ public class MensaListModel extends AndroidViewModel {
                                                 ));
                                     }
 
-                                    if(favoritedItemIds.contains(mensaItem.getuID())){
+                                    if(favouriteItemIds.contains(mensaItem.getuID())){
                                         mensaItem.setVisibility(VisibilityPreference.FAVORITE);
                                     } else if (hiddenItemIds.contains(mensaItem.getuID())) {
                                         mensaItem.setVisibility(VisibilityPreference.HIDDEN);
@@ -225,7 +180,7 @@ public class MensaListModel extends AndroidViewModel {
                                 }
                             }
                         }
-                        sortMensaData(mensaList);
+                        submitToSort(mensaList);
                     }
 
                     private Mensa getMensaFromSnapshot(QueryDocumentSnapshot snapshot) {
@@ -250,20 +205,8 @@ public class MensaListModel extends AndroidViewModel {
                 });
     }
 
-    private void sortMensaData(LinkedList<Mensa> items) {
-        Comparator<Mensa> comparator;
-        switch(sortingStrategy){
-            case DISTANCE:
-                comparator = distanceComparator; break;
-            case OCCUPANCY:
-                comparator = occupancyComparator; break;
-            case ALPHABETICALLY:
-                comparator = lexigraphicalComparator; break;
-            default:
-                comparator = lexigraphicalComparator;
-        }
-        Collections.sort(items, comparator);
-        mensaData.postValue(items);
-
+    private void submitToSort(LinkedList<Mensa> list){
+        mensaData.postValue(MensaListSorter.sortMensaData(list, getSortingStrategy()));
     }
+
 }
