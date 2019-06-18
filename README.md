@@ -20,27 +20,40 @@ ________________________________________________________________________________
 Feature branch workflow in git:
 
 # Make a feature branch:
-git pull --ff-only
-git checkout <your-branch-name>
+
+*  `git pull --ff-only`
+
+*  `git checkout <your-branch-name>`
 
 # Update your feature branch:
-git checkout master (from your feature branch)
-git pull --ff-only (update your local master branch)
-git checkout <your-branch-name> (switch to your feature branch)
-git rebase master (update your feature branch with the master branch)
+
+*  `git checkout master` (from your feature branch)
+
+*  `git pull --ff-only` (update your local master branch)
+
+*  `git checkout <your-branch-name>` (switch to your feature branch)
+
+*  `git rebase master` (update your feature branch with the master branch)
 
 # Merge your feature branch into master branch:
-git checkout master (from your feature branch)
-git pull--ff-only (update your local master branch)
-git merge <your-branch-name>
-git push
 
-# HINT: If your feature branch is completely merged into the master, deleat this branch and create a new one.
-# Don't rebase the already merged feature branch with the master. Then you'll definitely get merge conflicts.
-# For deleting a (merged) feature branch:
-git branch -d <your-branch-name>
+*  `git checkout master (from your feature branch)`
 
-#After that, just make a new feature branch from master and start again with your implementation in the workflow (see first steps...)
-git checkout <your-new-branch-name> 
+*  `git pull--ff-only (update your local master branch)`
+
+*  `git merge <your-branch-name>`
+
+*  `git push`
+
+# HINT:
+  If your feature branch is completely merged into the master, deleat this branch and create a new one.
+  Don't rebase the already merged feature branch with the master. Then you'll definitely get merge conflicts.
+  For deleting a (merged) feature branch:
+
+*  `git branch -d <your-branch-name>`
+
+  After that, just make a new feature branch from master and start again with your implementation in the workflow (see first steps...)
+
+*  `git checkout <your-new-branch-name> `
 
 
