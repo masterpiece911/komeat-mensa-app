@@ -37,9 +37,9 @@ Feature branch workflow in git:
 
 # Merge your feature branch into master branch:
 
-*  `git checkout master (from your feature branch)`
+*  `git checkout master` (from your feature branch)
 
-*  `git pull--ff-only (update your local master branch)`
+*  `git pull--ff-only` (update your local master branch)
 
 *  `git merge <your-branch-name>`
 
