@@ -7,6 +7,7 @@ public class Mensa {
     private String uID;
     private String name;
     private String address;
+    private String url;
     private Occupancy occupancy;
     private RestaurantType type;
     private VisibilityPreference visibility;
@@ -63,6 +64,14 @@ public class Mensa {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public Occupancy getOccupancy() {
