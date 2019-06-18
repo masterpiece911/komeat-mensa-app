@@ -1,3 +1,0 @@
-[submodule "app/src/main/java/com/pem/mensa_app/utilities/haversine"]
-	path = app/src/main/java/com/pem/mensa_app/utilities/haversine
-	url = https://github.com/jasonwinn/haversine.git
