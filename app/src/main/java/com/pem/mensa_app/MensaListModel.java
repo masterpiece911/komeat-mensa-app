@@ -80,7 +80,10 @@ public class MensaListModel extends AndroidViewModel {
     private final Comparator<Mensa> lexigraphicalComparator = new Comparator<Mensa>() {
         @Override
         public int compare(Mensa o1, Mensa o2) {
-            return o1.getName().compareTo(o2.getName());
+            int visibilityResult = Integer.compare(o1.getVisibility().ordinal(), o2.getVisibility().ordinal());
+            if (visibilityResult == 0) {
+                return o1.getName().compareTo(o2.getName());
+            } else return visibilityResult;
         }
     };
 
