@@ -16,4 +16,31 @@ In particular, adhere to these rules in your commits:
 7. Use the body to explain what and why vs. how
 
 [Keep your commits atomic.](https://www.freshconsulting.com/atomic-commits/)
+___________________________________________________________________________________________________________________________________
+Feature branch workflow in git:
+
+Make a feature branch:
+1. git pull --ff-only
+2. git checkout <your-branch-name>
+
+Update your feature branch:
+1. git checkout master (from your feature branch)
+2. git pull --ff-only (update your local master branch)
+3. git checkout <your-branch-name> (switch to your feature branch)
+4. git rebase master (update your feature branch with the master branch)
+   ... and your are done.
+
+Merge your feature branch into master branch:
+1. git checkout master (from your feature branch)
+2. git pull--ff-only (update your local master branch)
+3. git merge <your-branch-name>
+4. git push
+
+HINT: If your feature branch is compleatly merged into the master, deleat this branch and create a new one.
+Don't rebase the already merge feature branch with the master. Then you'll definitely get merge conflicts.
+For deleting a (merged) feature branch:
+   git branch -d <your-branch-name>
+After that, just make a new feature branch from master and start again with your implementation in the workflow (see first steps...)
+   git checkout <your-new-branch-name> 
+
 
