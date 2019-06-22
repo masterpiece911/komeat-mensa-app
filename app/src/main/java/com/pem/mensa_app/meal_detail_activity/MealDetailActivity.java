@@ -97,6 +97,5 @@ public class MealDetailActivity extends AppCompatActivity implements CommentFrag
         TextView textView = findViewById(R.id.textView_meal_dishes);
         textView.setText(meal.getName());
         
-
     }
 }
