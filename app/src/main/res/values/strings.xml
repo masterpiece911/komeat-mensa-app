@@ -10,4 +10,22 @@
     <string name="intent_mensa_meal_plan_reference_path">INTENT_MENSA_REFERENCE_PATH</string>
     <string name="intent_mensa_eatapi_url">INTENT_MENSA_URL</string>
 
+    <string name="meal_collection_identifier">Meal</string>
+    <string name="meal_field_name">name</string>
+    <string name="meal_field_price">price</string>
+    <string name="meal_field_ingredients">ingredients</string>
+    <string name="meal_field_comments">comments</string>
+    <string name="meal_field_imagepaths">imagepaths</string>
+
+    <string name="mensa_collection_identifier">Mensa</string>
+    <string name="mensa_field_address">address</string>
+    <string name="mensa_field_location">location</string>
+    <string name="mensa_field_name">name</string>
+    <string name="mensa_field_occupancy">occupancy</string>
+    <string name="mensa_field_type">type</string>
+    <string name="mensa_field_url">url</string>
+
+    <string name="ingredient_field_description">description</string>
+    <string name="ingredient_field_shorthand">shorthand</string>
+
 </resources>
