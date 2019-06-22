@@ -15,21 +15,27 @@ public class Meal {
 
     private final String name;
 
-    private final Double price;
+    private final String price;
 
     private final List<Ingredient> ingredients;
 
-    public Meal(String name, Double price, List<Ingredient> ingredients) {
+    private final List<String> comments;
+
+    private final List<String> images;
+
+    public Meal(String name, String price, List<Ingredient> ingredients, List<String> comments, List<String> images) {
         this.name = name;
         this.price = price;
         this.ingredients = ingredients;
+        this.comments = comments;
+        this.images = images;
     }
 
     public String getName() {
         return name;
     }
 
-    public Double getPrice() {
+    public String getPrice() {
         return price;
     }
 
