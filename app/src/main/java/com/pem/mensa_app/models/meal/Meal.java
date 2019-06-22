@@ -15,7 +15,7 @@ public class Meal {
 
     private final String name;
 
-    private final String price;
+    private final Double price;
 
     private final List<Ingredient> ingredients;
 
@@ -23,7 +23,7 @@ public class Meal {
 
     private final List<String> images;
 
-    public Meal(String name, String price, List<Ingredient> ingredients, List<String> comments, List<String> images) {
+    public Meal(String name, Double price, List<Ingredient> ingredients, List<String> comments, List<String> images) {
         this.name = name;
         this.price = price;
         this.ingredients = ingredients;
@@ -35,7 +35,7 @@ public class Meal {
         return name;
     }
 
-    public String getPrice() {
+    public Double getPrice() {
         return price;
     }
 
