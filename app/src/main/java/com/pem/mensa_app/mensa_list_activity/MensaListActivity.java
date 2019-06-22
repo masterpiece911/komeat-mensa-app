@@ -43,6 +43,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.pem.mensa_app.BuildConfig;
+import com.pem.mensa_app.MensaMealListActivity;
 import com.pem.mensa_app.R;
 import com.pem.mensa_app.models.mensa.Mensa;
 import com.pem.mensa_app.models.mensa.VisibilityPreference;
@@ -74,15 +75,34 @@ public class MensaListActivity extends AppCompatActivity {
         viewModel = ViewModelProviders.of(this).get(MensaListModel.class);
 
         final RecyclerView recyclerView =findViewById(R.id.mensa_list_recyclerview);
-        final MensaListAdapter adapter = new MensaListAdapter(this, new MensaListAdapter.ItemButtonsListener() {
+        final MensaListAdapter adapter = new MensaListAdapter(this, new MensaListAdapter.ItemListener() {
             @Override
             public void visibilityButtonClicked(Mensa mensa, VisibilityPreference newVisibility) {
                 viewModel.visibilityChanged(mensa, newVisibility);
+            }
+
+            @Override
+            public void elementClicked(int position) {
+                Mensa clickedElement = viewModel.getMensaAtPosition(position);
+                Intent intent = new Intent(MensaListActivity.this, MensaMealListActivity.class);
+                intent.putExtra(getString(R.string.intent_mensa_uid), clickedElement.getuID());
+                intent.putExtra(getString(R.string.intent_mensa_name), clickedElement.getName());
+                if(clickedElement.getMealPlanReference() != null) {
+                    intent.putExtra(getString(R.string.intent_mensa_meal_plan_reference_path), clickedElement.getMealPlanReference());
+                }
+                if(clickedElement.getUrl() != null) {
+                    intent.putExtra(getString(R.string.intent_mensa_eatapi_url), clickedElement.getUrl());
+                }
+
+                startActivity(intent);
+
             }
         });
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(false);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 1, RecyclerView.VERTICAL, false));
+
+
 
         mRequestingLocationUpdates = false;
 
@@ -107,16 +127,16 @@ public class MensaListActivity extends AppCompatActivity {
                         }
                         break;
                     case R.id.occupancy_sorting_rb:
+                        stopLocationUpdates();
                         viewModel.setSortingStrategy(MensaListModel.SortingStrategy.OCCUPANCY);
                         viewModel.perishLocations();
                         mRequestingLocationUpdates = false;
-                        stopLocationUpdates();
                         break;
                     case R.id.lexigraphical_sorting_rb:
+                        stopLocationUpdates();
                         viewModel.setSortingStrategy(MensaListModel.SortingStrategy.ALPHABETICALLY);
                         viewModel.perishLocations();
                         mRequestingLocationUpdates = false;
-                        stopLocationUpdates();
                         break;
                 }
             }

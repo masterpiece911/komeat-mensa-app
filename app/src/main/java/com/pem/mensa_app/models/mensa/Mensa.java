@@ -8,6 +8,7 @@ public class Mensa {
     private String name;
     private String address;
     private String url;
+    private String mealPlanReference;
     private Occupancy occupancy;
     private RestaurantType type;
     private VisibilityPreference visibility;
@@ -72,6 +73,14 @@ public class Mensa {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getMealPlanReference() {
+        return mealPlanReference;
+    }
+
+    public void setMealPlanReference(String mealPlanReference) {
+        this.mealPlanReference = mealPlanReference;
     }
 
     public Occupancy getOccupancy() {

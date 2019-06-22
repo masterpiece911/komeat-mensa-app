@@ -142,6 +142,10 @@ public class MensaListModel extends AndroidViewModel {
         submitToSort(newData);
     }
 
+    public Mensa getMensaAtPosition(int position) {
+        return mensaData.getValue().get(position);
+    }
+
     private void loadMensaData() {
         FirebaseFirestore.getInstance()
                 .collection(COLLECTION_IDENTIFIER)
@@ -195,6 +199,12 @@ public class MensaListModel extends AndroidViewModel {
                             mensaItem.setuID(snapshot.getId());
                             mensaItem.setType(RestaurantType.fromString(snapshot.getString("type")));
                             mensaItem.setOccupancy(Occupancy.fromDouble(snapshot.getDouble("occupancy")));
+                            if (snapshot.getString("url") != null) {
+                                mensaItem.setUrl(snapshot.getString("url"));
+                            }
+                            if (snapshot.getDocumentReference("mealplan") != null) {
+                                mensaItem.setMealPlanReference(snapshot.getDocumentReference("mealplan").getPath());
+                            }
                         } catch (NullPointerException e) {
                             mensaItem = null;
                         }

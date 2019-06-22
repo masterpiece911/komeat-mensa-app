@@ -19,10 +19,10 @@ import com.pem.mensa_app.models.mensa.VisibilityPreference;
 
 public class MensaListAdapter extends ListAdapter<Mensa, MensaListAdapter.MensaViewHolder> {
 
-    private final ItemButtonsListener listener;
+    private ItemListener mItemListener;
     private final Context context;
 
-    class MensaViewHolder extends RecyclerView.ViewHolder {
+    class MensaViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView nameLabel;
         TextView addressLabel;
@@ -31,9 +31,13 @@ public class MensaListAdapter extends ListAdapter<Mensa, MensaListAdapter.MensaV
         TextView distanceLabel;
         ImageButton favoriteButton;
         ImageButton hideButton;
+        ItemListener fItemListener;
 
-        public MensaViewHolder(@NonNull View itemView) {
+
+        public MensaViewHolder(@NonNull View itemView, ItemListener itemListener) {
             super(itemView);
+
+            fItemListener = itemListener;
 
             nameLabel = itemView.findViewById(R.id.name_label);
             addressLabel = itemView.findViewById(R.id.address_label);
@@ -42,6 +46,8 @@ public class MensaListAdapter extends ListAdapter<Mensa, MensaListAdapter.MensaV
             distanceLabel = itemView.findViewById(R.id.distance_label);
             favoriteButton = itemView.findViewById(R.id.favorite_button);
             hideButton = itemView.findViewById(R.id.hide_button);
+
+            itemView.setOnClickListener(this);
 
         }
 
@@ -65,14 +71,14 @@ public class MensaListAdapter extends ListAdapter<Mensa, MensaListAdapter.MensaV
                     favoriteButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            listener.visibilityButtonClicked(newMensa, VisibilityPreference.DEFAULT);
+                            fItemListener.visibilityButtonClicked(newMensa, VisibilityPreference.DEFAULT);
                         }
                     });
                     hideButton.setImageDrawable(ResourcesCompat.getDrawable(context.getResources(), R.drawable.hidden_inactive, null));
                     hideButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            listener.visibilityButtonClicked(newMensa, VisibilityPreference.HIDDEN);
+                            fItemListener.visibilityButtonClicked(newMensa, VisibilityPreference.HIDDEN);
                         }
                     }); break;
                 case DEFAULT:
@@ -80,14 +86,14 @@ public class MensaListAdapter extends ListAdapter<Mensa, MensaListAdapter.MensaV
                     favoriteButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            listener.visibilityButtonClicked(newMensa, VisibilityPreference.FAVORITE);
+                            fItemListener.visibilityButtonClicked(newMensa, VisibilityPreference.FAVORITE);
                         }
                     });
                     hideButton.setImageDrawable(ResourcesCompat.getDrawable(context.getResources(), R.drawable.hidden_inactive, null));
                     hideButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            listener.visibilityButtonClicked(newMensa, VisibilityPreference.HIDDEN);
+                            fItemListener.visibilityButtonClicked(newMensa, VisibilityPreference.HIDDEN);
                         }
                     }); break;
                 case HIDDEN:
@@ -95,14 +101,14 @@ public class MensaListAdapter extends ListAdapter<Mensa, MensaListAdapter.MensaV
                     favoriteButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            listener.visibilityButtonClicked(newMensa, VisibilityPreference.FAVORITE);
+                            fItemListener.visibilityButtonClicked(newMensa, VisibilityPreference.FAVORITE);
                         }
                     });
                     hideButton.setImageDrawable(ResourcesCompat.getDrawable(context.getResources(), R.drawable.hidden_active, null));
                     hideButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            listener.visibilityButtonClicked(newMensa, VisibilityPreference.DEFAULT);
+                            fItemListener.visibilityButtonClicked(newMensa, VisibilityPreference.DEFAULT);
                         }
                     }); break;
 
@@ -110,12 +116,17 @@ public class MensaListAdapter extends ListAdapter<Mensa, MensaListAdapter.MensaV
             }
 
         }
+
+        @Override
+        public void onClick(View v) {
+            fItemListener.elementClicked(getAdapterPosition());
+        }
     }
 
-    public MensaListAdapter(Context context, ItemButtonsListener listener) {
+    public MensaListAdapter(Context context, ItemListener mItemListener) {
         super(DIFF_CALLBACK);
         this.context = context;
-        this.listener = listener;
+        this.mItemListener = mItemListener;
     }
 
     private static final DiffUtil.ItemCallback<Mensa> DIFF_CALLBACK =
@@ -142,7 +153,7 @@ public class MensaListAdapter extends ListAdapter<Mensa, MensaListAdapter.MensaV
     @Override
     public MensaViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         final View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
-        return new MensaViewHolder(view);
+        return new MensaViewHolder(view, mItemListener);
     }
 
     @Override
@@ -150,8 +161,9 @@ public class MensaListAdapter extends ListAdapter<Mensa, MensaListAdapter.MensaV
         holder.bindData(getItem(position));
     }
 
-    public interface ItemButtonsListener{
+    public interface ItemListener {
         void visibilityButtonClicked(Mensa mensa, VisibilityPreference newVisibility);
+        void elementClicked(int position);
     }
 
 }

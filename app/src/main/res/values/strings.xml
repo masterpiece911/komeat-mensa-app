@@ -4,4 +4,10 @@
     <string name="location_setting_missing">This app requires the use of location data to verify your position. Please turn on location in your settings.</string>
     <string name="location_permission_missing">This app requires the use of location data to verify your position. Please grant location permissions using the button below.</string>
 
+
+    <string name="intent_mensa_name">INTENT_MENSA_NAME</string>
+    <string name="intent_mensa_uid">INTENT_MENSA_UID</string>
+    <string name="intent_mensa_meal_plan_reference_path">INTENT_MENSA_REFERENCE_PATH</string>
+    <string name="intent_mensa_eatapi_url">INTENT_MENSA_URL</string>
+
 </resources>
