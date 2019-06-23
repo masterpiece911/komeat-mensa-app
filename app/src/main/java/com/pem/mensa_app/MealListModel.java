@@ -282,10 +282,13 @@ public class MealListModel extends AndroidViewModel {
 
     }
 
-    private void setSelectedWeekday(int weekday){
+    public void setSelectedWeekday(int weekday){
         this.selectedWeekday = weekday;
         mealData.postValue(weekMealData.get(selectedWeekday));
+    }
 
+    public int getSelectedWeekday() {
+        return selectedWeekday;
     }
 
     private String getString(int id) {
