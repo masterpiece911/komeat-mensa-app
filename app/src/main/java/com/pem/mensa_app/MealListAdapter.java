@@ -8,33 +8,43 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.pem.mensa_app.models.meal.Meal;
 
 import java.util.ArrayList;
 
-public class MealListAdapter extends RecyclerView.Adapter<MealListAdapter.MealVieHolder> {
+public class MealListAdapter extends ListAdapter<Meal, MealListAdapter.MealViewHolder> {
 
-   private Context mContext;
-   private ArrayList<Meal> mMealList;
+    public static final DiffUtil.ItemCallback<Meal> DIFF_CALLBACK =
+           new DiffUtil.ItemCallback<Meal>() {
+               @Override
+               public boolean areItemsTheSame(@NonNull Meal oldItem, @NonNull Meal newItem) {
+                   return oldItem.equals(newItem);
+               }
 
-   public MealListAdapter(Context context, ArrayList<Meal> mealList){
-       mContext=context;
-       mMealList=mealList;
+               @Override
+               public boolean areContentsTheSame(@NonNull Meal oldItem, @NonNull Meal newItem) {
+                   return false;
+               }
+           };
 
+   public MealListAdapter(){
+       super(DIFF_CALLBACK);
    }
 
     @NonNull
     @Override
-    public MealVieHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View V = LayoutInflater.from(mContext).inflate(R.layout.example_item, parent, false);
-        return new MealVieHolder(V);
+    public MealViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View V = LayoutInflater.from(parent.getContext()).inflate(R.layout.example_item, parent, false);
+        return new MealViewHolder(V);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MealVieHolder holder, int position) {
-        Meal currentItem = mMealList.get(position);
+    public void onBindViewHolder(@NonNull MealViewHolder holder, int position) {
+        Meal currentItem = getItem(position);
 
         String dishesName = currentItem.getName();
         Double dishesPrice =currentItem.getPrice();
@@ -43,20 +53,14 @@ public class MealListAdapter extends RecyclerView.Adapter<MealListAdapter.MealVi
         holder.mTextViewPrice.setText("Price: "+dishesPrice);
     }
 
-    @Override
-    public int getItemCount() {
 
-       return mMealList.size();
-    }
-
-
-    public class MealVieHolder extends RecyclerView.ViewHolder{
+    public class MealViewHolder extends RecyclerView.ViewHolder{
 
         public ImageView mImageView;
         public TextView mTextViewName;
         public TextView mTextViewPrice;
 
-        public MealVieHolder(@NonNull View itemView) {
+        public MealViewHolder(@NonNull View itemView) {
             super(itemView);
             mImageView=itemView.findViewById(R.id.image_view);
             mTextViewName=itemView.findViewById(R.id.text_view_dishes);
