@@ -33,6 +33,7 @@
     <string name="mealplan_field_meals">meals</string>
     <string name="mealplan_field_days">days</string>
 
+    <string name="ingredient_collection_identifier">Ingredient</string>
     <string name="ingredient_field_description">description</string>
     <string name="ingredient_field_shorthand">shorthand</string>
 
