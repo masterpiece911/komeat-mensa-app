@@ -18,6 +18,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.pem.mensa_app.models.meal.Ingredient;
@@ -40,12 +41,19 @@ import java.util.Map;
 public class MealListModel extends AndroidViewModel {
 
     private final MutableLiveData<LinkedList<Meal>> mealData = new MutableLiveData<>();
+    private ArrayList<LinkedList<Meal>> weekMealData;
+    private int selectedWeekday = -1;
 
     private static final String EAT_API_URL_FORMAT = "https://srehwald.github.io/eat-api/%s/%d/%d.json";
     private static final String TAG = MealListModel.class.getSimpleName();
 
     public MealListModel(@NonNull Application application) {
         super(application);
+        mealData.setValue(new LinkedList<Meal>());
+    }
+
+    public MutableLiveData<LinkedList<Meal>> getMealData() {
+        return mealData;
     }
 
     private static String generateEatApiUrl(String eatApiMensaString, LocalDate date){
@@ -59,6 +67,12 @@ public class MealListModel extends AndroidViewModel {
 
     public void informationSet(){
         LocalDate date = new LocalDate(DateTimeZone.forID("Europe/Berlin"));
+        if(selectedWeekday == -1) {
+            selectedWeekday = date.dayOfWeek().get();
+            if (selectedWeekday > 4) {
+                selectedWeekday = 4;
+            }
+        }
         if (mensaEatApiUrl != null) {
             if (mealPlanReferencePath != null) {
                 loadDataFromFirebase(date);
@@ -68,6 +82,26 @@ public class MealListModel extends AndroidViewModel {
         } else {
             // HANDLE MISSING API SUPPORT.
         }
+    }
+
+    private void parseMealData(DocumentSnapshot mealPlan, QuerySnapshot mealSnapshot) {
+
+        ArrayList<LinkedList<Meal>> meals = new ArrayList<>(Arrays.asList(new LinkedList<Meal>(), new LinkedList<Meal>(), new LinkedList<Meal>(), new LinkedList<Meal>(), new LinkedList<Meal>()));
+        String name; int weekday;
+        List<Ingredient> ingredients;
+        for(DocumentSnapshot snapshot : mealSnapshot) {
+            // price?
+            ingredients = new LinkedList<>();
+            name = snapshot.getString(getString(R.string.meal_field_name));
+            weekday = snapshot.getDouble("weekday").intValue();
+            for(DocumentReference ingredientReference : (ArrayList<DocumentReference>)snapshot.get(getString(R.string.meal_field_ingredients))) {
+                ingredients.add(new Ingredient(ingredientReference.getId(), null));
+            }
+            meals.get(weekday).add(new Meal(name, null, ingredients, null, null));
+        }
+
+        weekMealData = meals;
+        mealData.postValue(weekMealData.get(this.selectedWeekday));
     }
 
     private void loadDataFromFirebase(LocalDate date) {
@@ -82,7 +116,24 @@ public class MealListModel extends AndroidViewModel {
                         if (task.isSuccessful() && !task.getResult().isEmpty()) {
                             //todo surface items
                             Log.d(TAG, "loadDataFromFirebase complete and successful");
+                            FirebaseFirestore instance = FirebaseFirestore.getInstance();
+                            final DocumentSnapshot mealplan = task.getResult().getDocuments().get(0);
+                            instance.collection(getString(R.string.meal_collection_identifier))
+                                    .whereEqualTo("mealplan", instance.collection(mealPlanReferencePath + "/items").document(mealplan.getId()))
+                                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if(task.isSuccessful() && !task.getResult().isEmpty()) {
+                                        Log.d(TAG, "load meal data complete and successful.");
+                                        Log.d(TAG, String.format("result is %d large", task.getResult().size()));
+                                        parseMealData(mealplan, task.getResult());
+                                    }
+                                }
+                            });
+
+
                         } else if (task.getResult().isEmpty()) {
+                            Log.d(TAG, "No mealplan for selected week found. Generating.");
                             loadDataFromEatApi(new LocalDate(mDate));
                         }
                     }
@@ -97,6 +148,7 @@ public class MealListModel extends AndroidViewModel {
 
                     @Override
                     public void onResponse(JSONObject response) {
+                        Log.d(TAG, String.format("Retrieved data from %s", requestUrl));
                         createMealplanOnFirebase(date, response);
                     }
                 }, new Response.ErrorListener() {
@@ -112,6 +164,7 @@ public class MealListModel extends AndroidViewModel {
     }
 
     private void createMealplanOnFirebase(LocalDate date, JSONObject mealPlanData){
+        DocumentReference newMealplanRef = FirebaseFirestore.getInstance().collection(mealPlanReferencePath + "/items").document();
         Map<String, Object> firebaseData = new HashMap<>();
         firebaseData.put(getString(R.string.mealplan_field_week), date.weekOfWeekyear().get());
         firebaseData.put(getString(R.string.mealplan_field_year), date.year().get());
@@ -146,16 +199,16 @@ public class MealListModel extends AndroidViewModel {
                     meal = new Meal(dishname, null, ingredients, null, null);
                     dishesList.add(meal);
                 }
-                dayMap.put(getString(R.string.mealplan_field_meals), getReferenceListFromMeals(dishesList));
+                dayMap.put(getString(R.string.mealplan_field_meals), getReferenceListFromMeals(dishesList, newMealplanRef, weekday));
                 daysList.set(weekday, dayMap);
             }
             firebaseData.put(getString(R.string.mealplan_field_days), daysList);
-            FirebaseFirestore.getInstance().collection(mealPlanReferencePath + "/items")
-                    .document().set(firebaseData)
+            newMealplanRef.set(firebaseData)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
+                                Log.d(TAG, "Successfully loaded eatapi data to firebase.");
                                 informationSet();
                             } else {
                                 Log.d(TAG, "Failed to load eatapi data to firebase");
@@ -189,7 +242,7 @@ public class MealListModel extends AndroidViewModel {
         });
     }
 
-    private List<DocumentReference> getReferenceListFromMeals(List<Meal> mealList){
+    private List<DocumentReference> getReferenceListFromMeals(List<Meal> mealList, final DocumentReference mealPlanRef, int weekday){
         CollectionReference mealRef = FirebaseFirestore.getInstance().collection(getString(R.string.meal_collection_identifier));
         DocumentReference docRef;
         LinkedList<DocumentReference> references = new LinkedList<>();
@@ -205,6 +258,8 @@ public class MealListModel extends AndroidViewModel {
                 ingredients.add(FirebaseFirestore.getInstance().collection(getString(R.string.ingredient_collection_identifier)).document(i.getId()));
             }
             mealMap.put(getString(R.string.meal_field_ingredients), ingredients);
+            mealMap.put("mealplan", mealPlanRef);
+            mealMap.put("weekday", weekday);
 
             docRef = mealRef.document();
             final String mealName = meal.getName();
@@ -224,6 +279,12 @@ public class MealListModel extends AndroidViewModel {
         }
 
         return references;
+
+    }
+
+    private void setSelectedWeekday(int weekday){
+        this.selectedWeekday = weekday;
+        mealData.postValue(weekMealData.get(selectedWeekday));
 
     }
 
