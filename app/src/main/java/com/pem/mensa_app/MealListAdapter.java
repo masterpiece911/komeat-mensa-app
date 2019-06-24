@@ -1,6 +1,5 @@
 package com.pem.mensa_app;
 
-import android.content.Context;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,10 +13,11 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.pem.mensa_app.models.meal.Ingredient;
 import com.pem.mensa_app.models.meal.Meal;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -60,6 +60,7 @@ public class MealListAdapter extends ListAdapter<Meal, MealListAdapter.MealViewH
 
     public class MealViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
+        private View mItemView;
         private ImageView mImageView;
         private TextView mTextViewName;
         private TextView mTextViewPrice;
@@ -69,6 +70,7 @@ public class MealListAdapter extends ListAdapter<Meal, MealListAdapter.MealViewH
 
         public MealViewHolder(@NonNull View itemView, MealClickEventListener listener) {
             super(itemView);
+            mItemView = itemView;
             mClickListener = listener;
             mImageView=itemView.findViewById(R.id.image_view);
             mTextViewName=itemView.findViewById(R.id.text_view_dishes);
@@ -93,6 +95,9 @@ public class MealListAdapter extends ListAdapter<Meal, MealListAdapter.MealViewH
                     mClickListener.onImageButtonClick(getAdapterPosition());
                 }
             });
+
+            StorageReference reference = FirebaseStorage.getInstance().getReference("/images/halbeshendl.png");
+            GlideApp.with(this.mItemView).load(reference).into(mImageView);
         }
 
         @Override
