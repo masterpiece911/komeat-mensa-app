@@ -58,7 +58,7 @@ public class MealListAdapter extends ListAdapter<Meal, MealListAdapter.MealViewH
     }
 
 
-    public class MealViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class MealViewHolder extends RecyclerView.ViewHolder{
 
         private View mItemView;
         private ImageView mImageView;
@@ -96,14 +96,17 @@ public class MealListAdapter extends ListAdapter<Meal, MealListAdapter.MealViewH
                 }
             });
 
+            mItemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mClickListener.onMealClick(getAdapterPosition());
+                }
+            });
+
             StorageReference reference = FirebaseStorage.getInstance().getReference("/images/halbeshendl.png");
             GlideApp.with(this.mItemView).load(reference).into(mImageView);
         }
 
-        @Override
-        public void onClick(View view) {
-            mClickListener.onMealClick(getAdapterPosition());
-        }
     }
 
     interface MealClickEventListener {

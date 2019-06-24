@@ -6,15 +6,21 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import com.pem.mensa_app.meal_detail_activity.MealDetailActivity;
 import com.pem.mensa_app.models.meal.Meal;
 
 import java.util.LinkedList;
 
 public class MensaMealListActivity extends AppCompatActivity implements MealListAdapter.MealClickEventListener {
+
+    private static final String TAG = MensaMealListActivity.class.getSimpleName();
+
     private MealListModel viewModel;
     private RecyclerView mRecyclerView;
     private MealListAdapter mMealListAdapter;
@@ -79,10 +85,16 @@ public class MensaMealListActivity extends AppCompatActivity implements MealList
     @Override
     public void onMealClick(int position) {
 
+        Meal clickedMeal = viewModel.getMealData().getValue().get(position);
+
+        Intent mealDetailIntent = new Intent(MensaMealListActivity.this, MealDetailActivity.class);
+        mealDetailIntent.putExtra(getString(R.string.intent_meal_uid), clickedMeal.getUid());
+        startActivity(mealDetailIntent);
+
     }
 
     @Override
     public void onImageButtonClick(int position) {
-
+        Log.d(TAG, "onImageButtonClick: " + position);
     }
 }

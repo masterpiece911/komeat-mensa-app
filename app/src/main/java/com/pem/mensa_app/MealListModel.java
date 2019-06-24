@@ -89,17 +89,19 @@ public class MealListModel extends AndroidViewModel {
     private void parseMealData(DocumentSnapshot mealPlan, QuerySnapshot mealSnapshot) {
 
         ArrayList<LinkedList<Meal>> meals = new ArrayList<>(Arrays.asList(new LinkedList<Meal>(), new LinkedList<Meal>(), new LinkedList<Meal>(), new LinkedList<Meal>(), new LinkedList<Meal>()));
-        String name; int weekday;
+        String name; int weekday; Meal meal;
         List<Ingredient> ingredients;
         for(DocumentSnapshot snapshot : mealSnapshot) {
+            meal = new Meal();
             // price?
             ingredients = new LinkedList<>();
-            name = snapshot.getString(getString(R.string.meal_field_name));
+            meal.setName(snapshot.getString(getString(R.string.meal_field_name)));
             weekday = snapshot.getDouble("weekday").intValue();
             for(DocumentReference ingredientReference : (ArrayList<DocumentReference>)snapshot.get(getString(R.string.meal_field_ingredients))) {
                 ingredients.add(new Ingredient(ingredientReference.getId(), null));
             }
-            meals.get(weekday).add(new Meal(name, null, ingredients, null, null));
+            meal.setIngredients(ingredients);
+            meals.get(weekday).add(meal);
         }
 
         weekMealData = meals;

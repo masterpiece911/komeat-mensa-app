@@ -13,15 +13,17 @@ import java.util.List;
 
 public class Meal {
 
-    private final String name;
+    private String uid;
 
-    private final Double price;
+    private String name;
 
-    private final List<Ingredient> ingredients;
+    private Double price;
 
-    private final List<String> comments;
+    private List<Ingredient> ingredients;
 
-    private final List<String> images;
+    private List<String> comments;
+
+    private List<String> images;
 
     public Meal(String name, Double price, List<Ingredient> ingredients, List<String> comments, List<String> images) {
         this.name = name;
@@ -29,6 +31,46 @@ public class Meal {
         this.ingredients = ingredients;
         this.comments = comments;
         this.images = images;
+    }
+
+    public Meal() {
+
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    public void setIngredients(List<Ingredient> ingredients) {
+        this.ingredients = ingredients;
+    }
+
+    public void setComments(List<String> comments) {
+        this.comments = comments;
+    }
+
+    public void setImages(List<String> images) {
+        this.images = images;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public List<String> getComments() {
+        return comments;
+    }
+
+    public List<String> getImages() {
+        return images;
     }
 
     public String getName() {
