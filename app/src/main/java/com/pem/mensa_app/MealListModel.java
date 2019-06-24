@@ -33,6 +33,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -284,7 +285,9 @@ public class MealListModel extends AndroidViewModel {
 
     public void setSelectedWeekday(int weekday){
         this.selectedWeekday = weekday;
-        mealData.postValue(weekMealData.get(selectedWeekday - 1));
+        if(weekMealData != null) {
+            mealData.postValue(weekMealData.get(selectedWeekday - 1));
+        }
     }
 
     public int getSelectedWeekday() {
