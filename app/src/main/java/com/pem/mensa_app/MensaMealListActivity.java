@@ -29,10 +29,7 @@ public class MensaMealListActivity extends AppCompatActivity implements MealList
         Bundle extras = getIntent().getExtras();
 
         viewModel = ViewModelProviders.of(this).get(MealListModel.class);
-        viewModel.setMensaName(extras.getString(getString(R.string.intent_mensa_name)));
-        viewModel.setMensaID(extras.getString(getString(R.string.intent_mensa_uid)));
-        viewModel.setMealPlanReferencePath(extras.getString(getString(R.string.intent_mensa_meal_plan_reference_path)));
-        viewModel.setMensaEatApiUrl(extras.getString(getString(R.string.intent_mensa_eatapi_url)));
+        viewModel.setData(extras);
 
         mRecyclerView = findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);

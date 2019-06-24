@@ -1,6 +1,7 @@
 package com.pem.mensa_app;
 
 import android.app.Application;
+import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -290,6 +291,13 @@ public class MealListModel extends AndroidViewModel {
         }
     }
 
+    public void setData(Bundle data) {
+        setMensaName(data.getString(getString(R.string.intent_mensa_name)));
+        setMensaID(data.getString(getString(R.string.intent_mensa_uid)));
+        setMealPlanReferencePath(data.getString(getString(R.string.intent_mensa_meal_plan_reference_path)));
+        setMensaEatApiUrl(data.getString(getString(R.string.intent_mensa_eatapi_url)));
+    }
+
     public int getSelectedWeekday() {
         return selectedWeekday;
     }
@@ -298,11 +306,11 @@ public class MealListModel extends AndroidViewModel {
         return getApplication().getString(id);
     }
 
-    public void setMensaID(String mensaID) {
+    private void setMensaID(String mensaID) {
         this.mensaID = mensaID;
     }
 
-    public void setMensaName(String mensaName) {
+    private void setMensaName(String mensaName) {
         this.mensaName = mensaName;
     }
 
@@ -310,11 +318,11 @@ public class MealListModel extends AndroidViewModel {
         return mensaName;
     }
 
-    public void setMealPlanReferencePath(String mealPlanReferencePath) {
+    private void setMealPlanReferencePath(String mealPlanReferencePath) {
         this.mealPlanReferencePath = mealPlanReferencePath;
     }
 
-    public void setMensaEatApiUrl(String mensaEatApiUrl) {
+    private void setMensaEatApiUrl(String mensaEatApiUrl) {
         this.mensaEatApiUrl = mensaEatApiUrl;
     }
 
