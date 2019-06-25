@@ -47,6 +47,10 @@ public class MensaMealListActivity extends AppCompatActivity implements MealList
     private RadioGroup mRadioGroup;
     private ImageView mImageView;
 
+    static final int REQUEST_TAKE_PHOTO = 1;
+    String currentPhotoPath;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,7 +117,7 @@ public class MensaMealListActivity extends AppCompatActivity implements MealList
 
     }
 
-    String currentPhotoPath;
+
 
     private File createImageFile() throws IOException {
         // Create an image file name
@@ -131,7 +135,7 @@ public class MensaMealListActivity extends AppCompatActivity implements MealList
         return image;
     }
 
-    static final int REQUEST_TAKE_PHOTO = 1;
+
     private void dispatchTakePictureIntent() {
 
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -165,15 +169,15 @@ public class MensaMealListActivity extends AppCompatActivity implements MealList
             // File or Blob
              Uri file = Uri.fromFile(new File(currentPhotoPath));
 
-// Create the file metadata
+           // Create the file metadata
             StorageMetadata metadata = new StorageMetadata.Builder()
                     .setContentType("image/jpeg")
                     .build();
             StorageReference storageRef= FirebaseStorage.getInstance().getReference();
-// Upload file and metadata to the path 'images/mountains.jpg'
+               // Upload file and metadata to the current path
             UploadTask uploadTask = storageRef.child("images/"+file.getLastPathSegment()).putFile(file, metadata);
 
-// Listen for state changes, errors, and completion of the upload.
+                // Listen for state changes, errors, and completion of the upload.
             uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
