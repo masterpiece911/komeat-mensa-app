@@ -113,6 +113,24 @@ public class MensaMealListActivity extends AppCompatActivity implements MealList
 
     }
 
+    String currentPhotoPath;
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
     static final int REQUEST_TAKE_PHOTO = 1;
     private void dispatchTakePictureIntent() {
 
@@ -145,7 +163,7 @@ public class MensaMealListActivity extends AppCompatActivity implements MealList
 
 
             // File or Blob
-             Uri file = Uri.fromFile(new File("path/to/mountains.jpg"));
+             Uri file = Uri.fromFile(new File(currentPhotoPath));
 
 // Create the file metadata
             StorageMetadata metadata = new StorageMetadata.Builder()
@@ -183,23 +201,7 @@ public class MensaMealListActivity extends AppCompatActivity implements MealList
         }
     }
 
-    String currentPhotoPath;
 
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        currentPhotoPath = image.getAbsolutePath();
-        return image;
-    }
 
     @Override
     public void onImageButtonClick(int position) {
