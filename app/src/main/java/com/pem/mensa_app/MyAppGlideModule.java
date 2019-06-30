@@ -1,4 +1,4 @@
-package com.pem.mensa_app.utilities.Glide;
+package com.pem.mensa_app;
 
 import android.content.Context;
 
