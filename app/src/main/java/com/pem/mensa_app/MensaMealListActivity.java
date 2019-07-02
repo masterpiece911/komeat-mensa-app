@@ -19,6 +19,7 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -108,13 +109,11 @@ public class MensaMealListActivity extends AppCompatActivity implements MealList
 
     @Override
     public void onMealClick(int position) {
-
         Meal clickedMeal = viewModel.getMealData().getValue().get(position);
 
         Intent mealDetailIntent = new Intent(MensaMealListActivity.this, MealDetailActivity.class);
         mealDetailIntent.putExtra(getString(R.string.intent_meal_uid), clickedMeal.getUid());
         startActivity(mealDetailIntent);
-
     }
 
 

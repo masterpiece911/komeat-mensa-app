@@ -22,7 +22,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.pem.mensa_app.models.meal.Ingredient;
 import com.pem.mensa_app.models.meal.Meal;
 
 import org.joda.time.DateTimeZone;
@@ -34,7 +33,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -89,18 +87,14 @@ public class MealListModel extends AndroidViewModel {
     private void parseMealData(DocumentSnapshot mealPlan, QuerySnapshot mealSnapshot) {
 
         ArrayList<LinkedList<Meal>> meals = new ArrayList<>(Arrays.asList(new LinkedList<Meal>(), new LinkedList<Meal>(), new LinkedList<Meal>(), new LinkedList<Meal>(), new LinkedList<Meal>()));
-        String name; int weekday; Meal meal;
-        List<Ingredient> ingredients;
+        int weekday; Meal meal;
         for(DocumentSnapshot snapshot : mealSnapshot) {
             meal = new Meal();
             // price?
-            ingredients = new LinkedList<>();
             meal.setName(snapshot.getString(getString(R.string.meal_field_name)));
             weekday = snapshot.getDouble("weekday").intValue();
-            for(DocumentReference ingredientReference : (ArrayList<DocumentReference>)snapshot.get(getString(R.string.meal_field_ingredients))) {
-                ingredients.add(new Ingredient(ingredientReference.getId(), null));
-            }
-            meal.setIngredients(ingredients);
+            meal.setIngredients((List<String>) snapshot.get("ingredients"));
+            meal.setUid(snapshot.getId());
             meals.get(weekday).add(meal);
         }
 
@@ -178,8 +172,8 @@ public class MealListModel extends AndroidViewModel {
         Map<String, Object> dayMap;
         JSONObject day, dish; String dishname; double dishprice;
         JSONArray dishes, ingredientsJson;
-        LinkedList<Ingredient> ingredients;
-        Ingredient ingredient;
+        LinkedList<String> ingredients;
+        String ingredient;
         try {
             JSONArray daysArray = mealPlanData.getJSONArray("days");
             Meal meal;
@@ -197,10 +191,10 @@ public class MealListModel extends AndroidViewModel {
                     ingredients = new LinkedList<>();
                     ingredientsJson = dish.getJSONArray("ingredients");
                     for(int k = 0; k < ingredientsJson.length(); k++){
-                        ingredient = new Ingredient(ingredientsJson.getString(k), null);
+                        ingredient = ingredientsJson.getString(k);
                         ingredients.add(ingredient);
                     }
-                    meal = new Meal(dishname, null, ingredients, null, null);
+                    meal = new Meal(null, dishname, null, ingredients, null, null);
                     dishesList.add(meal);
                 }
                 dayMap.put(getString(R.string.mealplan_field_meals), getReferenceListFromMeals(dishesList, newMealplanRef, weekday));
@@ -250,20 +244,21 @@ public class MealListModel extends AndroidViewModel {
         CollectionReference mealRef = FirebaseFirestore.getInstance().collection(getString(R.string.meal_collection_identifier));
         DocumentReference docRef;
         LinkedList<DocumentReference> references = new LinkedList<>();
-        LinkedList<DocumentReference> ingredients;
+        List<String> ingredients;
+        List<String> imagePaths = new ArrayList<>();
         HashMap<String, Object> mealMap;
 
         for(Meal meal : mealList) {
             mealMap = new HashMap<>();
-            ingredients = new LinkedList<>();
+            ingredients = meal.getIngredients();
+
             mealMap.put(getString(R.string.meal_field_name), meal.getName());
             mealMap.put(getString(R.string.meal_field_price), meal.getPrice());
-            for(Ingredient i : meal.getIngredients()) {
-                ingredients.add(FirebaseFirestore.getInstance().collection(getString(R.string.ingredient_collection_identifier)).document(i.getId()));
-            }
+
             mealMap.put(getString(R.string.meal_field_ingredients), ingredients);
             mealMap.put("mealplan", mealPlanRef);
             mealMap.put("weekday", weekday);
+            mealMap.put("imagePaths", imagePaths);
 
             docRef = mealRef.document();
             final String mealName = meal.getName();
