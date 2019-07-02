@@ -19,6 +19,8 @@ import com.google.firebase.storage.StorageReference;
 import com.pem.mensa_app.GlideApp;
 import com.pem.mensa_app.R;
 
+import org.joda.time.LocalDateTime;
+
 public class ImageFragment extends Fragment {
 
     private String imagePath;
@@ -43,26 +45,12 @@ public class ImageFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         final View view = inflater.inflate(R.layout.fragment_meal_detail, container, false);
         final ImageView imageView = view.findViewById(R.id.imageView_meal_detail);
-        imageView.setImageResource(R.drawable.examplemage);
+        //imageView.setImageResource(R.drawable.examplemage);
 
-//        final FirebaseStorage storage = FirebaseStorage.getInstance();
-//        storage.getReference("images/halbeshendl.png").getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-//            @Override
-//            public void onSuccess(byte[] bytes) {
-//                Log.d("mealDetailActivity", "Yeah");
-//
-//                GlideApp.with(view)
-//                        .load(storage)
-//                        .into(imageView);
-//
-//
-//            }
-//        }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception exception) {
-//                Log.d("mealDetailActivity", "get failed with: ", exception);
-//            }
-//        });
+
+        StorageReference reference = FirebaseStorage.getInstance().getReference("/images/halbeshendl.png");
+        GlideApp.with(view).load(reference).into(imageView);
+
         return view;
     }
 
