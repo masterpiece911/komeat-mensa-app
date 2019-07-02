@@ -26,7 +26,6 @@ import java.util.List;
 public class MealDetailActivity extends AppCompatActivity implements CommentFragment.OnListFragmentInteractionListener {
 
     //private CommentFragment.OnListFragmentInteractionListener onListFragmentInteractionListener;
-    private ViewPager viewPager;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -40,23 +39,10 @@ public class MealDetailActivity extends AppCompatActivity implements CommentFrag
         // get ID from MensaMealListActivity
         Bundle extras = getIntent().getExtras();
 
-        String uid = extras.getString(getString(R.string.intent_meal_uid));
+        final String uid = extras.getString(getString(R.string.intent_meal_uid));
         if (uid == null) {
             Log.d("mealDetailActivity", "There is nothing today!");
         }
-
-        // ViewPager for food images
-        this.viewPager = findViewById(R.id.view_pager);
-        final ImageAdapter imageAdapter = new ImageAdapter(getSupportFragmentManager(), new ArrayList<String>());
-        this.viewPager.setAdapter(imageAdapter);
-
-        // Food description
-
-        // RecyclerView for comments
-        final RecyclerView recyclerView = findViewById(R.id.comment_fragment);
-        recyclerView.setHasFixedSize(true);
-        final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
 
         // get description
         final DocumentReference docRef = db.collection(getString(R.string.meal_collection_identifier)).document(uid);
@@ -66,20 +52,17 @@ public class MealDetailActivity extends AppCompatActivity implements CommentFrag
                 if (task.isSuccessful()) {
                     DocumentSnapshot documentSnapshot = task.getResult();
                     if (documentSnapshot.exists()) {
-                        Toast.makeText(MealDetailActivity.this, documentSnapshot.getId(), Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(MealDetailActivity.this, documentSnapshot.getId(), Toast.LENGTH_SHORT).show();
                         Log.d("mealDetailActivity", documentSnapshot.getId());
 
-
-
-
-                        Meal meal = new Meal(documentSnapshot.getString("name"),
+                        Meal meal = new Meal(uid,
+                                documentSnapshot.getString("name"),
                                 documentSnapshot.getDouble("price"),
                                 (List<String>) documentSnapshot.get("ingredients"),
                                 (List<String>) documentSnapshot.get("comments"),
                                 (List<String>) documentSnapshot.get("imagepaths"));
                         setDataToView(meal);
                         setImageToView(meal.getImages());
-
 
                     } else {
                         Toast.makeText(MealDetailActivity.this, "Document is unknown.", Toast.LENGTH_SHORT).show();
@@ -91,6 +74,12 @@ public class MealDetailActivity extends AppCompatActivity implements CommentFrag
             }
         });
 
+        // RecyclerView for comments
+        final RecyclerView recyclerView = findViewById(R.id.comment_fragment);
+        recyclerView.setHasFixedSize(true);
+        final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+
         // get comments
         DummyContent.DummyItem dummy = new DummyContent.DummyItem( "id", "content", "details");
 
@@ -99,7 +88,6 @@ public class MealDetailActivity extends AppCompatActivity implements CommentFrag
 
         final CommentRecyclerViewAdapter commentRecyclerViewAdapter = new CommentRecyclerViewAdapter(items, this);
         recyclerView.setAdapter(commentRecyclerViewAdapter);
-
     }
 
     @Override
@@ -111,18 +99,18 @@ public class MealDetailActivity extends AppCompatActivity implements CommentFrag
         TextView textView = findViewById(R.id.textView_meal_dishes);
         textView.setText(meal.getName());
 
-        TextView textViewIngredients = findViewById(R.id.text_view_ingredients);
+        TextView textViewIngredients = findViewById(R.id.textView_ingredients);
         StringBuilder stringBuilderIngredients = new StringBuilder();
         for (String ingredient : meal.getIngredients()) {
             stringBuilderIngredients.append(ingredient);
             stringBuilderIngredients.append(", ");
         }
-        //textViewIngredients.setText(stringBuilderIngredients.toString());
+        textViewIngredients.setText(stringBuilderIngredients.toString());
     }
 
     private void setImageToView(List<String> imagePaths) {
-        final ImageAdapter imageAdapter = new ImageAdapter(getSupportFragmentManager(), imagePaths);
-        this.viewPager.setAdapter(imageAdapter);
-
+        ViewPager viewPager = findViewById(R.id.view_pager);
+        ImageAdapter imageAdapter = new ImageAdapter(getSupportFragmentManager(), imagePaths);
+        viewPager.setAdapter(imageAdapter);
     }
 }

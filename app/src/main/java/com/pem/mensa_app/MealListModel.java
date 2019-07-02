@@ -194,7 +194,7 @@ public class MealListModel extends AndroidViewModel {
                         ingredient = ingredientsJson.getString(k);
                         ingredients.add(ingredient);
                     }
-                    meal = new Meal(dishname, null, ingredients, null, null);
+                    meal = new Meal(null, dishname, null, ingredients, null, null);
                     dishesList.add(meal);
                 }
                 dayMap.put(getString(R.string.mealplan_field_meals), getReferenceListFromMeals(dishesList, newMealplanRef, weekday));

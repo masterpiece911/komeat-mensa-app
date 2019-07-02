@@ -25,7 +25,8 @@ public class Meal {
 
     private List<String> images;
 
-    public Meal(String name, Double price, List<String> ingredients, List<String> comments, List<String> images) {
+    public Meal(String uid, String name, Double price, List<String> ingredients, List<String> comments, List<String> images) {
+        this.uid = uid;
         this.name = name;
         this.price = price;
         this.ingredients = ingredients;

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -42,25 +43,26 @@ public class ImageFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         final View view = inflater.inflate(R.layout.fragment_meal_detail, container, false);
         final ImageView imageView = view.findViewById(R.id.imageView_meal_detail);
+        imageView.setImageResource(R.drawable.examplemage);
 
-        final FirebaseStorage storage = FirebaseStorage.getInstance();
-        storage.getReference("images/halbeshendl.png").getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-                Log.d("mealDetailActivity", "Yeah");
-
-                GlideApp.with(view)
-                        .load(storage)
-                        .into(imageView);
-
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Log.d("mealDetailActivity", "get failed with: ", exception);
-            }
-        });
+//        final FirebaseStorage storage = FirebaseStorage.getInstance();
+//        storage.getReference("images/halbeshendl.png").getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+//            @Override
+//            public void onSuccess(byte[] bytes) {
+//                Log.d("mealDetailActivity", "Yeah");
+//
+//                GlideApp.with(view)
+//                        .load(storage)
+//                        .into(imageView);
+//
+//
+//            }
+//        }).addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception exception) {
+//                Log.d("mealDetailActivity", "get failed with: ", exception);
+//            }
+//        });
         return view;
     }
 
