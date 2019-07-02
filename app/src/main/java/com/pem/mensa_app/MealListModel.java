@@ -101,6 +101,7 @@ public class MealListModel extends AndroidViewModel {
                 ingredients.add(new Ingredient(ingredientReference.getId(), null));
             }
             meal.setIngredients(ingredients);
+            meal.setUid(snapshot.getId());
             meals.get(weekday).add(meal);
         }
 
@@ -251,11 +252,13 @@ public class MealListModel extends AndroidViewModel {
         DocumentReference docRef;
         LinkedList<DocumentReference> references = new LinkedList<>();
         LinkedList<DocumentReference> ingredients;
+        List<String> imagePaths = new ArrayList<>();
         HashMap<String, Object> mealMap;
 
         for(Meal meal : mealList) {
             mealMap = new HashMap<>();
             ingredients = new LinkedList<>();
+
             mealMap.put(getString(R.string.meal_field_name), meal.getName());
             mealMap.put(getString(R.string.meal_field_price), meal.getPrice());
             for(Ingredient i : meal.getIngredients()) {
@@ -264,6 +267,7 @@ public class MealListModel extends AndroidViewModel {
             mealMap.put(getString(R.string.meal_field_ingredients), ingredients);
             mealMap.put("mealplan", mealPlanRef);
             mealMap.put("weekday", weekday);
+            mealMap.put("imagePaths", imagePaths);
 
             docRef = mealRef.document();
             final String mealName = meal.getName();
