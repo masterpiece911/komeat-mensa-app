@@ -19,13 +19,13 @@ public class Meal {
 
     private Double price;
 
-    private List<Ingredient> ingredients;
+    private List<String> ingredients;
 
     private List<String> comments;
 
     private List<String> images;
 
-    public Meal(String name, Double price, List<Ingredient> ingredients, List<String> comments, List<String> images) {
+    public Meal(String name, Double price, List<String> ingredients, List<String> comments, List<String> images) {
         this.name = name;
         this.price = price;
         this.ingredients = ingredients;
@@ -49,7 +49,7 @@ public class Meal {
         this.price = price;
     }
 
-    public void setIngredients(List<Ingredient> ingredients) {
+    public void setIngredients(List<String> ingredients) {
         this.ingredients = ingredients;
     }
 
@@ -81,7 +81,7 @@ public class Meal {
         return price;
     }
 
-    public List<Ingredient> getIngredients() {
+    public List<String> getIngredients() {
         return ingredients;
     }
 }

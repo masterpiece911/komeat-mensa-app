@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.pem.mensa_app.models.meal.Ingredient;
 import com.pem.mensa_app.models.meal.Meal;
 
 import java.util.LinkedList;
@@ -83,8 +82,9 @@ public class MealListAdapter extends ListAdapter<Meal, MealListAdapter.MealViewH
             mTextViewName.setText(data.getName());
             mTextViewPrice.setText("Price: " + data.getPrice());
             List<String> ingredientIds = new LinkedList<>();
-            for (Ingredient i : data.getIngredients()) {
-                ingredientIds.add(i.getId());
+            // TODO: Refactor
+            for (String i : data.getIngredients()) {
+                ingredientIds.add(i);
             }
             String ingredientString = TextUtils.join(", ", ingredientIds);
             mTextViewIngredients.setText(ingredientString);

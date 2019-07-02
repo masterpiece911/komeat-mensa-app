@@ -18,7 +18,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.pem.mensa_app.R;
 import com.pem.mensa_app.dummy.DummyContent;
-import com.pem.mensa_app.models.meal.Ingredient;
 import com.pem.mensa_app.models.meal.Meal;
 
 import java.util.ArrayList;
@@ -71,12 +70,14 @@ public class MealDetailActivity extends AppCompatActivity implements CommentFrag
                         Log.d("mealDetailActivity", documentSnapshot.getId());
 
 
+
+
                         Meal meal = new Meal(documentSnapshot.getString("name"),
                                 documentSnapshot.getDouble("price"),
-                                (List<Ingredient>) documentSnapshot.get("ingredients"),
+                                (List<String>) documentSnapshot.get("ingredients"),
                                 (List<String>) documentSnapshot.get("comments"),
                                 (List<String>) documentSnapshot.get("imagepaths"));
-                        setDatatoView(meal);
+                        setDataToView(meal);
                         setImageToView(meal.getImages());
 
 
@@ -106,10 +107,17 @@ public class MealDetailActivity extends AppCompatActivity implements CommentFrag
 
     }
 
-    private void setDatatoView( Meal meal) {
+    private void setDataToView(Meal meal) {
         TextView textView = findViewById(R.id.textView_meal_dishes);
         textView.setText(meal.getName());
-        
+
+        TextView textViewIngredients = findViewById(R.id.text_view_ingredients);
+        StringBuilder stringBuilderIngredients = new StringBuilder();
+        for (String ingredient : meal.getIngredients()) {
+            stringBuilderIngredients.append(ingredient);
+            stringBuilderIngredients.append(", ");
+        }
+        //textViewIngredients.setText(stringBuilderIngredients.toString());
     }
 
     private void setImageToView(List<String> imagePaths) {
