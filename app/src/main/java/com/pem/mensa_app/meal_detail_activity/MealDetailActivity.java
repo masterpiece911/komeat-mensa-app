@@ -23,6 +23,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.pem.mensa_app.R;
 import com.pem.mensa_app.dummy.DummyContent;
+import com.pem.mensa_app.meal_image_activity.MealImageActivity;
 import com.pem.mensa_app.models.meal.Meal;
 
 import java.util.ArrayList;
@@ -141,7 +142,13 @@ public class MealDetailActivity extends AppCompatActivity implements CommentFrag
 
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             mImageUri = data.getData();
-            
+
+            // Start new Activity und transfer selected image with data.getDataString()
+            Intent mealImageIntent = new Intent(MealDetailActivity.this, MealImageActivity.class);
+            mealImageIntent.putExtra("selected_image", data.getDataString());
+            startActivity(mealImageIntent);
+
+
         }
     }
 }
