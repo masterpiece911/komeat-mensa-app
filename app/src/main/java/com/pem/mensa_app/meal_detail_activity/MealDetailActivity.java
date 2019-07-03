@@ -1,11 +1,16 @@
 package com.pem.mensa_app.meal_detail_activity;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,11 +30,11 @@ import java.util.List;
 
 public class MealDetailActivity extends AppCompatActivity implements CommentFragment.OnListFragmentInteractionListener {
 
-    //private CommentFragment.OnListFragmentInteractionListener onListFragmentInteractionListener;
+    private static final int PICK_IMAGE_REQUEST = 1;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-
+    private Uri mImageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +93,15 @@ public class MealDetailActivity extends AppCompatActivity implements CommentFrag
 
         final CommentRecyclerViewAdapter commentRecyclerViewAdapter = new CommentRecyclerViewAdapter(items, this);
         recyclerView.setAdapter(commentRecyclerViewAdapter);
+
+        final Button mButtonChooseImage = findViewById(R.id.button_choose_image);
+
+        mButtonChooseImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openFileChooser();
+            }
+        });
     }
 
     @Override
@@ -112,5 +126,22 @@ public class MealDetailActivity extends AppCompatActivity implements CommentFrag
         ViewPager viewPager = findViewById(R.id.view_pager);
         ImageAdapter imageAdapter = new ImageAdapter(getSupportFragmentManager(), imagePaths);
         viewPager.setAdapter(imageAdapter);
+    }
+
+    private void openFileChooser() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(intent, PICK_IMAGE_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            mImageUri = data.getData();
+            
+        }
     }
 }
