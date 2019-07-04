@@ -23,7 +23,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.pem.mensa_app.R;
 import com.pem.mensa_app.dummy.DummyContent;
-import com.pem.mensa_app.meal_image_activity.MealImageActivity;
+import com.pem.mensa_app.image_upload_activity.ImageUploadActivity;
 import com.pem.mensa_app.models.meal.Meal;
 
 import java.util.ArrayList;
@@ -36,6 +36,7 @@ public class MealDetailActivity extends AppCompatActivity implements CommentFrag
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private Uri mImageUri;
+    private String mMealUid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,13 +46,13 @@ public class MealDetailActivity extends AppCompatActivity implements CommentFrag
         // get ID from MensaMealListActivity
         Bundle extras = getIntent().getExtras();
 
-        final String uid = extras.getString(getString(R.string.intent_meal_uid));
-        if (uid == null) {
+        mMealUid = extras.getString(getString(R.string.intent_meal_uid));
+        if (mMealUid == null) {
             Log.d("mealDetailActivity", "There is nothing today!");
         }
 
         // get description
-        final DocumentReference docRef = db.collection(getString(R.string.meal_collection_identifier)).document(uid);
+        final DocumentReference docRef = db.collection(getString(R.string.meal_collection_identifier)).document(mMealUid);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -61,7 +62,7 @@ public class MealDetailActivity extends AppCompatActivity implements CommentFrag
                         //Toast.makeText(MealDetailActivity.this, documentSnapshot.getId(), Toast.LENGTH_SHORT).show();
                         Log.d("mealDetailActivity", documentSnapshot.getId());
 
-                        Meal meal = new Meal(uid,
+                        Meal meal = new Meal(mMealUid,
                                 documentSnapshot.getString("name"),
                                 documentSnapshot.getDouble("price"),
                                 (List<String>) documentSnapshot.get("ingredients"),
@@ -144,8 +145,9 @@ public class MealDetailActivity extends AppCompatActivity implements CommentFrag
             mImageUri = data.getData();
 
             // Start new Activity und transfer selected image with data.getDataString()
-            Intent mealImageIntent = new Intent(MealDetailActivity.this, MealImageActivity.class);
+            Intent mealImageIntent = new Intent(MealDetailActivity.this, ImageUploadActivity.class);
             mealImageIntent.putExtra("selected_image", data.getDataString());
+            mealImageIntent.putExtra("meal_uid", mMealUid);
             startActivity(mealImageIntent);
 
 

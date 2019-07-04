@@ -29,7 +29,7 @@
             android:name=".mensa_list_activity.LocationRequestActivity"
             android:theme="@style/AppFullScreenTheme"
             ></activity>
-        <activity android:name=".meal_image_activity.MealImageActivity"></activity>
+        <activity android:name=".image_upload_activity.ImageUploadActivity"></activity>
         <activity android:name=".meal_detail_activity.MealDetailActivity"></activity>
         <activity android:name=".MensaMealListActivity" />
         <activity android:name=".mensa_list_activity.MensaListActivity">

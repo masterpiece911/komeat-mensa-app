@@ -1,4 +1,4 @@
-package com.pem.mensa_app.models.image;
+package com.pem.mensa_app.models.imageUpoald;
 
 import org.joda.time.LocalDateTime;
 
