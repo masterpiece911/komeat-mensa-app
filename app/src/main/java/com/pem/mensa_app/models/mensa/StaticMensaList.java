@@ -6,7 +6,7 @@ import java.util.List;
 
 public class StaticMensaList {
 
-    static List<Mensa> getMensaList() {
+    public static List<Mensa> getMensaList() {
         return new ArrayList<>(Arrays.asList(
                 new Mensa("Boltzmannstraße","Boltzmannstraße 15",48.265750,11.670166,"1iR6zO6UlldtEms1YOWp","stucafe","stucafe-boltzmannstr"),
                 new Mensa("Akademie Weihenstephan","Alte Akademie 1",48.395362,11.728780,"1sAcO8eYarRdA1Nn1hDv","stucafe","stucafe-akademie-weihenstephan"),
