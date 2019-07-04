@@ -1,6 +1,5 @@
 package com.pem.mensa_app;
 
-import android.annotation.SuppressLint;
 import android.app.Application;
 import android.os.Bundle;
 import android.util.Log;
@@ -57,7 +56,6 @@ public class MealListModel extends AndroidViewModel {
         return mealData;
     }
 
-    @SuppressLint("DefaultLocale")
     private static String generateEatApiUrl(String eatApiMensaString, LocalDate date){
         return String.format(EAT_API_URL_FORMAT, eatApiMensaString, date.getYear(), date.getWeekOfWeekyear());
     }
@@ -79,7 +77,7 @@ public class MealListModel extends AndroidViewModel {
             if (mealPlanReferencePath != null) {
                 loadDataFromFirebase(date);
             } else {
-                checkMealPlanReferenceExists(mensaID);
+                createMealplanReferenceOnFirebase(mensaID);
             }
         } else {
             // HANDLE MISSING API SUPPORT.
@@ -219,24 +217,6 @@ public class MealListModel extends AndroidViewModel {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }
-
-    private void checkMealPlanReferenceExists(final String mensaID) {
-        FirebaseFirestore instance = FirebaseFirestore.getInstance();
-        instance.collection(getString(R.string.mensa_collection_identifier)).document(mensaID)
-                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful() && task.getResult().exists()) {
-                    if (task.getResult().getDocumentReference(getString(R.string.mensa_field_mealplan_reference)) != null) {
-                        mealPlanReferencePath = task.getResult().getDocumentReference(getString(R.string.mensa_field_mealplan_reference)).getPath();
-                        informationSet();
-                    } else {
-                        createMealplanReferenceOnFirebase(mensaID);
-                    }
-                }
-            }
-        });
     }
 
     private void createMealplanReferenceOnFirebase(String mensaID) {
