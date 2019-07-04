@@ -27,7 +27,7 @@
     <string name="mensa_field_type">type</string>
     <string name="mensa_field_url">url</string>
     <string name="mensa_field_mealplan_reference">mealplan</string>
-    
+
     <string name="mealplan_collection_identifier">Mealplan</string>
     <string name="mealplan_items">items</string>
     <string name="mealplan_field_week">week</string>
@@ -38,5 +38,9 @@
     <string name="ingredient_collection_identifier">Ingredient</string>
     <string name="ingredient_field_description">description</string>
     <string name="ingredient_field_shorthand">shorthand</string>
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
+    <string name="search_title">search</string>
 
 </resources>

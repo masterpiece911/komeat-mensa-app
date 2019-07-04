@@ -194,8 +194,8 @@ public class MensaListModel extends AndroidViewModel {
                             mensaItem = new Mensa();
                             mensaItem.setName(snapshot.getString("name"));
                             mensaItem.setAddress(snapshot.getString("address"));
-                            mensaItem.setLatitude(snapshot.getGeoPoint("location").getLatitude());
-                            mensaItem.setLongitude(snapshot.getGeoPoint("location").getLongitude());
+                            mensaItem.setLatitude(snapshot.getGeoPoint("map_pin").getLatitude());
+                            mensaItem.setLongitude(snapshot.getGeoPoint("map_pin").getLongitude());
                             mensaItem.setuID(snapshot.getId());
                             mensaItem.setType(RestaurantType.fromString(snapshot.getString("type")));
                             mensaItem.setOccupancy(Occupancy.fromDouble(snapshot.getDouble("occupancy")));

@@ -104,7 +104,7 @@ public class LocationRequestActivity extends AppCompatActivity {
                     @SuppressLint("MissingPermission")
                     @Override
                     public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-                        Log.i(TAG, "All location settings are satisfied.");
+                        Log.i(TAG, "All map_pin settings are satisfied.");
                         ActivityCompat.requestPermissions(LocationRequestActivity.this, PERMISSIONS, REQUEST_PERMISSIONS_REQUEST_CODE);
                     }
                 })
@@ -115,7 +115,7 @@ public class LocationRequestActivity extends AppCompatActivity {
                         switch (statusCode) {
                             case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                                 Log.i(TAG, "Location settings are not satisfied. Attempting to upgrade " +
-                                        "location settings ");
+                                        "map_pin settings ");
                                 try {
                                     // Show the dialog by calling startResolutionForResult(), and check the
                                     // result in onActivityResult().
@@ -145,10 +145,10 @@ public class LocationRequestActivity extends AppCompatActivity {
             case REQUEST_CHECK_SETTINGS:
                 switch (resultCode) {
                     case Activity.RESULT_OK:
-                        Log.i(TAG, "User agreed to make required location settings changes.");
+                        Log.i(TAG, "User agreed to make required map_pin settings changes.");
                         ActivityCompat.requestPermissions(this, PERMISSIONS, REQUEST_PERMISSIONS_REQUEST_CODE);
                     case Activity.RESULT_CANCELED:
-                        Log.i(TAG, "User chose not to make required location settings changes.");
+                        Log.i(TAG, "User chose not to make required map_pin settings changes.");
 
                         break;
                 }
@@ -176,7 +176,7 @@ public class LocationRequestActivity extends AppCompatActivity {
 
             } else {
 
-                showSnackbar("location permission in settings required",
+                showSnackbar("map_pin permission in settings required",
                         "Settings", new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
