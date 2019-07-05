@@ -26,6 +26,16 @@ public class Mensa {
         this.longitude = longitude;
     }
 
+    public Mensa(String name, String address, double latitude, double longitude, String uID, String type, String url) {
+        setName(name);
+        setAddress(address);
+        setLatitude(latitude);
+        setLongitude(longitude);
+        setuID(uID);
+        setType(RestaurantType.fromString(type));
+        setUrl(url);
+    }
+
     public Mensa() {
 
     }
