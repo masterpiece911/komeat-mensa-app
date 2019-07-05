@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.SharedPreferences;
 import android.os.Process;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import androidx.arch.core.util.Function;
 import androidx.core.util.Pair;
@@ -34,7 +35,7 @@ import java.util.concurrent.Executors;
 
 public class HomeViewModel extends AndroidViewModel {
 
-    private static final String PREFERENCES_FAVORITES_IDENTIFIER = "mensa_favorites";
+    private static final String PREFERENCES_FAVORITES_IDENTIFIER = "mensa_favorites_new";
     private static final String[] DEFAULT_FAVORITES = {
             "1zWkH9T1gKOE9wEWFpng", //mensa akademie weihenstephan
             "45KkDBxESsqXFy6pVBoj", //mensa garching
@@ -58,7 +59,7 @@ public class HomeViewModel extends AndroidViewModel {
         };
         preferences.registerOnSharedPreferenceChangeListener(listener);
 
-        favoriteMensaIDs.setValue(getFavoriteMensaIDs());
+        favoriteMensaIDs.postValue(getFavoriteMensaIDs());
 
         FirebaseQueryLiveData mensaSnapshot = new FirebaseQueryLiveData(mensaListQuery);
         mensaList.addSource(mensaSnapshot, new Observer<QuerySnapshot>() {
@@ -72,6 +73,10 @@ public class HomeViewModel extends AndroidViewModel {
         favoriteMensaList.addSource(mensaSortTrigger, new Observer<Pair<List<Mensa>, List<String>>>() {
             @Override
             public void onChanged(Pair<List<Mensa>, List<String>> sorter) {
+                if (sorter.first == null || sorter.second == null) {
+                    favoriteMensaList.postValue(new LinkedList<Mensa>());
+                    return;
+                }
                 LinkedList<Mensa> mensas = new LinkedList<>(sorter.first);
                 LinkedList<String> ids = new LinkedList<>(sorter.second);
                 LinkedList<Mensa> sortedMensas = new LinkedList<>();
@@ -89,29 +94,6 @@ public class HomeViewModel extends AndroidViewModel {
         });
 
     }
-
-    // DEFAULT METHODS, DELETE AT END
-    // ---------------------------------------------------------------------------------------------
-
-    private MutableLiveData<Integer> mIndex = new MutableLiveData<>();
-    private LiveData<String> mText = Transformations.map(mIndex, new Function<Integer, String>() {
-        @Override
-        public String apply(Integer input) {
-            return "Hello world from section: " + input;
-        }
-    });
-
-    public void setIndex(int index) {
-        mIndex.setValue(index);
-    }
-
-    public LiveData<String> getText() {
-        return mText;
-    }
-
-    // END DEFAULT METHODS
-    // ---------------------------------------------------------------------------------------------
-
     private final Query mensaListQuery = FirebaseFirestore.getInstance().collection(getApplication().getString(R.string.mensa_collection_identifier));
 
     private final MutableLiveData<List<String>> favoriteMensaIDs = new MutableLiveData<>();
@@ -126,28 +108,27 @@ public class HomeViewModel extends AndroidViewModel {
         return favoriteMensaList;
     }
 
-    public void addFavoriteMensa(Mensa newFavorite) {
+    public void flipFavoriteMensa(Mensa toFlip) {
         Set<String> defaults = Collections.emptySet();
         defaults.addAll(Arrays.asList(DEFAULT_FAVORITES));
         HashSet<String> newFavorites = new HashSet<>(preferences.getStringSet(PREFERENCES_FAVORITES_IDENTIFIER, defaults));
-        newFavorites.add(newFavorite.getuID());
-        preferences.edit().putStringSet(PREFERENCES_FAVORITES_IDENTIFIER, newFavorites).apply();
-    }
-
-    public void removeFavoriteMensa(Mensa toRemove) {
-        if (getFavoriteMensaIDs().size() == 1) {
-            preferences.edit().remove(PREFERENCES_FAVORITES_IDENTIFIER).apply();
+        if(newFavorites.contains(toFlip.getuID())) {
+            newFavorites.remove(toFlip.getuID());
+            if (newFavorites.isEmpty()) {
+                preferences.edit().remove(PREFERENCES_FAVORITES_IDENTIFIER).apply();
+            }
         } else {
-            HashSet<String> newFavorites = new HashSet<>(preferences.getStringSet(PREFERENCES_FAVORITES_IDENTIFIER, null));
-            newFavorites.remove(toRemove.getuID());
+            newFavorites.add(toFlip.getuID());
             preferences.edit().putStringSet(PREFERENCES_FAVORITES_IDENTIFIER, newFavorites).apply();
         }
     }
 
     private List<String> getFavoriteMensaIDs() {
-        Set<String> defaults = Collections.emptySet();
-        defaults.addAll(Arrays.asList(DEFAULT_FAVORITES));
-        return Arrays.asList(preferences.getStringSet(PREFERENCES_FAVORITES_IDENTIFIER, defaults).toArray(new String[0]));
+        HashSet<String> defaults = new HashSet<>(Arrays.asList(DEFAULT_FAVORITES));
+//        return Arrays.asList(preferences.getStringSet(PREFERENCES_FAVORITES_IDENTIFIER, defaults).toArray(new String[0]));
+        Set<String> favorites = preferences.getStringSet(PREFERENCES_FAVORITES_IDENTIFIER, defaults);
+        return Arrays.asList(favorites.toArray(new String[0]));
+
     }
 
     class MensaListDeserialiser implements Runnable {
