@@ -1,39 +1,51 @@
 package com.pem.mensa_app;
 
-import android.os.Bundle;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.tabs.TabLayout;
-
-import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
 
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
 
-import com.pem.mensa_app.ui.main.SectionsPagerAdapter;
+import com.google.android.material.tabs.TabLayout;
+import com.pem.mensa_app.models.mensa.Mensa;
+import com.pem.mensa_app.ui.main.HomePagerAdapter;
+import com.pem.mensa_app.ui.main.OnMensaItemSelectedListener;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements OnMensaItemSelectedListener {
+
+    static final String TAG = HomeActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
-        ViewPager viewPager = findViewById(R.id.home_view_pager);
-        viewPager.setAdapter(sectionsPagerAdapter);
-        TabLayout tabs = findViewById(R.id.tabs);
-        tabs.setupWithViewPager(viewPager);
-        FloatingActionButton fab = findViewById(R.id.fab);
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        HomePagerAdapter homePagerAdapter = new HomePagerAdapter(this, getSupportFragmentManager());
+        ViewPager viewPager = findViewById(R.id.home_viewpager);
+        viewPager.setAdapter(homePagerAdapter);
+        TabLayout tabs = findViewById(R.id.home_tabs);
+        tabs.setupWithViewPager(viewPager);
+
+
     }
+
+
+    @Override
+    public void onMensaSelected(Mensa mensa) {
+        Log.d(TAG, "onMensaSelected: selected " + mensa.getName());
+        Intent intent = new Intent(HomeActivity.this, MensaMealListActivity.class);
+        intent.putExtra(getString(R.string.intent_mensa_uid), mensa.getuID());
+        intent.putExtra(getString(R.string.intent_mensa_name), mensa.getName());
+        if(mensa.getMealPlanReference() != null) {
+            intent.putExtra(getString(R.string.intent_mensa_meal_plan_reference_path), mensa.getMealPlanReference());
+        }
+        if(mensa.getUrl() != null) {
+            intent.putExtra(getString(R.string.intent_mensa_eatapi_url), mensa.getUrl());
+        }
+
+        startActivity(intent);
+
+    }
+
 }
