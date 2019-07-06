@@ -1,4 +1,4 @@
-package com.pem.mensa_app.ui.main;
+package com.pem.mensa_app.ui.home_activity;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.button.MaterialButton;
 import com.pem.mensa_app.R;
 import com.pem.mensa_app.models.mensa.Mensa;
 
@@ -30,9 +31,9 @@ import java.util.List;
  * Use the {@link HomeFeedFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HomeFeedFragment extends Fragment implements HomeFeedAdapter.MensaDetailClickListener {
+public class HomeFeedFragment extends Fragment implements HomeFeedAdapter.MensaDetailClickListener, View.OnClickListener {
 
-    private OnMensaItemSelectedListener mListener;
+    private OnMensaItemAndCustomizeSelectedListener mListener;
     private HomeViewModel homeViewModel;
 
     public HomeFeedFragment() {
@@ -72,17 +73,25 @@ public class HomeFeedFragment extends Fragment implements HomeFeedAdapter.MensaD
             }
         });
 
+        MaterialButton button = getView().findViewById(R.id.feed_customize_button);
+        button.setOnClickListener(this);
+
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnMensaItemSelectedListener) {
-            mListener = (OnMensaItemSelectedListener) context;
+        if (context instanceof OnMensaItemAndCustomizeSelectedListener) {
+            mListener = (OnMensaItemAndCustomizeSelectedListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnMensaItemSelectedListener");
         }
+    }
+
+    @Override
+    public void onClick(View v) {
+        mListener.onCustomizeClicked();
     }
 
     @Override
@@ -93,11 +102,11 @@ public class HomeFeedFragment extends Fragment implements HomeFeedAdapter.MensaD
 
     @Override
     public void mensaClicked(int position) {
-
+        mListener.onMensaSelected(homeViewModel.getMensaList().getValue().get(position));
     }
 
     @Override
     public void imageClicked(int position) {
-        // todo implements images :(
+        // todo implement images :(
     }
 }

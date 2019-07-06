@@ -1,7 +1,6 @@
 package com.pem.mensa_app;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -23,8 +22,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.pem.mensa_app.models.mensa.Mensa;
 import com.pem.mensa_app.models.mensa.RestaurantType;
-import com.pem.mensa_app.ui.main.HomeViewModel;
-import com.pem.mensa_app.ui.main.OnMensaItemSelectedListener;
+import com.pem.mensa_app.ui.home_activity.HomeViewModel;
+import com.pem.mensa_app.ui.home_activity.OnMensaItemSelectedListener;
 
 import java.util.List;
 

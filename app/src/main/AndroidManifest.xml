@@ -32,23 +32,20 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity
-            android:name=".mensa_list_activity.LocationRequestActivity"
-            android:theme="@style/AppFullScreenTheme" />
         <activity android:name=".meal_detail_activity.MealDetailActivity" />
         <activity android:name=".MensaMealListActivity" />
-        <!--<activity android:name=".mensa_list_activity.MensaListActivity">-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
-
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
-        <!--</activity>-->
+        <activity
+            android:name=".FavoritePickerActivity"
+            android:label="@string/activity_title_favoritepicker"
+            android:parentActivityName=".HomeActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".HomeActivity" />
+        </activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
-
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

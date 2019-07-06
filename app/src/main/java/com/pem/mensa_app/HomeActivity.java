@@ -9,10 +9,10 @@ import android.util.Log;
 
 import com.google.android.material.tabs.TabLayout;
 import com.pem.mensa_app.models.mensa.Mensa;
-import com.pem.mensa_app.ui.main.HomePagerAdapter;
-import com.pem.mensa_app.ui.main.OnMensaItemSelectedListener;
+import com.pem.mensa_app.ui.home_activity.HomePagerAdapter;
+import com.pem.mensa_app.ui.home_activity.OnMensaItemAndCustomizeSelectedListener;
 
-public class HomeActivity extends AppCompatActivity implements OnMensaItemSelectedListener {
+public class HomeActivity extends AppCompatActivity implements OnMensaItemAndCustomizeSelectedListener {
 
     static final String TAG = HomeActivity.class.getSimpleName();
 
@@ -27,9 +27,13 @@ public class HomeActivity extends AppCompatActivity implements OnMensaItemSelect
         TabLayout tabs = findViewById(R.id.home_tabs);
         tabs.setupWithViewPager(viewPager);
 
-
     }
 
+    @Override
+    public void onCustomizeClicked() {
+        Intent intent = new Intent(HomeActivity.this, FavoritePickerActivity.class);
+        startActivity(intent);
+    }
 
     @Override
     public void onMensaSelected(Mensa mensa) {

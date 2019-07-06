@@ -1,4 +1,4 @@
-package com.pem.mensa_app.ui.main;
+package com.pem.mensa_app.ui.home_activity;
 
 import android.content.Context;
 

@@ -39,7 +39,7 @@ public class FirebaseQueryLiveData extends LiveData<QuerySnapshot> {
     protected void onActive() {
         super.onActive();
 
-        Log.d(TAG, "onActive");
+//        Log.d(TAG, "onActive");
         if (listenerRemovePending) {
             handler.removeCallbacks(removeListener);
         }
@@ -53,7 +53,7 @@ public class FirebaseQueryLiveData extends LiveData<QuerySnapshot> {
     protected void onInactive() {
         super.onInactive();
 
-        Log.d(TAG, "onInactive: ");
+//        Log.d(TAG, "onInactive: ");
         // Listener removal is schedule on a two second delay
         handler.postDelayed(removeListener, 2000);
         listenerRemovePending = true;

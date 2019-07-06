@@ -1,18 +1,15 @@
-package com.pem.mensa_app.ui.main;
+package com.pem.mensa_app.ui.home_activity;
 
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.os.Process;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
-import androidx.arch.core.util.Function;
 import androidx.core.util.Pair;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.Transformations;
 import androidx.lifecycle.AndroidViewModel;
 
 import com.google.firebase.firestore.DocumentSnapshot;

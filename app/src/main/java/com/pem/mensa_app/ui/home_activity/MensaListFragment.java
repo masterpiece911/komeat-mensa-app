@@ -1,11 +1,10 @@
-package com.pem.mensa_app.ui.main;
+package com.pem.mensa_app.ui.home_activity;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
