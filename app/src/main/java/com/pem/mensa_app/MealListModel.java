@@ -335,6 +335,10 @@ public class MealListModel extends AndroidViewModel {
         return mensaName;
     }
 
+    public String getMealPlanReferencePath() {
+        return this.mealPlanReferencePath;
+    }
+
     private void setMealPlanReferencePath(String mealPlanReferencePath) {
         this.mealPlanReferencePath = mealPlanReferencePath;
     }

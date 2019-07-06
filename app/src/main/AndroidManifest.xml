@@ -33,6 +33,7 @@
         </provider>
 
         <activity android:name=".meal_detail_activity.MealDetailActivity" />
+        <activity android:name=".image_upload_activity.ImageUploadActivity"></activity>
         <activity android:name=".MensaMealListActivity" />
         <activity
             android:name=".FavoritePickerActivity"

@@ -4,41 +4,57 @@ import org.joda.time.LocalDateTime;
 
 import java.util.List;
 
+/** This class represents the metadata of an image in Firebase */
+
 public class Image {
 
-    List<String> uids;
+    /** List of all dishes, which are on this image*/
+    List<String> mMealUids;
 
-    String imagePath;
+    /** Path to the image in FirebaseStorage */
+    String mImagePath;
 
-    LocalDateTime localDateTime;
+    /** The day, on which the image was taken */
+    LocalDateTime mDate;
 
-    public Image(List<String> uids, String imagePath, LocalDateTime localDateTime) {
-        this.uids = uids;
-        this.imagePath = imagePath;
-        this.localDateTime = localDateTime;
+    String mMealPlanUid;
+
+    public Image(List<String> uids, String imagePath, LocalDateTime localDateTime, String mealPlanUid) {
+        this.mMealUids = uids;
+        this.mImagePath = imagePath;
+        this.mDate = localDateTime;
+        this.mMealPlanUid = mealPlanUid;
     }
 
-    public List<String> getUids() {
-        return uids;
+    public List<String> getmMealUids() {
+        return mMealUids;
     }
 
-    public void setUids(List<String> uids) {
-        this.uids = uids;
+    public void setmMealUids(List<String> mMealUids) {
+        this.mMealUids = mMealUids;
     }
 
-    public String getImagePath() {
-        return imagePath;
+    public String getmImagePath() {
+        return mImagePath;
     }
 
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
+    public void setmImagePath(String mImagePath) {
+        this.mImagePath = mImagePath;
     }
 
-    public LocalDateTime getLocalDateTime() {
-        return localDateTime;
+    public LocalDateTime getmDate() {
+        return mDate;
     }
 
-    public void setLocalDateTime(LocalDateTime localDateTime) {
-        this.localDateTime = localDateTime;
+    public void setmDate(LocalDateTime mDate) {
+        this.mDate = mDate;
+    }
+
+    public String getmMealPlanUid() {
+        return mMealPlanUid;
+    }
+
+    public void setmMealPlanUid(String mMealPlanUid) {
+        this.mMealPlanUid = mMealPlanUid;
     }
 }
