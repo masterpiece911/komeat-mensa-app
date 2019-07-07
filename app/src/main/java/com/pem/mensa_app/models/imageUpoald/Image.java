@@ -1,7 +1,11 @@
 package com.pem.mensa_app.models.imageUpoald;
 
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentReference;
+
 import org.joda.time.LocalDateTime;
 
+import java.util.Date;
 import java.util.List;
 
 /** This class represents the metadata of an image in Firebase */
@@ -9,52 +13,38 @@ import java.util.List;
 public class Image {
 
     /** List of all dishes, which are on this image*/
-    List<String> mMealUids;
+    private final List<DocumentReference> mMealReferences;
 
     /** Path to the image in FirebaseStorage */
-    String mImagePath;
+    private final String mImagePath;
 
     /** The day, on which the image was taken */
-    LocalDateTime mDate;
+    private final String mTimestamp;
 
-    String mMealPlanUid;
+    private final DocumentReference mMealPlanReference;
 
-    public Image(List<String> uids, String imagePath, LocalDateTime localDateTime, String mealPlanUid) {
-        this.mMealUids = uids;
+    public Image(List<DocumentReference> mealReferences, String imagePath, DocumentReference mealPlanUid) {
+        this.mMealReferences = mealReferences;
         this.mImagePath = imagePath;
-        this.mDate = localDateTime;
-        this.mMealPlanUid = mealPlanUid;
+        this.mTimestamp = LocalDateTime.now().toString();
+        this.mMealPlanReference = mealPlanUid;
     }
 
-    public List<String> getmMealUids() {
-        return mMealUids;
+    public List<DocumentReference> getMealReferences() {
+        return mMealReferences;
     }
 
-    public void setmMealUids(List<String> mMealUids) {
-        this.mMealUids = mMealUids;
-    }
-
-    public String getmImagePath() {
+    public String getImagePath() {
         return mImagePath;
     }
 
-    public void setmImagePath(String mImagePath) {
-        this.mImagePath = mImagePath;
+    public String getTimestamp() {
+        return mTimestamp;
     }
 
-    public LocalDateTime getmDate() {
-        return mDate;
+    public DocumentReference getMealPlanReference() {
+        return mMealPlanReference;
     }
 
-    public void setmDate(LocalDateTime mDate) {
-        this.mDate = mDate;
-    }
 
-    public String getmMealPlanUid() {
-        return mMealPlanUid;
-    }
-
-    public void setmMealPlanUid(String mMealPlanUid) {
-        this.mMealPlanUid = mMealPlanUid;
-    }
 }

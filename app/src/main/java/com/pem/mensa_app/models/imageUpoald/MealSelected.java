@@ -8,12 +8,21 @@ import java.util.List;
 
 public class MealSelected {
 
+    private String uid;
     private String mDescription;
     private boolean mSelected;
 
-    public MealSelected(String description, boolean selected) {
+    public MealSelected(String uid, String description, boolean selected) {
         this.mDescription = description;
         this.mSelected = selected;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public String getmDescription() {
