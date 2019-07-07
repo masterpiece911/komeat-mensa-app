@@ -127,6 +127,12 @@ public class MensaListAdapter extends ListAdapter<Mensa, MensaListAdapter.MensaV
             if (!hasCheckbox) {
                 mCheckBox.setVisibility(View.GONE);
             } else {
+                mCheckBox.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mensaClickListener.itemClicked(getAdapterPosition());
+                    }
+                });
                 mCheckBox.setVisibility(View.VISIBLE);
                 if (favorites.contains(data)) {
                     mCheckBox.setChecked(true);
@@ -140,6 +146,7 @@ public class MensaListAdapter extends ListAdapter<Mensa, MensaListAdapter.MensaV
             mItemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    mCheckBox.toggle();
                     mensaClickListener.itemClicked(getAdapterPosition());
                 }
             });
