@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/imageView_meal_image"
-        android:layout_width="100dp"
-        android:layout_height="0dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/recyclerView_meal_list_image_upload"
         app:layout_constraintEnd_toEndOf="parent"
@@ -17,30 +17,10 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_launcher_background" />
 
-    <Button
-        android:id="@+id/button_upload_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="Upload"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerView_meal_list_image_upload" />
-
-    <ProgressBar
-        android:id="@+id/progressBar_upload_image"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="11dp"
-        app:layout_constraintEnd_toStartOf="@+id/button_upload_image"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerView_meal_list_image_upload" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView_meal_list_image_upload"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="390dp"
+        android:layout_height="280dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="108dp"
         android:layout_marginEnd="8dp"
@@ -51,5 +31,25 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progressBar_upload_image"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="390dp"
+        android:layout_height="15dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerView_meal_list_image_upload" />
+
+    <Button
+        android:id="@+id/button_upload_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="160dp"
+        android:text="Upload"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progressBar_upload_image" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
