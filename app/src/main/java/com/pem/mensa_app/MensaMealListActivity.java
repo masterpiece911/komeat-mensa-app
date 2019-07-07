@@ -29,6 +29,7 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.pem.mensa_app.image_upload_activity.ImageUploadActivity;
 import com.pem.mensa_app.meal_detail_activity.MealDetailActivity;
 import com.pem.mensa_app.models.meal.Meal;
 
@@ -119,101 +120,15 @@ public class MensaMealListActivity extends AppCompatActivity implements MealList
         startActivity(mealDetailIntent);
     }
 
-
-
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        currentPhotoPath = image.getAbsolutePath();
-        return image;
-    }
-
-
-    private void dispatchTakePictureIntent() {
-
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // Create the File where the photo should go
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                // Error occurred while creating the File
-            }
-            // Continue only if the File was successfully created
-            if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this,
-                        "com.pem.mensa_app",
-                        photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-            }
-        }
-
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-
-
-            // File or Blob
-             Uri file = Uri.fromFile(new File(currentPhotoPath));
-
-           // Create the file metadata
-            StorageMetadata metadata = new StorageMetadata.Builder()
-                    .setContentType("image/jpeg")
-                    .build();
-            StorageReference storageRef= FirebaseStorage.getInstance().getReference();
-               // Upload file and metadata to the current path
-            UploadTask uploadTask = storageRef.child("images/"+file.getLastPathSegment()).putFile(file, metadata);
-
-                // Listen for state changes, errors, and completion of the upload.
-            uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                    double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                    System.out.println("Upload is " + progress + "% done");
-                }
-            }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onPaused(UploadTask.TaskSnapshot taskSnapshot) {
-                    System.out.println("Upload is paused");
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    // Handle unsuccessful uploads
-                }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    // Handle successful uploads on complete
-                    // ...
-                }
-            });
-
-        }
-    }
-
-
-
     @Override
     public void onImageButtonClick(int position) {
-
         Log.d(TAG, "onImageButtonClick: " + position);
 
-        dispatchTakePictureIntent();
+        Intent imageUploadActivityIntent = new Intent(MensaMealListActivity.this, ImageUploadActivity.class);
+        // TODO get the exact meal uid at this point
+        imageUploadActivityIntent.putExtra("meal_uid", viewModel.getMealData().getValue().getFirst().getUid());
+        imageUploadActivityIntent.putExtra("meal_path", viewModel.getMealPlanReferencePath());
+        imageUploadActivityIntent.putExtra("day", viewModel.getSelectedWeekday());
+        startActivity(imageUploadActivityIntent);
     }
 }

@@ -26,24 +26,22 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder
         public MealViewHolder(@NonNull View itemView) {
             super(itemView);
             mCheckBox = itemView.findViewById(R.id.checkBox_meal_item);
-//            if (mCheckBox == null) {
-//                mCheckBox = new CheckBox(R.layout.activity_image_upload);
-//            }
         }
     }
 
     public MealAdapter(ArrayList<MealSelected> dishes) {
-        if (dishes == null) {
-            this.mDishes = new ArrayList<>();
-            MealSelected mealSelected = new MealSelected("Test", false);
-            mDishes.add(mealSelected);
-        } else if (dishes.isEmpty()) {
-            this.mDishes = dishes;
-            MealSelected mealSelected = new MealSelected("Test", false);
-            mDishes.add(mealSelected);
-        } else {
-            this.mDishes = dishes;
-        }
+        this.mDishes = dishes;
+        //if (dishes == null) {
+        //    this.mDishes = new ArrayList<>();
+        //    MealSelected mealSelected = new MealSelected("Test", false);
+        //    mDishes.add(mealSelected);
+        //} else if (dishes.isEmpty()) {
+        //    this.mDishes = dishes;
+        //    MealSelected mealSelected = new MealSelected("Test", false);
+        //    mDishes.add(mealSelected);
+        //} else {
+        //    this.mDishes = dishes;
+        //}
     }
 
     public void setMealData(ArrayList<MealSelected> dishes) {
