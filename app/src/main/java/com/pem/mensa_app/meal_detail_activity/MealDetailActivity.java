@@ -21,6 +21,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.pem.mensa_app.MensaMealListActivity;
 import com.pem.mensa_app.R;
 import com.pem.mensa_app.dummy.DummyContent;
 import com.pem.mensa_app.image_upload_activity.ImageUploadActivity;
@@ -32,8 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MealDetailActivity extends AppCompatActivity implements CommentFragment.OnListFragmentInteractionListener {
-
-    private static final int PICK_IMAGE_REQUEST = 1;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -109,7 +108,11 @@ public class MealDetailActivity extends AppCompatActivity implements CommentFrag
         mButtonChooseImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openFileChooser();
+                Intent imageUploadActivityIntent = new Intent(MealDetailActivity.this, ImageUploadActivity.class);
+                imageUploadActivityIntent.putExtra("meal_uid", mMealUid);
+                imageUploadActivityIntent.putExtra("meal_path", mMealPlanReferencePath);
+                imageUploadActivityIntent.putExtra("day", mDay);
+                startActivity(imageUploadActivityIntent);
             }
         });
     }
@@ -136,32 +139,5 @@ public class MealDetailActivity extends AppCompatActivity implements CommentFrag
         ViewPager viewPager = findViewById(R.id.view_pager);
         ImageAdapter imageAdapter = new ImageAdapter(getSupportFragmentManager(), imagePaths);
         viewPager.setAdapter(imageAdapter);
-    }
-
-    private void openFileChooser() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent, PICK_IMAGE_REQUEST);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            mImageUri = data.getData();
-
-            // Start new Activity und transfer selected image with data.getDataString()
-            Intent mealImageIntent = new Intent(MealDetailActivity.this, ImageUploadActivity.class);
-            mealImageIntent.putExtra("selected_image", data.getDataString());
-            mealImageIntent.putExtra("meal_uid", mMealUid);
-            mealImageIntent.putExtra("meal_path", mMealPlanReferencePath);
-            mealImageIntent.putExtra("day", mDay);
-
-            startActivity(mealImageIntent);
-
-
-        }
     }
 }
