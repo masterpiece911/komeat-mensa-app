@@ -29,6 +29,7 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.pem.mensa_app.image_upload_activity.ImageUploadActivity;
 import com.pem.mensa_app.meal_detail_activity.MealDetailActivity;
 import com.pem.mensa_app.models.meal.Meal;
 
@@ -208,12 +209,15 @@ public class MensaMealListActivity extends AppCompatActivity implements MealList
     }
 
 
-
     @Override
     public void onImageButtonClick(int position) {
-
         Log.d(TAG, "onImageButtonClick: " + position);
 
-        dispatchTakePictureIntent();
+        Intent imageUploadActivityIntent = new Intent(MensaMealListActivity.this, ImageUploadActivity.class);
+        // TODO get the exact meal uid at this point
+        imageUploadActivityIntent.putExtra("meal_uid", viewModel.getMealData().getValue().getFirst().getUid());
+        imageUploadActivityIntent.putExtra("meal_path", viewModel.getMealPlanReferencePath());
+        imageUploadActivityIntent.putExtra("day", viewModel.getSelectedWeekday());
+        startActivity(imageUploadActivityIntent);
     }
 }

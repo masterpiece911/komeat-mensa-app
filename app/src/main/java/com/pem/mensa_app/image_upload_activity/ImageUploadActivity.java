@@ -1,9 +1,12 @@
 package com.pem.mensa_app.image_upload_activity;
 
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
@@ -13,7 +16,9 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,7 +31,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnPausedListener;
 import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.pem.mensa_app.R;
@@ -38,7 +45,11 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +57,10 @@ import java.util.Map;
 public class ImageUploadActivity extends AppCompatActivity {
 
     private static final String TAG = ImageUploadActivity.class.getName();
+
+    private static final int REQUEST_TAKE_PHOTO = 1;
+
+    private String currentPhotoPath;
 
     /** StorageReference for image upload */
     private StorageReference mStorageRef;
@@ -58,6 +73,8 @@ public class ImageUploadActivity extends AppCompatActivity {
 
     /** Progress bar for image upload */
     private ProgressBar mProgressBar;
+
+    private ImageView mImageView;
 
     private String mMealUid;
 
@@ -85,21 +102,21 @@ public class ImageUploadActivity extends AppCompatActivity {
 
         // Get data from intent
         Bundle extras = getIntent().getExtras();
-        mSelectedImageUri = Uri.parse(extras.getString("selected_image"));
+        //mSelectedImageUri = Uri.parse(extras.getString("selected_image"));
         mMealUid = extras.getString("meal_uid");
         mMealPlanReferencePath = extras.getString("meal_path");
         mDay = extras.getInt("day");
+
+        // Start camera intent
+        dispatchTakePictureIntent();
 
         mStorageRef = FirebaseStorage.getInstance().getReference("/images");
         mDocRef = FirebaseFirestore.getInstance().collection(getString(R.string.meal_collection_identifier)).document("uid");
 
         // View
-        ImageView imageView = findViewById(R.id.imageView_meal_image);
+        mImageView = findViewById(R.id.imageView_meal_image);
         Button button = findViewById(R.id.button_upload_image);
         mProgressBar = findViewById(R.id.progressBar_upload_image);
-
-        // Set image into ImageView
-        imageView.setImageURI(mSelectedImageUri);
 
         // Create List
         mRecyclerView = findViewById(R.id.recyclerView_meal_list_image_upload);
@@ -159,24 +176,12 @@ public class ImageUploadActivity extends AppCompatActivity {
     }
 
     /**
-     * Get the file extension from the iamge.
-     * @param uri
-     * @return file extension
-     */
-    private String getFileExtension(Uri uri) {
-        ContentResolver cR = getContentResolver();
-        MimeTypeMap mime = MimeTypeMap.getSingleton();
-        return mime.getExtensionFromMimeType(cR.getType(uri));
-    }
-
-    /**
      * Upload the image to FirebaseStorage
      */
     private void uploadImage() {
         if (mSelectedImageUri != null) {
 
-            final String fileName = System.currentTimeMillis()
-                    + "." + getFileExtension(mSelectedImageUri);
+            final String fileName = mSelectedImageUri.getLastPathSegment();
 
             StorageReference fileReference = mStorageRef.child(fileName);
 
@@ -301,5 +306,57 @@ public class ImageUploadActivity extends AppCompatActivity {
             documentReferences.add(FirebaseFirestore.getInstance().collection("Meal").document(uid));
         }
         return documentReferences;
+    }
+
+    private void dispatchTakePictureIntent() {
+
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.pem.mensa_app",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            }
+        }
+
+    }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+
+            mSelectedImageUri = Uri.fromFile(new File(currentPhotoPath));
+
+            // Set image into ImageView
+            mImageView.setImageURI(mSelectedImageUri);
+        }
     }
 }
