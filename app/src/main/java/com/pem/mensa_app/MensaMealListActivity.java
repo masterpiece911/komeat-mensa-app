@@ -113,6 +113,9 @@ public class MensaMealListActivity extends AppCompatActivity implements MealList
 
         Intent mealDetailIntent = new Intent(MensaMealListActivity.this, MealDetailActivity.class);
         mealDetailIntent.putExtra(getString(R.string.intent_meal_uid), clickedMeal.getUid());
+        mealDetailIntent.putExtra("meal_path", viewModel.getMealPlanReferencePath());
+        mealDetailIntent.putExtra("day", viewModel.getSelectedWeekday());
+
         startActivity(mealDetailIntent);
     }
 

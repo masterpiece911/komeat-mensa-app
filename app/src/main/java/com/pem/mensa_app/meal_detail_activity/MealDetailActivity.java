@@ -26,6 +26,8 @@ import com.pem.mensa_app.dummy.DummyContent;
 import com.pem.mensa_app.image_upload_activity.ImageUploadActivity;
 import com.pem.mensa_app.models.meal.Meal;
 
+import org.joda.time.LocalDateTime;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +39,8 @@ public class MealDetailActivity extends AppCompatActivity implements CommentFrag
 
     private Uri mImageUri;
     private String mMealUid;
+    private String mMealPlanReferencePath;
+    private int mDay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +54,10 @@ public class MealDetailActivity extends AppCompatActivity implements CommentFrag
         if (mMealUid == null) {
             Log.d("mealDetailActivity", "There is nothing today!");
         }
+
+        mMealPlanReferencePath = extras.getString("meal_path");
+
+        mDay = extras.getInt("day");
 
         // get description
         final DocumentReference docRef = db.collection(getString(R.string.meal_collection_identifier)).document(mMealUid);
@@ -148,6 +156,9 @@ public class MealDetailActivity extends AppCompatActivity implements CommentFrag
             Intent mealImageIntent = new Intent(MealDetailActivity.this, ImageUploadActivity.class);
             mealImageIntent.putExtra("selected_image", data.getDataString());
             mealImageIntent.putExtra("meal_uid", mMealUid);
+            mealImageIntent.putExtra("meal_path", mMealPlanReferencePath);
+            mealImageIntent.putExtra("day", mDay);
+
             startActivity(mealImageIntent);
 
 
