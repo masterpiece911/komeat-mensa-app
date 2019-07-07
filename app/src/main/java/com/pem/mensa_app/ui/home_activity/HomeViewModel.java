@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.SharedPreferences;
 import android.os.Process;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import androidx.core.util.Pair;
 import androidx.lifecycle.LiveData;
@@ -32,6 +33,8 @@ import java.util.concurrent.Executors;
 
 public class HomeViewModel extends AndroidViewModel {
 
+    private static final String TAG = HomeViewModel.class.getSimpleName();
+
     private static final String PREFERENCES_FAVORITES_IDENTIFIER = "mensa_favorites_new";
     private static final String[] DEFAULT_FAVORITES = {
             "1zWkH9T1gKOE9wEWFpng", //mensa akademie weihenstephan
@@ -42,11 +45,12 @@ public class HomeViewModel extends AndroidViewModel {
             "TO0wkynjhzHgruF6Xt9s", //mensa martinsried
     };
     private final SharedPreferences preferences;
+    private SharedPreferences.OnSharedPreferenceChangeListener listener;
 
     public HomeViewModel(Application app) {
         super(app);
         preferences = PreferenceManager.getDefaultSharedPreferences(app);
-        SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 if (key.equals(PREFERENCES_FAVORITES_IDENTIFIER)) {
@@ -106,7 +110,7 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     public void flipFavoriteMensa(Mensa toFlip) {
-        Set<String> defaults = Collections.emptySet();
+        HashSet<String> defaults = new HashSet<>();
         defaults.addAll(Arrays.asList(DEFAULT_FAVORITES));
         HashSet<String> newFavorites = new HashSet<>(preferences.getStringSet(PREFERENCES_FAVORITES_IDENTIFIER, defaults));
         if(newFavorites.contains(toFlip.getuID())) {
@@ -114,6 +118,7 @@ public class HomeViewModel extends AndroidViewModel {
             if (newFavorites.isEmpty()) {
                 preferences.edit().remove(PREFERENCES_FAVORITES_IDENTIFIER).apply();
             }
+            preferences.edit().putStringSet(PREFERENCES_FAVORITES_IDENTIFIER, newFavorites).apply();
         } else {
             newFavorites.add(toFlip.getuID());
             preferences.edit().putStringSet(PREFERENCES_FAVORITES_IDENTIFIER, newFavorites).apply();
@@ -124,6 +129,11 @@ public class HomeViewModel extends AndroidViewModel {
         HashSet<String> defaults = new HashSet<>(Arrays.asList(DEFAULT_FAVORITES));
 //        return Arrays.asList(preferences.getStringSet(PREFERENCES_FAVORITES_IDENTIFIER, defaults).toArray(new String[0]));
         Set<String> favorites = preferences.getStringSet(PREFERENCES_FAVORITES_IDENTIFIER, defaults);
+
+        for(String fav : favorites.toArray(new String[0])) {
+            Log.d(TAG, fav);
+        }
+
         return Arrays.asList(favorites.toArray(new String[0]));
 
     }
