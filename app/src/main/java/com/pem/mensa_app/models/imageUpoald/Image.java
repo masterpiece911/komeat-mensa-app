@@ -1,11 +1,9 @@
 package com.pem.mensa_app.models.imageUpoald;
 
-import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
 
-import org.joda.time.LocalDateTime;
+import org.joda.time.LocalDate;
 
-import java.util.Date;
 import java.util.List;
 
 /** This class represents the metadata of an image in Firebase */
@@ -19,14 +17,14 @@ public class Image {
     private final String mImagePath;
 
     /** The day, on which the image was taken */
-    private final String mTimestamp;
+    private final LocalDate mLocalDate;
 
     private final DocumentReference mMealPlanReference;
 
-    public Image(List<DocumentReference> mealReferences, String imagePath, DocumentReference mealPlanUid) {
+    public Image(List<DocumentReference> mealReferences, String imagePath, LocalDate localDate, DocumentReference mealPlanUid) {
         this.mMealReferences = mealReferences;
         this.mImagePath = imagePath;
-        this.mTimestamp = LocalDateTime.now().toString();
+        this.mLocalDate = localDate;
         this.mMealPlanReference = mealPlanUid;
     }
 
@@ -38,9 +36,15 @@ public class Image {
         return mImagePath;
     }
 
-    public String getTimestamp() {
-        return mTimestamp;
+    public LocalDate getLocalDate() {
+        return mLocalDate;
     }
+
+    public int getDayOfMonth() { return mLocalDate.getDayOfMonth(); }
+
+    public int getMonth() { return mLocalDate.getMonthOfYear(); }
+
+    public int getYear() { return mLocalDate.getYear(); }
 
     public DocumentReference getMealPlanReference() {
         return mMealPlanReference;

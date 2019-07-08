@@ -240,11 +240,14 @@ public class ImageUploadActivity extends AppCompatActivity {
         List<DocumentReference> documentReferences = parseToDocumentReference(uids);
         String uid = mMealPlanReferencePath.substring(mMealPlanReferencePath.indexOf('/'));
         DocumentReference mealplanReference = FirebaseFirestore.getInstance().collection(uid).document();
-        Image image = new Image(documentReferences, fileName, mealplanReference);
+        //TODO get the date from query before
+        Image image = new Image(documentReferences, fileName, LocalDate.now(), mealplanReference);
 
         // Prepare Upload
         Map<String, Object> imageMetadata = new HashMap<>();
-        imageMetadata.put("date", image.getTimestamp());
+        imageMetadata.put("dayOfMonth", image.getDayOfMonth());
+        imageMetadata.put("month", image.getMonth());
+        imageMetadata.put("year", image.getYear());
         imageMetadata.put("image_path", image.getImagePath());
         imageMetadata.put("meal_reference", image.getMealReferences());
         imageMetadata.put("mealplan_reference", image.getMealPlanReference());
