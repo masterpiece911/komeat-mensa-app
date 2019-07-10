@@ -44,8 +44,6 @@
     <string name="home_tab_2">AROUND YOU</string>
     <string name="home_tab_3">ALL</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="activity_title_favoritepicker">Customize Favorites</string>
 
 </resources>
