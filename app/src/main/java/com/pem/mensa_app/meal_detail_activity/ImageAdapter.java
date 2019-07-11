@@ -18,7 +18,7 @@ public class ImageAdapter extends FragmentStatePagerAdapter {
     public ImageAdapter(FragmentManager fm, ArrayList<String> imagePathList) {
         super(fm);
         this.defaultPath.add(PLACEHOLDER);
-        this.imagePaths = imagePathList == null ? defaultPath : imagePathList;
+        this.imagePaths = imagePathList == null || (imagePathList != null && imagePathList.isEmpty()) ? defaultPath : imagePathList;
     }
 
     @Override
