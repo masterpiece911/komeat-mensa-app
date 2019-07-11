@@ -21,6 +21,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.pem.mensa_app.MensaMealListActivity;
 import com.pem.mensa_app.R;
 import com.pem.mensa_app.dummy.DummyContent;
@@ -46,16 +47,12 @@ public class MealDetailActivity extends AppCompatActivity implements CommentFrag
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meal_detail);
 
-        // get ID from MensaMealListActivity
         Bundle extras = getIntent().getExtras();
-
         mMealUid = extras.getString(getString(R.string.intent_meal_uid));
         if (mMealUid == null) {
             Log.d("mealDetailActivity", "There is nothing today!");
         }
-
         mMealPlanReferencePath = extras.getString("meal_path");
-
         mDay = extras.getInt("day");
 
         // get description

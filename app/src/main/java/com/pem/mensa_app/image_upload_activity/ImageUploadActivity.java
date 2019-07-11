@@ -1,6 +1,5 @@
 package com.pem.mensa_app.image_upload_activity;
 
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,7 +8,6 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -26,14 +24,14 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnPausedListener;
 import com.google.firebase.storage.OnProgressListener;
-import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.pem.mensa_app.R;
@@ -43,7 +41,6 @@ import com.pem.mensa_app.models.meal.Meal;
 
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
 
 import java.io.File;
 import java.io.IOException;
@@ -66,7 +63,7 @@ public class ImageUploadActivity extends AppCompatActivity {
     private StorageReference mStorageRef;
 
     /** DocumentReference for ... */
-    private DocumentReference mDocRef;
+    private CollectionReference mMealDocumentReference;
 
     /** Selected image uri, image for upload */
     private Uri mSelectedImageUri;
@@ -111,7 +108,7 @@ public class ImageUploadActivity extends AppCompatActivity {
         dispatchTakePictureIntent();
 
         mStorageRef = FirebaseStorage.getInstance().getReference("/images");
-        mDocRef = FirebaseFirestore.getInstance().collection(getString(R.string.meal_collection_identifier)).document("uid");
+        mMealDocumentReference = FirebaseFirestore.getInstance().collection(getString(R.string.meal_collection_identifier));
 
         // View
         mImageView = findViewById(R.id.imageView_meal_image);
@@ -204,7 +201,7 @@ public class ImageUploadActivity extends AppCompatActivity {
                             List<String> uids = new ArrayList<>();
                             uids.add(mMealUid);
 
-                            uploadMetaData(fileName, uids);
+                            uploadImageMetaData(fileName, uids);
 
                         }
                     })
@@ -235,7 +232,7 @@ public class ImageUploadActivity extends AppCompatActivity {
      * @param fileName Path to image in FirebaseStorage
      * @param uids List with all dishes, which are represented on the image
      */
-    private void uploadMetaData(String fileName, List<String> uids) {
+    private void uploadImageMetaData(String fileName, List<String> uids) {
         uids.addAll(getAllSelectedMeals());
         List<DocumentReference> documentReferences = parseToDocumentReference(uids);
         String uid = mMealPlanReferencePath.substring(mMealPlanReferencePath.indexOf('/'));
@@ -252,8 +249,75 @@ public class ImageUploadActivity extends AppCompatActivity {
         imageMetadata.put("meal_reference", image.getMealReferences());
         imageMetadata.put("mealplan_reference", image.getMealPlanReference());
 
-        DocumentReference imageReference = FirebaseFirestore.getInstance().collection("Image").document();
+        final DocumentReference imageReference = FirebaseFirestore.getInstance().collection("Image").document();
         imageReference.set(imageMetadata)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "Successfully loaded image metadata to firebase.");
+                            //Toast.makeText(ImageUploadActivity.this, "Upload metadata success", Toast.LENGTH_SHORT);
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "Failed to load image metadata to firebase");
+                        //Toast.makeText(ImageUploadActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        // Set data also in meal document
+        // Für jeden Essen Array holen, ergänzen und wieder updaten
+        for (final DocumentReference docRef : documentReferences) {
+            docRef.get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot documentSnapshot = task.getResult();
+                                if (documentSnapshot.exists()) {
+                                    //Toast.makeText(MealDetailActivity.this, documentSnapshot.getId(), Toast.LENGTH_SHORT).show();
+                                    Log.d("IamgeUploadActivity", documentSnapshot.getId());
+
+                                    Meal meal = new Meal(
+                                            documentSnapshot.getId(),
+                                            documentSnapshot.getString("name"),
+                                            documentSnapshot.getDouble("price"),
+                                            (List<String>) documentSnapshot.get("ingredients"),
+                                            (List<String>) documentSnapshot.get("comments"),
+                                            (List<String>) documentSnapshot.get("imagepaths"));
+
+                                    if (meal.getImages() == null) {
+                                        List<String> imagePaths = new ArrayList<>();
+                                        imagePaths.add(imageReference.getPath());
+                                        meal.setImages(imagePaths);
+                                    } else {
+                                        meal.getImages().add(imageReference.getPath());
+                                    }
+                                    updateMealMetaData(meal, docRef);
+                                } else {
+                                    Toast.makeText(ImageUploadActivity.this, "Document is unknown.", Toast.LENGTH_SHORT).show();
+                                    Log.d("ImageUploadActivity", "Document is unknown");
+                                }
+                            } else {
+                                Log.d("ImageUploadActivity", "get failed with: ", task.getException());
+                            }
+                        }
+                    });
+        }
+    }
+
+    private void updateMealMetaData(Meal meal, DocumentReference mealDocumentReference) {
+        Map<String, Object> mealMetadata = new HashMap<>();
+        mealMetadata.put("name", meal.getName());
+        mealMetadata.put("price", meal.getPrice());
+        mealMetadata.put("ingredients", meal.getIngredients());
+        mealMetadata.put("comments", meal.getComments());
+        mealMetadata.put("imagepaths", meal.getImages());
+
+        mealDocumentReference.set(mealMetadata, SetOptions.merge())
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
