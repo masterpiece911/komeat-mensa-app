@@ -229,6 +229,8 @@ public class ImageUploadActivity extends AppCompatActivity {
             Toast.makeText(this, "No file selected", Toast.LENGTH_SHORT).show();
         }
 
+        finish();
+
     }
 
     /**
