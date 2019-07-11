@@ -48,6 +48,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -152,18 +153,26 @@ public class ImageUploadActivity extends AppCompatActivity {
                             Log.d(TAG, "loadDataFromFirebase complete and successful");
                             FirebaseFirestore instance = FirebaseFirestore.getInstance();
                             final DocumentSnapshot mealplan = task.getResult().getDocuments().get(0);
-                            instance.collection(getString(R.string.meal_collection_identifier))
-                                    .whereEqualTo("mealplan", instance.collection(mMealPlanReferencePath + "/items").document(mealplan.getId()))
-                                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                    if(task.isSuccessful() && !task.getResult().isEmpty()) {
-                                        Log.d(TAG, "load meal data complete and successful.");
-                                        Log.d(TAG, String.format("result is %d large", task.getResult().size()));
-                                        parseMealData(mealplan, task.getResult());
+
+                            // Hier das Array abgreifen
+                            Long week = (Long) mealplan.get("week");
+                            Long year = (Long) mealplan.get("year");
+                            ArrayList<HashMap<String, ArrayList<DocumentReference>>> days = (ArrayList<HashMap<String, ArrayList<DocumentReference>>> ) mealplan.get("days");
+
+                            // über die Tage iterieren und den richtigen suchen
+                            for (int i = 0; i < days.size(); i++) {
+                                if (i == newDate.getDayOfWeek()-1) {
+                                    HashMap<String, ArrayList<DocumentReference>> meals = days.get(i);
+                                    Iterator iterator = meals.entrySet().iterator();
+                                    ArrayList<DocumentReference> mealDocumentReferenceList = new ArrayList<>();
+                                    while(iterator.hasNext()) {
+                                        Map.Entry pair = (Map.Entry) iterator.next();
+                                        mealDocumentReferenceList = (ArrayList<DocumentReference>) pair.getValue();
+                                        iterator.remove();
                                     }
+                                    loadMealDescription(mealDocumentReferenceList);
                                 }
-                            });
+                            }
                         } else if (task.getResult().isEmpty()) {
                             Log.d(TAG, "No mealplan for selected week found. Generating.");
                             Toast.makeText(ImageUploadActivity.this, "No data avaiable!", Toast.LENGTH_LONG);
@@ -336,22 +345,6 @@ public class ImageUploadActivity extends AppCompatActivity {
                 });
     }
 
-    /**
-     * Parse the data from Firebase into an @{@link MealSelected} Object, to represent all dishes of the day.
-     * @param mealPlan
-     * @param mealSnapshot
-     */
-    private void parseMealData(DocumentSnapshot mealPlan, QuerySnapshot mealSnapshot) {
-        for(DocumentSnapshot snapshot : mealSnapshot) {
-            // Meal erstellen und abspeichern
-            Meal meal = new Meal();
-            meal.setUid(snapshot.getId());
-            MealSelected mealSelected = new MealSelected(snapshot.getId(), snapshot.getString(getString(R.string.meal_field_name)), false);
-            mealSelectedList.add(mealSelected);
-        }
-        mRecyclerView.setAdapter(new MealAdapter(mealSelectedList));
-    }
-
     private List<String> getAllSelectedMeals() {
         List<String> uids = new ArrayList<>();
         for (MealSelected mealSelected : mealSelectedList) {
@@ -425,5 +418,25 @@ public class ImageUploadActivity extends AppCompatActivity {
             // Set image into ImageView
             mImageView.setImageURI(mSelectedImageUri);
         }
+    }
+
+    private void loadMealDescription(List<DocumentReference> mealDocumentReferenceList) {
+        for (DocumentReference mealDocumentReference : mealDocumentReferenceList) {
+            FirebaseFirestore.getInstance().collection("Meal").document(mealDocumentReference.getId())
+                    .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if(task.isSuccessful() && task.getResult().exists()) {
+                        DocumentSnapshot documentSnapshot = task.getResult();
+
+                        Meal meal = new Meal();
+                        meal.setUid(documentSnapshot.getId());
+                        MealSelected mealSelected = new MealSelected(documentSnapshot.getId(), documentSnapshot.getString(getString(R.string.meal_field_name)), false);
+                        mealSelectedList.add(mealSelected);
+                    }
+                }
+            });
+        }
+        mRecyclerView.setAdapter(new MealAdapter(mealSelectedList));
     }
 }
