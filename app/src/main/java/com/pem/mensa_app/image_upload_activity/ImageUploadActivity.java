@@ -412,6 +412,9 @@ public class ImageUploadActivity extends AppCompatActivity {
 
             // Set image into ImageView
             mImageView.setImageURI(mSelectedImageUri);
+
+        } else if (resultCode == RESULT_CANCELED) {
+            finish();
         }
     }
 
