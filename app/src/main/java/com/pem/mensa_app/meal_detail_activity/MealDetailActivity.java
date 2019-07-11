@@ -42,6 +42,9 @@ public class MealDetailActivity extends AppCompatActivity implements CommentFrag
     private String mMealPlanReferencePath;
     private int mDay;
 
+    private ImageAdapter mImageAdapter;
+    private ViewPager mViewPager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,12 +69,12 @@ public class MealDetailActivity extends AppCompatActivity implements CommentFrag
                         //Toast.makeText(MealDetailActivity.this, documentSnapshot.getId(), Toast.LENGTH_SHORT).show();
                         Log.d("mealDetailActivity", documentSnapshot.getId());
 
-                        Meal meal = new Meal(mMealUid,
+                        Meal meal = new Meal(documentSnapshot.getId(),
                                 documentSnapshot.getString("name"),
                                 documentSnapshot.getDouble("price"),
                                 (List<String>) documentSnapshot.get("ingredients"),
                                 (List<String>) documentSnapshot.get("comments"),
-                                (List<String>) documentSnapshot.get("imagepaths"));
+                                (ArrayList<String>) documentSnapshot.get("imagePaths"));
                         setDataToView(meal);
                         setImageToView(meal.getImages());
 
@@ -84,6 +87,8 @@ public class MealDetailActivity extends AppCompatActivity implements CommentFrag
                 }
             }
         });
+
+        mViewPager = findViewById(R.id.view_pager);
 
         // RecyclerView for comments
         final RecyclerView recyclerView = findViewById(R.id.comment_fragment);
@@ -132,9 +137,8 @@ public class MealDetailActivity extends AppCompatActivity implements CommentFrag
         textViewIngredients.setText(stringBuilderIngredients.toString());
     }
 
-    private void setImageToView(List<String> imagePaths) {
-        ViewPager viewPager = findViewById(R.id.view_pager);
-        ImageAdapter imageAdapter = new ImageAdapter(getSupportFragmentManager(), imagePaths);
-        viewPager.setAdapter(imageAdapter);
+    private void setImageToView(ArrayList<String> imagePaths) {
+        mImageAdapter= new ImageAdapter(getSupportFragmentManager(), imagePaths);
+        mViewPager.setAdapter(mImageAdapter);
     }
 }

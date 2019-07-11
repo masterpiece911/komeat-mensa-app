@@ -11,15 +11,17 @@ import java.util.List;
 
 public class ImageAdapter extends FragmentStatePagerAdapter {
 
-    private List<String> imagePaths;
+    public static final String PLACEHOLDER = "placeholder";
 
-    private List<String> defaultPath = new ArrayList<>();
+    private ArrayList<String> imagePaths;
+
+    private ArrayList<String> defaultPath = new ArrayList<>();
 
 
-    public ImageAdapter(FragmentManager fm, List<String> iamgePaths) {
+    public ImageAdapter(FragmentManager fm, ArrayList<String> imagePathList) {
         super(fm);
-        this.defaultPath.add("images/halbeshendl.png");
-        this.imagePaths = imagePaths == null ? defaultPath : iamgePaths;
+        this.defaultPath.add(PLACEHOLDER);
+        this.imagePaths = imagePathList == null ? defaultPath : imagePathList;
     }
 
     @Override

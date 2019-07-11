@@ -85,8 +85,6 @@ public class ImageUploadActivity extends AppCompatActivity {
     private ArrayList<MealSelected> mealSelectedList = new ArrayList<>();
 
     private RecyclerView mRecyclerView;
-    //private MealAdapter mAdapter;
-    //private RecyclerView.LayoutManager mLayoutManager;
 
 
 
@@ -149,17 +147,14 @@ public class ImageUploadActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                            //todo surface items
-                            Log.d(TAG, "loadDataFromFirebase complete and successful");
+
+                            Log.d(TAG, "loadData complete and successful");
                             FirebaseFirestore instance = FirebaseFirestore.getInstance();
                             final DocumentSnapshot mealplan = task.getResult().getDocuments().get(0);
 
-                            // Hier das Array abgreifen
-                            Long week = (Long) mealplan.get("week");
-                            Long year = (Long) mealplan.get("year");
                             ArrayList<HashMap<String, ArrayList<DocumentReference>>> days = (ArrayList<HashMap<String, ArrayList<DocumentReference>>> ) mealplan.get("days");
 
-                            // über die Tage iterieren und den richtigen suchen
+                            // TODO day of week
                             for (int i = 0; i < days.size(); i++) {
                                 if (i == newDate.getDayOfWeek()-1) {
                                     HashMap<String, ArrayList<DocumentReference>> meals = days.get(i);
@@ -296,10 +291,10 @@ public class ImageUploadActivity extends AppCompatActivity {
                                             documentSnapshot.getDouble("price"),
                                             (List<String>) documentSnapshot.get("ingredients"),
                                             (List<String>) documentSnapshot.get("comments"),
-                                            (List<String>) documentSnapshot.get("imagepaths"));
+                                            (ArrayList<String>) documentSnapshot.get("imagePaths"));
 
                                     if (meal.getImages() == null) {
-                                        List<String> imagePaths = new ArrayList<>();
+                                        ArrayList<String> imagePaths = new ArrayList<>();
                                         imagePaths.add(imageReference.getPath());
                                         meal.setImages(imagePaths);
                                     } else {
@@ -324,7 +319,7 @@ public class ImageUploadActivity extends AppCompatActivity {
         mealMetadata.put("price", meal.getPrice());
         mealMetadata.put("ingredients", meal.getIngredients());
         mealMetadata.put("comments", meal.getComments());
-        mealMetadata.put("imagepaths", meal.getImages());
+        mealMetadata.put("imagePaths", meal.getImages());
 
         mealDocumentReference.set(mealMetadata, SetOptions.merge())
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
