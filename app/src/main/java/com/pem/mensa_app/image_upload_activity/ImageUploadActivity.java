@@ -407,12 +407,9 @@ public class ImageUploadActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-
             mSelectedImageUri = Uri.fromFile(new File(currentPhotoPath));
-
             // Set image into ImageView
             mImageView.setImageURI(mSelectedImageUri);
-
         } else if (resultCode == RESULT_CANCELED) {
             finish();
         }

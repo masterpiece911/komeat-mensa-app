@@ -4,10 +4,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
-import com.pem.mensa_app.R;
-
 import java.util.ArrayList;
-import java.util.List;
 
 public class ImageAdapter extends FragmentStatePagerAdapter {
 
