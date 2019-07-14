@@ -1,6 +1,11 @@
 package com.pem.mensa_app.image_upload_activity;
 
+import android.Manifest;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -16,6 +21,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,6 +41,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.pem.mensa_app.BuildConfig;
 import com.pem.mensa_app.R;
 import com.pem.mensa_app.models.imageUpoald.Image;
 import com.pem.mensa_app.models.imageUpoald.MealSelected;
@@ -44,6 +52,7 @@ import org.joda.time.LocalDate;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileStore;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -56,7 +65,11 @@ public class ImageUploadActivity extends AppCompatActivity {
 
     private static final String TAG = ImageUploadActivity.class.getName();
 
+    private static final String[] PERMISSIONS_ARRAY = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    private static final int REQUEST_PERMISSION = 200;
+
     private static final int REQUEST_TAKE_PHOTO = 1;
+    private static final int PIC_CROP = 2;
 
     private String currentPhotoPath;
 
@@ -103,9 +116,6 @@ public class ImageUploadActivity extends AppCompatActivity {
         mMealPlanReferencePath = extras.getString("meal_path");
         mDay = extras.getInt("day");
 
-        // Start camera intent
-        dispatchTakePictureIntent();
-
         mStorageRef = FirebaseStorage.getInstance().getReference("/images");
         mMealDocumentReference = FirebaseFirestore.getInstance().collection(getString(R.string.meal_collection_identifier));
 
@@ -117,6 +127,8 @@ public class ImageUploadActivity extends AppCompatActivity {
         // Create List
         mRecyclerView = findViewById(R.id.recyclerView_meal_list_image_upload);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        handlePermissionRequest();
 
         // Listener for Upload Button
         button.setOnClickListener(new View.OnClickListener() {
@@ -199,6 +211,7 @@ public class ImageUploadActivity extends AppCompatActivity {
                                 }
                             }, 5000);
                             Toast.makeText(ImageUploadActivity.this, "Upload success", Toast.LENGTH_LONG).show();
+                            finish();
 
                             // save the metadata from the image
                             // List of selected meals
@@ -228,8 +241,6 @@ public class ImageUploadActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "No file selected", Toast.LENGTH_SHORT).show();
         }
-
-        finish();
 
     }
 
@@ -375,25 +386,24 @@ public class ImageUploadActivity extends AppCompatActivity {
             try {
                 photoFile = createImageFile();
             } catch (IOException ex) {
-                // Error occurred while creating the File
+                Log.d(TAG, ex.getMessage());
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this,
-                        "com.pem.mensa_app",
-                        photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+
+                mSelectedImageUri = FileProvider.getUriForFile(ImageUploadActivity.this, getPackageName()+ ".mensa_app.fileprovider", photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mSelectedImageUri);
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
             }
         }
-
     }
 
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+        File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
@@ -401,19 +411,38 @@ public class ImageUploadActivity extends AppCompatActivity {
         );
 
         // Save a file: path for use with ACTION_VIEW intents
-        currentPhotoPath = image.getAbsolutePath();
+        currentPhotoPath = image.getCanonicalPath();
         return image;
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-            mSelectedImageUri = Uri.fromFile(new File(currentPhotoPath));
-            // Set image into ImageView
-            mImageView.setImageURI(mSelectedImageUri);
+
+        if (resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_TAKE_PHOTO) {
+                //mSelectedImageUri = Uri.fromFile(new File(currentPhotoPath));
+
+                //mSelectedImageUri = Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), currentPhotoPath));
+                //mSelectedImageUri = FileProvider.getUriForFile(ImageUploadActivity.this, getPackageName() + ".mensa_app.fileprovider",);
+                mImageView.setImageURI(mSelectedImageUri);
+                // Crop the captured Image
+                performCrop();
+            } else if (requestCode == PIC_CROP) {
+                Bundle extras = data.getExtras();
+                Bitmap cropedImage = extras.getParcelable("data");
+                //retrieve a reference to the ImageView
+                //display the returned cropped image
+                mImageView.setImageBitmap(cropedImage);
+
+            }
         } else if (resultCode == RESULT_CANCELED) {
-            finish();
+            if (requestCode == REQUEST_TAKE_PHOTO) {
+                finish();
+            } else if (requestCode == PIC_CROP) {
+
+
+            }
         }
     }
 
@@ -435,5 +464,67 @@ public class ImageUploadActivity extends AppCompatActivity {
             });
         }
         mRecyclerView.setAdapter(new MealAdapter(mealSelectedList));
+    }
+
+    private void performCrop() {
+        Intent cropIntent = new Intent("com.android.camera.action.CROP");
+        cropIntent.setType("image/*");
+        List<ResolveInfo> resolveInfo = ImageUploadActivity.this.getPackageManager().queryIntentActivities(cropIntent, 0);
+
+        if (resolveInfo.isEmpty()) {
+            Toast.makeText(this, "Device doesn't support a crop action!", Toast.LENGTH_SHORT);
+        } else {
+            ResolveInfo res = resolveInfo.get(0);
+            cropIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            cropIntent.setDataAndType(mSelectedImageUri, "image/*");
+            cropIntent.setClassName(res.activityInfo.packageName, res.activityInfo.name);
+            cropIntent.putExtra("crop", "true");
+            cropIntent.putExtra("aspectX", 1);
+            cropIntent.putExtra("aspectY", 1);
+            //indicate output X and Y
+            cropIntent.putExtra("outputX", 256);
+            cropIntent.putExtra("outputY", 256);
+            //retrieve data on return
+            cropIntent.putExtra("return-data", true);
+            //start the activity - we handle returning in onActivityResult
+            startActivityForResult(cropIntent, PIC_CROP);
+        }
+    }
+
+    private void handlePermissionRequest() {
+        // Get permission for location tracking
+        if (ContextCompat.checkSelfPermission(ImageUploadActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(ImageUploadActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                Toast.makeText(ImageUploadActivity.this, "The external storage permission is needed to crop the taken picture",Toast.LENGTH_LONG).show();
+
+            } else {
+                // No explanation needed; request the permission
+                ActivityCompat.requestPermissions(ImageUploadActivity.this, PERMISSIONS_ARRAY, REQUEST_PERMISSION);
+                Toast.makeText(ImageUploadActivity.this, "Request for permission",Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            // Permission has already been granted
+            Toast.makeText(ImageUploadActivity.this, "Permission has already been granted.",Toast.LENGTH_SHORT).show();
+            dispatchTakePictureIntent();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_PERMISSION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay!
+                    Toast.makeText(ImageUploadActivity.this, "Permission was granted, yay!",Toast.LENGTH_SHORT).show();
+                    dispatchTakePictureIntent();
+                } else {
+                    Toast.makeText(ImageUploadActivity.this, "Do the picture without croping the image.",Toast.LENGTH_SHORT).show();
+
+                }
+            }
+        }
     }
 }
