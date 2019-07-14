@@ -203,7 +203,7 @@ public class MealListModel extends AndroidViewModel {
                     dishesList.add(meal);
                 }
                 date.withField(DateTimeFieldType.dayOfWeek(), weekday + 1);
-                dayMap.put(getString(R.string.mealplan_field_meals), getReferenceListFromMeals(dishesList, newMealplanRef, date));
+                dayMap.put(getString(R.string.mealplan_field_meals), getReferenceListFromMeals(dishesList, newMealplanRef, date, weekday));
                 daysList.set(weekday, dayMap);
             }
             firebaseData.put(getString(R.string.mealplan_field_days), daysList);
@@ -265,7 +265,7 @@ public class MealListModel extends AndroidViewModel {
         });
     }
 
-    private List<DocumentReference> getReferenceListFromMeals(List<Meal> mealList, final DocumentReference mealPlanRef, LocalDate date){
+    private List<DocumentReference> getReferenceListFromMeals(List<Meal> mealList, final DocumentReference mealPlanRef, LocalDate date, int weekday){
         CollectionReference mealRef = FirebaseFirestore.getInstance().collection(getString(R.string.meal_collection_identifier));
         DocumentReference mensaRef = FirebaseFirestore.getInstance().collection(getString(R.string.mensa_collection_identifier)).document(mensaID);
         DocumentReference docRef;
@@ -284,7 +284,7 @@ public class MealListModel extends AndroidViewModel {
 
             mealMap.put(getString(R.string.meal_field_ingredients), ingredients);
             mealMap.put("mealplan", mealPlanRef);
-            mealMap.put("weekday", date.getDayOfWeek());
+            mealMap.put("weekday", weekday);
             mealMap.put("imagePaths", imagePaths);
             mealMap.put("mensa", mensaRef);
             mealMap.put("date", timestamp);
