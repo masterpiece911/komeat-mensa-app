@@ -18,6 +18,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -25,6 +26,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.pem.mensa_app.models.meal.Meal;
 
+import org.joda.time.DateTimeFieldType;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
@@ -200,7 +202,8 @@ public class MealListModel extends AndroidViewModel {
                     meal = new Meal(null, dishname, null, ingredients, null, null);
                     dishesList.add(meal);
                 }
-                dayMap.put(getString(R.string.mealplan_field_meals), getReferenceListFromMeals(dishesList, newMealplanRef, weekday));
+                date.withField(DateTimeFieldType.dayOfWeek(), weekday);
+                dayMap.put(getString(R.string.mealplan_field_meals), getReferenceListFromMeals(dishesList, newMealplanRef, date));
                 daysList.set(weekday, dayMap);
             }
             firebaseData.put(getString(R.string.mealplan_field_days), daysList);
@@ -262,10 +265,11 @@ public class MealListModel extends AndroidViewModel {
         });
     }
 
-    private List<DocumentReference> getReferenceListFromMeals(List<Meal> mealList, final DocumentReference mealPlanRef, int weekday){
+    private List<DocumentReference> getReferenceListFromMeals(List<Meal> mealList, final DocumentReference mealPlanRef, LocalDate date){
         CollectionReference mealRef = FirebaseFirestore.getInstance().collection(getString(R.string.meal_collection_identifier));
         DocumentReference mensaRef = FirebaseFirestore.getInstance().collection(getString(R.string.mensa_collection_identifier)).document(mensaID);
         DocumentReference docRef;
+        Timestamp timestamp = new Timestamp(date.toDate());
         LinkedList<DocumentReference> references = new LinkedList<>();
         List<String> ingredients;
         List<String> imagePaths = new ArrayList<>();
@@ -280,9 +284,10 @@ public class MealListModel extends AndroidViewModel {
 
             mealMap.put(getString(R.string.meal_field_ingredients), ingredients);
             mealMap.put("mealplan", mealPlanRef);
-            mealMap.put("weekday", weekday);
+            mealMap.put("weekday", date.getDayOfWeek());
             mealMap.put("imagePaths", imagePaths);
             mealMap.put("mensa", mensaRef);
+            mealMap.put("date", timestamp);
 
             docRef = mealRef.document();
             final String mealName = meal.getName();
