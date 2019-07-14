@@ -202,7 +202,7 @@ public class MealListModel extends AndroidViewModel {
                     meal = new Meal(null, dishname, null, ingredients, null, null);
                     dishesList.add(meal);
                 }
-                date.withField(DateTimeFieldType.dayOfWeek(), weekday);
+                date.withField(DateTimeFieldType.dayOfWeek(), weekday + 1);
                 dayMap.put(getString(R.string.mealplan_field_meals), getReferenceListFromMeals(dishesList, newMealplanRef, date));
                 daysList.set(weekday, dayMap);
             }
