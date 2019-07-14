@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +19,9 @@ import android.view.ViewGroup;
 import com.google.android.material.button.MaterialButton;
 import com.pem.mensa_app.R;
 import com.pem.mensa_app.models.mensa.Mensa;
+import com.pem.mensa_app.models.mensa.MensaDay;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -32,6 +35,8 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class HomeFeedFragment extends Fragment implements HomeFeedAdapter.MensaDetailClickListener, View.OnClickListener {
+
+    private static final String TAG = HomeFeedFragment.class.getSimpleName();
 
     private OnMensaItemAndCustomizeSelectedListener mListener;
     private HomeViewModel homeViewModel;
@@ -63,18 +68,19 @@ public class HomeFeedFragment extends Fragment implements HomeFeedAdapter.MensaD
         homeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
         RecyclerView recyclerView = getView().findViewById(R.id.feed_frag_recyclerview);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
-        final HomeFeedAdapter adapter = new HomeFeedAdapter(this);
+        final HomeFeedAdapter adapter = new HomeFeedAdapter(getContext(), this);
         recyclerView.setAdapter(adapter);
-        homeViewModel.getFavoriteMensaList().observe(getViewLifecycleOwner(), new Observer<List<Mensa>>() {
-            @Override
-            public void onChanged(List<Mensa> mensas) {
-                adapter.submitList(new LinkedList<Mensa>(mensas));
-                adapter.notifyDataSetChanged();
-            }
-        });
 
         MaterialButton button = getView().findViewById(R.id.feed_customize_button);
         button.setOnClickListener(this);
+
+        homeViewModel.getFavoriteMensaDetails().observe(getViewLifecycleOwner(), new Observer<List<MensaDay>>() {
+            @Override
+            public void onChanged(List<MensaDay> mensaDays) {
+                adapter.submitList(new ArrayList<>(mensaDays));
+                adapter.notifyDataSetChanged();
+            }
+        });
 
     }
 
@@ -101,8 +107,8 @@ public class HomeFeedFragment extends Fragment implements HomeFeedAdapter.MensaD
     }
 
     @Override
-    public void mensaClicked(int position) {
-        mListener.onMensaSelected(homeViewModel.getMensaList().getValue().get(position));
+    public void mensaClicked(Mensa mensa) {
+        mListener.onMensaSelected(mensa);
     }
 
     @Override

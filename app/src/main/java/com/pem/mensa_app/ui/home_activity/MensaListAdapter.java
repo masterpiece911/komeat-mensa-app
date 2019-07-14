@@ -33,7 +33,7 @@ public class MensaListAdapter extends ListAdapter<Mensa, MensaListAdapter.MensaV
     private LinkedList<Mensa> favorites = new LinkedList<>();
 
     interface MensaClickListener {
-        void itemClicked(int position);
+        void itemClicked(Mensa mensa);
     }
 
     public MensaListAdapter(MensaClickListener listener, boolean hasArrow, boolean hasCheckbox) {
@@ -96,7 +96,7 @@ public class MensaListAdapter extends ListAdapter<Mensa, MensaListAdapter.MensaV
 
         }
 
-        public void bindData(Mensa data) {
+        public void bindData(final Mensa data) {
             mTextName.setText(data.getName());
             mTextType.setText(data.getType().toString());
 
@@ -130,7 +130,7 @@ public class MensaListAdapter extends ListAdapter<Mensa, MensaListAdapter.MensaV
                 mCheckBox.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mensaClickListener.itemClicked(getAdapterPosition());
+                        mensaClickListener.itemClicked(data);
                     }
                 });
                 mCheckBox.setVisibility(View.VISIBLE);
@@ -147,7 +147,7 @@ public class MensaListAdapter extends ListAdapter<Mensa, MensaListAdapter.MensaV
                 @Override
                 public void onClick(View v) {
                     mCheckBox.toggle();
-                    mensaClickListener.itemClicked(getAdapterPosition());
+                    mensaClickListener.itemClicked(data);
                 }
             });
         }

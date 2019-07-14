@@ -100,8 +100,7 @@ public class MensaListFragment extends Fragment implements MensaListAdapter.Mens
     }
 
     @Override
-    public void itemClicked(int position) {
-        Mensa selectedMensa = homeViewModel.getMensaList().getValue().get(position);
+    public void itemClicked(Mensa selectedMensa) {
         if(CHECKBOX_ENABLED) {
             homeViewModel.flipFavoriteMensa(selectedMensa);
         } else {
