@@ -10,7 +10,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,13 +20,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.pem.mensa_app.MensaMealListActivity;
 import com.pem.mensa_app.R;
 import com.pem.mensa_app.dummy.DummyContent;
 import com.pem.mensa_app.image_upload_activity.ImageUploadActivity;
 import com.pem.mensa_app.models.meal.Meal;
-
-import org.joda.time.LocalDateTime;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,21 +37,20 @@ public class MealDetailActivity extends AppCompatActivity implements CommentFrag
     private String mMealPlanReferencePath;
     private int mDay;
 
+    private ImageAdapter mImageAdapter;
+    private ViewPager mViewPager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meal_detail);
 
-        // get ID from MensaMealListActivity
         Bundle extras = getIntent().getExtras();
-
         mMealUid = extras.getString(getString(R.string.intent_meal_uid));
         if (mMealUid == null) {
             Log.d("mealDetailActivity", "There is nothing today!");
         }
-
         mMealPlanReferencePath = extras.getString("meal_path");
-
         mDay = extras.getInt("day");
 
         // get description
@@ -69,12 +64,12 @@ public class MealDetailActivity extends AppCompatActivity implements CommentFrag
                         //Toast.makeText(MealDetailActivity.this, documentSnapshot.getId(), Toast.LENGTH_SHORT).show();
                         Log.d("mealDetailActivity", documentSnapshot.getId());
 
-                        Meal meal = new Meal(mMealUid,
+                        Meal meal = new Meal(documentSnapshot.getId(),
                                 documentSnapshot.getString("name"),
                                 documentSnapshot.getDouble("price"),
                                 (List<String>) documentSnapshot.get("ingredients"),
                                 (List<String>) documentSnapshot.get("comments"),
-                                (List<String>) documentSnapshot.get("imagepaths"));
+                                (ArrayList<String>) documentSnapshot.get("imagePaths"));
                         setDataToView(meal);
                         setImageToView(meal.getImages());
 
@@ -87,6 +82,8 @@ public class MealDetailActivity extends AppCompatActivity implements CommentFrag
                 }
             }
         });
+
+        mViewPager = findViewById(R.id.view_pager);
 
         // RecyclerView for comments
         final RecyclerView recyclerView = findViewById(R.id.comment_fragment);
@@ -135,9 +132,8 @@ public class MealDetailActivity extends AppCompatActivity implements CommentFrag
         textViewIngredients.setText(stringBuilderIngredients.toString());
     }
 
-    private void setImageToView(List<String> imagePaths) {
-        ViewPager viewPager = findViewById(R.id.view_pager);
-        ImageAdapter imageAdapter = new ImageAdapter(getSupportFragmentManager(), imagePaths);
-        viewPager.setAdapter(imageAdapter);
+    private void setImageToView(ArrayList<String> imagePaths) {
+        mImageAdapter= new ImageAdapter(getSupportFragmentManager(), imagePaths);
+        mViewPager.setAdapter(mImageAdapter);
     }
 }

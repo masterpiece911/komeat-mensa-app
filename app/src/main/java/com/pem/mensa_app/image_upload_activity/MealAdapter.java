@@ -10,10 +10,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.pem.mensa_app.R;
 import com.pem.mensa_app.models.imageUpoald.MealSelected;
-import com.pem.mensa_app.models.meal.Meal;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder> {
 
@@ -31,17 +29,6 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder
 
     public MealAdapter(ArrayList<MealSelected> dishes) {
         this.mDishes = dishes;
-        //if (dishes == null) {
-        //    this.mDishes = new ArrayList<>();
-        //    MealSelected mealSelected = new MealSelected("Test", false);
-        //    mDishes.add(mealSelected);
-        //} else if (dishes.isEmpty()) {
-        //    this.mDishes = dishes;
-        //    MealSelected mealSelected = new MealSelected("Test", false);
-        //    mDishes.add(mealSelected);
-        //} else {
-        //    this.mDishes = dishes;
-        //}
     }
 
     public void setMealData(ArrayList<MealSelected> dishes) {

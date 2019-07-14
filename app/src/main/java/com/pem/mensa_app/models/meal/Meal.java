@@ -1,5 +1,6 @@
 package com.pem.mensa_app.models.meal;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,9 +24,9 @@ public class Meal {
 
     private List<String> comments;
 
-    private List<String> images;
+    private ArrayList<String> images;
 
-    public Meal(String uid, String name, Double price, List<String> ingredients, List<String> comments, List<String> images) {
+    public Meal(String uid, String name, Double price, List<String> ingredients, List<String> comments, ArrayList<String> images) {
         this.uid = uid;
         this.name = name;
         this.price = price;
@@ -58,7 +59,7 @@ public class Meal {
         this.comments = comments;
     }
 
-    public void setImages(List<String> images) {
+    public void setImages(ArrayList<String> images) {
         this.images = images;
     }
 
@@ -70,7 +71,7 @@ public class Meal {
         return comments;
     }
 
-    public List<String> getImages() {
+    public ArrayList<String> getImages() {
         return images;
     }
 
