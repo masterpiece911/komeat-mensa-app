@@ -165,6 +165,7 @@ public class MealListModel extends AndroidViewModel {
 
     private void createMealplanOnFirebase(LocalDate date, JSONObject mealPlanData){
         DocumentReference newMealplanRef = FirebaseFirestore.getInstance().collection(mealPlanReferencePath + "/items").document();
+        DocumentReference mensaRef = FirebaseFirestore.getInstance().collection(getString(R.string.mensa_collection_identifier)).document(mensaID);
         Map<String, Object> firebaseData = new HashMap<>();
         firebaseData.put(getString(R.string.mealplan_field_week), date.weekOfWeekyear().get());
         firebaseData.put(getString(R.string.mealplan_field_year), date.year().get());
@@ -203,6 +204,7 @@ public class MealListModel extends AndroidViewModel {
                 daysList.set(weekday, dayMap);
             }
             firebaseData.put(getString(R.string.mealplan_field_days), daysList);
+            firebaseData.put("mensa", mensaRef);
             newMealplanRef.set(firebaseData)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
@@ -262,6 +264,7 @@ public class MealListModel extends AndroidViewModel {
 
     private List<DocumentReference> getReferenceListFromMeals(List<Meal> mealList, final DocumentReference mealPlanRef, int weekday){
         CollectionReference mealRef = FirebaseFirestore.getInstance().collection(getString(R.string.meal_collection_identifier));
+        DocumentReference mensaRef = FirebaseFirestore.getInstance().collection(getString(R.string.mensa_collection_identifier)).document(mensaID);
         DocumentReference docRef;
         LinkedList<DocumentReference> references = new LinkedList<>();
         List<String> ingredients;
@@ -279,6 +282,7 @@ public class MealListModel extends AndroidViewModel {
             mealMap.put("mealplan", mealPlanRef);
             mealMap.put("weekday", weekday);
             mealMap.put("imagePaths", imagePaths);
+            mealMap.put("mensa", mensaRef);
 
             docRef = mealRef.document();
             final String mealName = meal.getName();
