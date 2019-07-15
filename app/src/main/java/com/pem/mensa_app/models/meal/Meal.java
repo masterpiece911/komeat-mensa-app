@@ -1,7 +1,9 @@
 package com.pem.mensa_app.models.meal;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class represents the dishes.
@@ -22,11 +24,11 @@ public class Meal {
 
     private List<String> ingredients;
 
-    private List<String> comments;
+    private ArrayList<String> comments;
 
     private ArrayList<String> images;
 
-    public Meal(String uid, String name, Double price, List<String> ingredients, List<String> comments, ArrayList<String> images) {
+    public Meal(String uid, String name, Double price, List<String> ingredients, ArrayList<String> comments, ArrayList<String> images) {
         this.uid = uid;
         this.name = name;
         this.price = price;
@@ -47,15 +49,11 @@ public class Meal {
         this.name = name;
     }
 
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
     public void setIngredients(List<String> ingredients) {
         this.ingredients = ingredients;
     }
 
-    public void setComments(List<String> comments) {
+    public void setComments(ArrayList<String> comments) {
         this.comments = comments;
     }
 
@@ -67,7 +65,7 @@ public class Meal {
         return uid;
     }
 
-    public List<String> getComments() {
+    public ArrayList<String> getComments() {
         return comments;
     }
 
@@ -85,5 +83,16 @@ public class Meal {
 
     public List<String> getIngredients() {
         return ingredients;
+    }
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> mealMetadata = new HashMap<>();
+        mealMetadata.put("name", getName());
+        mealMetadata.put("price", getPrice());
+        mealMetadata.put("ingredients", getIngredients());
+        mealMetadata.put("comments", getComments());
+        mealMetadata.put("imagePaths", getImages());
+
+        return mealMetadata;
     }
 }

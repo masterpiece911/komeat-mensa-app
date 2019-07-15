@@ -302,8 +302,8 @@ public class ImageUploadActivity extends AppCompatActivity {
                                             documentSnapshot.getId(),
                                             documentSnapshot.getString("name"),
                                             documentSnapshot.getDouble("price"),
-                                            (List<String>) documentSnapshot.get("ingredients"),
-                                            (List<String>) documentSnapshot.get("comments"),
+                                            (ArrayList<String>) documentSnapshot.get("ingredients"),
+                                            (ArrayList<String>) documentSnapshot.get("comments"),
                                             (ArrayList<String>) documentSnapshot.get("imagePaths"));
 
                                     if (meal.getImages() == null) {

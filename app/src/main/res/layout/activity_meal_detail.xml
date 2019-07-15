@@ -7,7 +7,7 @@
     tools:context=".meal_detail_activity.MealDetailActivity">
 
     <androidx.viewpager.widget.ViewPager
-        android:id="@+id/view_pager"
+       android:id="@+id/view_pager"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintDimensionRatio="3:2"
@@ -15,49 +15,49 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
-    <fragment
-        android:id="@+id/comment_fragment"
-        android:name="com.pem.mensa_app.meal_detail_activity.CommentFragment"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_comment_list"
+        android:layout_width="395dp"
+        android:layout_height="295dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_weight="2"
+        android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/view_pager">
 
-        <TextView
+       <TextView
             android:id="@+id/textView_meal_dishes"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+           android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:text="TextView"
-            app:layout_constraintStart_toStartOf="parent"
+           app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textView_ingredients"
+           android:id="@+id/textView_ingredients"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+           android:layout_marginTop="8dp"
             android:text="TextView"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textView_meal_dishes" />
+           app:layout_constraintTop_toBottomOf="@id/textView_meal_dishes" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <Button
+   <Button
         android:id="@+id/button_choose_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -67,5 +67,26 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <EditText
+        android:id="@+id/editText_comment"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="4dp"
+        android:hint="Your comment..."
+        android:inputType="text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/imageButton_add_comment"
+        app:layout_constraintStart_toStartOf="parent" />
+    <ImageButton
+        android:id="@+id/imageButton_add_comment"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_add_circle" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout> 
