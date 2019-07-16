@@ -7,21 +7,19 @@
     tools:context=".meal_detail_activity.MealDetailActivity">
 
     <androidx.viewpager.widget.ViewPager
-       android:id="@+id/view_pager"
+        android:id="@+id/view_pager"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintDimensionRatio="3:2"
+        app:layout_constraintDimensionRatio="2:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_comment_list"
-        android:layout_width="395dp"
-        android:layout_height="295dp"
-        android:layout_marginStart="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
@@ -75,11 +73,27 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="4dp"
         android:hint="Your comment..."
-        android:inputType="text"
+        android:inputType="textCapSentences"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/imageButton_add_comment"
+        app:layout_constraintEnd_toStartOf="@+id/add_comment_customize_button"
         app:layout_constraintStart_toStartOf="parent" />
-    <ImageButton
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/add_comment_customize_button"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:textAppearance="@style/Komeat.Text.Subheader"
+        app:backgroundTint="#FFFFFF"
+        app:icon="@drawable/round_send"
+        app:iconTint="@color/onPrimary"
+        app:iconGravity="textStart"
+        android:gravity="center"
+        android:enabled="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!--ImageButton
         android:id="@+id/imageButton_add_comment"
         android:layout_width="50dp"
         android:layout_height="50dp"
@@ -87,6 +101,6 @@
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_add_circle" />
+        app:srcCompat="@drawable/round_send" /-->
 
 </androidx.constraintlayout.widget.ConstraintLayout> 
