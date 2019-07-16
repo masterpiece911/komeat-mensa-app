@@ -194,7 +194,9 @@ public class ImageUploadActivity extends AppCompatActivity {
     private void uploadImage() {
         if (mSelectedImageUri != null) {
 
-            final String fileName = mSelectedImageUri.getLastPathSegment();
+            final DocumentReference imageReference = FirebaseFirestore.getInstance().collection("Image").document();
+            
+            final String fileName = imageReference.getId();
 
             StorageReference fileReference = mStorageRef.child(fileName);
 
@@ -218,7 +220,7 @@ public class ImageUploadActivity extends AppCompatActivity {
                             List<String> uids = new ArrayList<>();
                             uids.add(mMealUid);
 
-                            uploadImageMetaData(fileName, uids);
+                            uploadImageMetaData(imageReference, fileName, uids);
 
                         }
                     })
@@ -249,7 +251,7 @@ public class ImageUploadActivity extends AppCompatActivity {
      * @param fileName Path to image in FirebaseStorage
      * @param uids List with all dishes, which are represented on the image
      */
-    private void uploadImageMetaData(String fileName, List<String> uids) {
+    private void uploadImageMetaData(final DocumentReference imageReference, String fileName, List<String> uids) {
         uids.addAll(getAllSelectedMeals());
         List<DocumentReference> documentReferences = parseToDocumentReference(uids);
         String uid = mMealPlanReferencePath.substring(mMealPlanReferencePath.indexOf('/'));
@@ -266,7 +268,7 @@ public class ImageUploadActivity extends AppCompatActivity {
         imageMetadata.put("meal_reference", image.getMealReferences());
         imageMetadata.put("mealplan_reference", image.getMealPlanReference());
 
-        final DocumentReference imageReference = FirebaseFirestore.getInstance().collection("Image").document();
+//        final DocumentReference imageReference = FirebaseFirestore.getInstance().collection("Image").document();
         imageReference.set(imageMetadata)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
