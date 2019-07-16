@@ -15,6 +15,42 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!--Button
+        android:id="@+id/button_choose_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="PICTURE"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" /-->
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/add_picture_customize_button"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:textAppearance="@style/Komeat.Text.Subheader"
+        app:backgroundTint="#FFFFFF"
+        app:icon="@android:drawable/ic_menu_camera"
+        app:iconGravity="textStart"
+        app:iconTint="@color/onPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/add_like_customize_button"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:textAppearance="@style/Komeat.Text.Subheader"
+        app:backgroundTint="#FFFFFF"
+        app:icon="@drawable/favorite_inactive"
+        app:iconGravity="textStart"
+        app:iconTint="@color/onPrimary"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+        app:layout_constraintEnd_toEndOf="@+id/view_pager" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_comment_list"
         android:layout_width="match_parent"
@@ -55,16 +91,6 @@
            app:layout_constraintTop_toBottomOf="@id/textView_meal_dishes" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-   <Button
-        android:id="@+id/button_choose_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="PICTURE"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <EditText
         android:id="@+id/editText_comment"
         android:layout_width="300dp"
@@ -92,15 +118,5 @@
         android:enabled="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
-    <!--ImageButton
-        android:id="@+id/imageButton_add_comment"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/round_send" /-->
 
 </androidx.constraintlayout.widget.ConstraintLayout> 

@@ -71,7 +71,7 @@ public class MealDetailActivity extends AppCompatActivity {
         mDay = extras.getInt("day");
 
         mViewPager = findViewById(R.id.view_pager);
-        mButtonTakeImage = findViewById(R.id.button_choose_image);
+        mButtonTakeImage = findViewById(R.id.add_picture_customize_button);
 
         mTextViewMealDescription = findViewById(R.id.textView_meal_dishes);
         mTextViewMealIncredients = findViewById(R.id.textView_ingredients);
