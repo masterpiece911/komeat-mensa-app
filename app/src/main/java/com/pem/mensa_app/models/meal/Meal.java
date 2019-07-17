@@ -28,6 +28,10 @@ public class Meal {
 
     private ArrayList<String> images;
 
+    private String mealplanID;
+
+    private int weekday;
+
     public Meal(String uid, String name, Double price, List<String> ingredients, ArrayList<String> comments, ArrayList<String> images) {
         this.uid = uid;
         this.name = name;
@@ -61,6 +65,14 @@ public class Meal {
         this.images = images;
     }
 
+    public void setMealplanID(String id) {
+        this.mealplanID = id;
+    }
+
+    public void setWeekday(int weekday) {
+        this.weekday = weekday;
+    }
+
     public String getUid() {
         return uid;
     }
@@ -83,6 +95,14 @@ public class Meal {
 
     public List<String> getIngredients() {
         return ingredients;
+    }
+
+    public String getMealplanID() {
+        return mealplanID;
+    }
+
+    public int getWeekday() {
+        return weekday;
     }
 
     public Map<String, Object> toMap() {

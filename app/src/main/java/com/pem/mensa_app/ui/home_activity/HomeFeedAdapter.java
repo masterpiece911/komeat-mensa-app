@@ -83,12 +83,13 @@ public class HomeFeedAdapter extends ListAdapter<MensaDay, HomeFeedAdapter.Mensa
             mRecyclerView = itemView.findViewById(R.id.mensa_item_expanded_image_recyclerview);
             mRecyclerView.setLayoutManager(new GridLayoutManager(context, 1, RecyclerView.HORIZONTAL, false));
             mRecyclerView.setRecycledViewPool(viewPool);
-            mAdapter = new HomeFeedImageAdapter();
+            mAdapter = new HomeFeedImageAdapter(listener);
             mRecyclerView.setAdapter(mAdapter);
         }
 
         public void bindData(final MensaDay data) {
             final Mensa m = data.getMensa();
+            mAdapter.setMensa(data.getMensa());
             mAdapter.submitList(new ArrayList<>(data.getMeals()));
             mTextType.setText(m.getType().toString());
             mTextName.setText(m.getName());
@@ -125,7 +126,7 @@ public class HomeFeedAdapter extends ListAdapter<MensaDay, HomeFeedAdapter.Mensa
 
     interface MensaDetailClickListener {
         void mensaClicked(Mensa mensa);
-        void imageClicked(int position);
+        void imageClicked(Mensa mensa, Meal meal);
     }
 
 }

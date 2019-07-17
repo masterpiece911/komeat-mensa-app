@@ -1,5 +1,6 @@
 package com.pem.mensa_app.ui.home_activity;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,11 +17,23 @@ import com.google.firebase.storage.StorageReference;
 import com.pem.mensa_app.GlideApp;
 import com.pem.mensa_app.R;
 import com.pem.mensa_app.models.meal.Meal;
+import com.pem.mensa_app.models.mensa.Mensa;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class HomeFeedImageAdapter extends ListAdapter<Meal, HomeFeedImageAdapter.ImageViewHolder> {
 
-    public HomeFeedImageAdapter() {
+    private final HomeFeedAdapter.MensaDetailClickListener mListener;
+    private Mensa mensa;
+
+    public HomeFeedImageAdapter(HomeFeedAdapter.MensaDetailClickListener listener) {
         super(DIFF_CALLBACK);
+        mListener = listener;
+    }
+
+    public void setMensa(Mensa mensa) {
+        this.mensa = mensa;
     }
 
     public static final DiffUtil.ItemCallback<Meal> DIFF_CALLBACK =
@@ -44,7 +57,7 @@ public class HomeFeedImageAdapter extends ListAdapter<Meal, HomeFeedImageAdapter
     @Override
     public ImageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View V = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_mensa_expanded_subitem, parent, false);
-        return new ImageViewHolder(V);
+        return new ImageViewHolder(V, mListener);
     }
 
     @Override
@@ -61,27 +74,37 @@ public class HomeFeedImageAdapter extends ListAdapter<Meal, HomeFeedImageAdapter
         private ImageView mMealImage;
         private HomeFeedAdapter.MensaDetailClickListener mListener;
 
-        public ImageViewHolder(@NonNull View itemView) {
+        public ImageViewHolder(@NonNull View itemView, HomeFeedAdapter.MensaDetailClickListener listener) {
             super(itemView);
 //            mListener = listener;
             mItemView = itemView;
             mMealName = itemView.findViewById(R.id.item_mensa_expanded_subitem_meal_name);
             mMealImage = itemView.findViewById(R.id.item_mensa_expanded_subitem_image);
+            mListener = listener;
         }
 
         public void bindData(final Meal data) {
             mMealName.setText(data.getName());
-            if (data.getImages() == null) {
+//            Log.d("imagelistbinder", String.format("Meal %s, id: %s, images: %s", data.getName(), data.getUid(), data.getImages()));
+            if (data.getImages().equals(new ArrayList<String>())) {
                 GlideApp.with(itemView)
                         .load(R.drawable.placeholder)
                         .into(mMealImage);
             } else {
-                StorageReference storageRef = FirebaseStorage.getInstance().getReference("images/" + data.getImages().get(0));
+                String path = data.getImages().get(0).split("/")[1];
+                StorageReference storageRef = FirebaseStorage.getInstance().getReference("images/" + path);
                 GlideApp.with(itemView)
                         .load(storageRef)
                         .placeholder(R.drawable.placeholder)
                         .into(mMealImage);
             }
+
+            mItemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mListener.imageClicked(mensa, data);
+                }
+            });
         }
 
     }

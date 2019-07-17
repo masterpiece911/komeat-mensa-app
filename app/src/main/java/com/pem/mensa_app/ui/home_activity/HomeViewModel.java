@@ -35,6 +35,7 @@ import com.pem.mensa_app.utilities.firebase.FirebaseQueryLiveData;
 import org.joda.time.DateTimeFieldType;
 import org.joda.time.LocalDate;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -146,8 +147,19 @@ public class HomeViewModel extends AndroidViewModel {
                             mealsList = new LinkedList<>();
                             Mensa m = item.first;
                             QuerySnapshot qs = item.second;
+                            Meal meal;
                             for (DocumentSnapshot s : qs.getDocuments()) {
-                                mealsList.add(s.toObject(Meal.class));
+                                meal = new Meal(
+                                        s.getId(),
+                                        s.getString("name"),
+                                        s.getDouble("price"),
+                                        (List<String>) s.get("ingredients"),
+                                        (ArrayList<String>) s.get("comments"),
+                                        (ArrayList<String>) s.get("imagePaths"));
+                                meal.setMealplanID(s.getDocumentReference("mealplan").getId());
+                                meal.setWeekday(s.getLong("weekday").intValue());
+                                mealsList.add(meal);
+
                             }
                             mensaDays.add(new MensaDay(m, mealsList));
                         }
@@ -361,7 +373,5 @@ public class HomeViewModel extends AndroidViewModel {
         }
 
     }
-
-
 
 }

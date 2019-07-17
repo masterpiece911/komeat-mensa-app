@@ -11,18 +11,17 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.material.button.MaterialButton;
 import com.pem.mensa_app.R;
+import com.pem.mensa_app.models.meal.Meal;
 import com.pem.mensa_app.models.mensa.Mensa;
 import com.pem.mensa_app.models.mensa.MensaDay;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 
@@ -38,7 +37,7 @@ public class HomeFeedFragment extends Fragment implements HomeFeedAdapter.MensaD
 
     private static final String TAG = HomeFeedFragment.class.getSimpleName();
 
-    private OnMensaItemAndCustomizeSelectedListener mListener;
+    private HomeFeedItemsListener mListener;
     private HomeViewModel homeViewModel;
 
     public HomeFeedFragment() {
@@ -87,8 +86,8 @@ public class HomeFeedFragment extends Fragment implements HomeFeedAdapter.MensaD
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnMensaItemAndCustomizeSelectedListener) {
-            mListener = (OnMensaItemAndCustomizeSelectedListener) context;
+        if (context instanceof HomeFeedItemsListener) {
+            mListener = (HomeFeedItemsListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnMensaItemSelectedListener");
@@ -112,7 +111,7 @@ public class HomeFeedFragment extends Fragment implements HomeFeedAdapter.MensaD
     }
 
     @Override
-    public void imageClicked(int position) {
-        // todo implement images :(
+    public void imageClicked(Mensa mensa, Meal meal) {
+        mListener.onImageClicked(mensa, meal);
     }
 }

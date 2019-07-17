@@ -9,11 +9,13 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.google.android.material.tabs.TabLayout;
+import com.pem.mensa_app.meal_detail_activity.MealDetailActivity;
+import com.pem.mensa_app.models.meal.Meal;
 import com.pem.mensa_app.models.mensa.Mensa;
 import com.pem.mensa_app.ui.home_activity.HomePagerAdapter;
-import com.pem.mensa_app.ui.home_activity.OnMensaItemAndCustomizeSelectedListener;
+import com.pem.mensa_app.ui.home_activity.HomeFeedItemsListener;
 
-public class HomeActivity extends AppCompatActivity implements OnMensaItemAndCustomizeSelectedListener {
+public class HomeActivity extends AppCompatActivity implements HomeFeedItemsListener {
 
     static final String TAG = HomeActivity.class.getSimpleName();
 
@@ -58,4 +60,12 @@ public class HomeActivity extends AppCompatActivity implements OnMensaItemAndCus
 
     }
 
+    @Override
+    public void onImageClicked(Mensa mensa, Meal meal) {
+        Intent intent = new Intent(HomeActivity.this, MealDetailActivity.class);
+        intent.putExtra("INTENT_MEAL_UID", meal.getUid());
+        intent.putExtra("meal_path", mensa.getMealPlanReference());
+        intent.putExtra("day", meal.getWeekday());
+        startActivity(intent);
+    }
 }
