@@ -1,6 +1,7 @@
 package com.pem.mensa_app;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
@@ -26,6 +27,11 @@ public class HomeActivity extends AppCompatActivity implements OnMensaItemAndCus
         viewPager.setAdapter(homePagerAdapter);
         TabLayout tabs = findViewById(R.id.home_tabs);
         tabs.setupWithViewPager(viewPager);
+
+        Toolbar toolbar = findViewById(R.id.home_toolbar);
+        toolbar.setTitle("  kom.eat");
+//        toolbar.setTitleTextAppearance(this, R.style.Komeat_Text_Header);
+        toolbar.setLogo(R.drawable.ic_glyph);
 
     }
 

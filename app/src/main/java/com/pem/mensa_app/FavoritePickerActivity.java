@@ -23,6 +23,7 @@ public class FavoritePickerActivity extends FragmentActivity implements OnMensaI
         viewPager.setAdapter(favoritePickerPagerAdapter);
 
         Toolbar toolbar = findViewById(R.id.favorite_picker_toolbar);
+        toolbar.setTitle("Customize Favorites");
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
