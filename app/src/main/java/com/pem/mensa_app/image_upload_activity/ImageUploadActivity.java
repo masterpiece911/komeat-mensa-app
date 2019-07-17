@@ -472,7 +472,7 @@ public class ImageUploadActivity extends AppCompatActivity {
                     Toast.makeText(ImageUploadActivity.this, "Permission was granted, yay!",Toast.LENGTH_SHORT).show();
                     dispatchTakePictureIntent();
                 } else {
-                    Toast.makeText(ImageUploadActivity.thgit is, "Do the picture without croping the image.",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ImageUploadActivity.this, "Do the picture without croping the image.",Toast.LENGTH_SHORT).show();
 
                 }
             }
