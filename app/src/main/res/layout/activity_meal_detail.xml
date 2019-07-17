@@ -7,21 +7,55 @@
     tools:context=".meal_detail_activity.MealDetailActivity">
 
     <androidx.viewpager.widget.ViewPager
-       android:id="@+id/view_pager"
+        android:id="@+id/view_pager"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintDimensionRatio="3:2"
+        app:layout_constraintDimensionRatio="2:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_comment_list"
-        android:layout_width="395dp"
-        android:layout_height="295dp"
-        android:layout_marginStart="8dp"
+    <!--Button
+        android:id="@+id/button_choose_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:text="PICTURE"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" /-->
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/add_picture_customize_button"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:textAppearance="@style/Komeat.Text.Subheader"
+        app:backgroundTint="#FFFFFF"
+        app:icon="@android:drawable/ic_menu_camera"
+        app:iconGravity="textStart"
+        app:iconTint="@color/onPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/add_like_customize_button"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:textAppearance="@style/Komeat.Text.Subheader"
+        app:backgroundTint="#FFFFFF"
+        app:icon="@drawable/favorite_inactive"
+        app:iconGravity="textStart"
+        app:iconTint="@color/onPrimary"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+        app:layout_constraintEnd_toEndOf="@+id/view_pager" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_comment_list"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
@@ -57,16 +91,6 @@
            app:layout_constraintTop_toBottomOf="@id/textView_meal_dishes" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-   <Button
-        android:id="@+id/button_choose_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="PICTURE"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <EditText
         android:id="@+id/editText_comment"
         android:layout_width="300dp"
@@ -75,18 +99,24 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="4dp"
         android:hint="Your comment..."
-        android:inputType="text"
+        android:inputType="textCapSentences"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/imageButton_add_comment"
+        app:layout_constraintEnd_toStartOf="@+id/add_comment_customize_button"
         app:layout_constraintStart_toStartOf="parent" />
-    <ImageButton
-        android:id="@+id/imageButton_add_comment"
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/add_comment_customize_button"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
+        android:textAppearance="@style/Komeat.Text.Subheader"
+        app:backgroundTint="#FFFFFF"
+        app:icon="@drawable/round_send"
+        app:iconTint="@color/onPrimary"
+        app:iconGravity="textStart"
+        android:gravity="center"
+        android:enabled="false"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_add_circle" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout> 

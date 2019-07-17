@@ -99,6 +99,8 @@ public class ImageUploadActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
 
+    private Button mUploadButtion;
+
 
 
     public ImageUploadActivity() {
@@ -121,7 +123,7 @@ public class ImageUploadActivity extends AppCompatActivity {
 
         // View
         mImageView = findViewById(R.id.imageView_meal_image);
-        Button button = findViewById(R.id.button_upload_image);
+        mUploadButtion = findViewById(R.id.button_upload_image);
         mProgressBar = findViewById(R.id.progressBar_upload_image);
 
         // Create List
@@ -131,7 +133,7 @@ public class ImageUploadActivity extends AppCompatActivity {
         handlePermissionRequest();
 
         // Listener for Upload Button
-        button.setOnClickListener(new View.OnClickListener() {
+        mUploadButtion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 uploadImage();
@@ -234,12 +236,11 @@ public class ImageUploadActivity extends AppCompatActivity {
                     .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                            mUploadButtion.setEnabled(taskSnapshot.getBytesTransferred() == taskSnapshot.getTotalByteCount());
                             double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
                             mProgressBar.setProgress((int) progress);
                         }
                     });
-
-
         } else {
             Toast.makeText(this, "No file selected", Toast.LENGTH_SHORT).show();
         }
@@ -423,10 +424,6 @@ public class ImageUploadActivity extends AppCompatActivity {
 
         if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_TAKE_PHOTO) {
-                //mSelectedImageUri = Uri.fromFile(new File(currentPhotoPath));
-
-                //mSelectedImageUri = Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), currentPhotoPath));
-                //mSelectedImageUri = FileProvider.getUriForFile(ImageUploadActivity.this, getPackageName() + ".mensa_app.fileprovider",);
                 mImageView.setImageURI(mSelectedImageUri);
                 // Crop the captured Image
                 performCrop();
@@ -442,7 +439,6 @@ public class ImageUploadActivity extends AppCompatActivity {
             if (requestCode == REQUEST_TAKE_PHOTO) {
                 finish();
             } else if (requestCode == PIC_CROP) {
-
 
             }
         }

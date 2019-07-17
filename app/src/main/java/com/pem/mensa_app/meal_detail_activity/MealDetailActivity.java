@@ -1,9 +1,13 @@
 package com.pem.mensa_app.meal_detail_activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -44,7 +48,7 @@ public class MealDetailActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private Button mButtonTakeImage;
     private EditText mEditTextComment;
-    private ImageButton mButtonAddComment;
+    private Button mButtonAddComment;
     private TextView mTextViewMealDescription;
     private TextView mTextViewMealIncredients;
 
@@ -67,17 +71,18 @@ public class MealDetailActivity extends AppCompatActivity {
         mDay = extras.getInt("day");
 
         mViewPager = findViewById(R.id.view_pager);
-        mButtonTakeImage = findViewById(R.id.button_choose_image);
+        mButtonTakeImage = findViewById(R.id.add_picture_customize_button);
 
         mTextViewMealDescription = findViewById(R.id.textView_meal_dishes);
         mTextViewMealIncredients = findViewById(R.id.textView_ingredients);
 
 
         mEditTextComment = findViewById(R.id.editText_comment);
-        mButtonAddComment = findViewById(R.id.imageButton_add_comment);
+        mButtonAddComment = findViewById(R.id.add_comment_customize_button);
 
         mCommentRecyclerView = findViewById(R.id.recycler_view_comment_list);
         mCommentRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mCommentRecyclerView.hasFixedSize();
 
         getMealDataFromFirebase();
 
@@ -93,11 +98,29 @@ public class MealDetailActivity extends AppCompatActivity {
             }
         });
 
+        mEditTextComment.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mButtonAddComment.setEnabled(!mEditTextComment.getText().toString().isEmpty());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
         mButtonAddComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                String comment =  mEditTextComment.getText().toString();
                insertComment(comment);
+               closeKeyboard();
             }
         });
     }
@@ -179,4 +202,13 @@ public class MealDetailActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void closeKeyboard() {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
 }
