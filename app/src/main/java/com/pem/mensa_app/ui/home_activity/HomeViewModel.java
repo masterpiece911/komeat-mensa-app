@@ -149,15 +149,7 @@ public class HomeViewModel extends AndroidViewModel {
                             QuerySnapshot qs = item.second;
                             Meal meal;
                             for (DocumentSnapshot s : qs.getDocuments()) {
-                                meal = new Meal(
-                                        s.getId(),
-                                        s.getString("name"),
-                                        s.getDouble("price"),
-                                        (List<String>) s.get("ingredients"),
-                                        (ArrayList<String>) s.get("comments"),
-                                        (ArrayList<String>) s.get("imagePaths"));
-                                meal.setMealplanID(s.getDocumentReference("mealplan").getId());
-                                meal.setWeekday(s.getLong("weekday").intValue());
+                                meal = new Meal(s);
                                 mealsList.add(meal);
 
                             }

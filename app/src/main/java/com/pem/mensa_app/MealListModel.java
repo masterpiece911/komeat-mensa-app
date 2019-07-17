@@ -97,7 +97,7 @@ public class MealListModel extends AndroidViewModel {
             // price?
             meal.setName(snapshot.getString(getString(R.string.meal_field_name)));
             weekday = snapshot.getDouble("weekday").intValue();
-            meal.setIngredients((List<String>) snapshot.get("ingredients"));
+            meal.setIngredients((ArrayList<String>) snapshot.get("ingredients"));
             meal.setUid(snapshot.getId());
             meals.get(weekday).add(meal);
         }
@@ -177,7 +177,7 @@ public class MealListModel extends AndroidViewModel {
         Map<String, Object> dayMap;
         JSONObject day, dish; String dishname; double dishprice;
         JSONArray dishes, ingredientsJson;
-        LinkedList<String> ingredients;
+        ArrayList<String> ingredients;
         String ingredient;
         try {
             JSONArray daysArray = mealPlanData.getJSONArray("days");
@@ -193,13 +193,13 @@ public class MealListModel extends AndroidViewModel {
                     dish = dishes.getJSONObject(j);
                     dishname = dish.getString("name");
 //                    dishprice = dish.getDouble("price");
-                    ingredients = new LinkedList<>();
+                    ingredients = new ArrayList<>();
                     ingredientsJson = dish.getJSONArray("ingredients");
                     for(int k = 0; k < ingredientsJson.length(); k++){
                         ingredient = ingredientsJson.getString(k);
                         ingredients.add(ingredient);
                     }
-                    meal = new Meal(null, dishname, null, ingredients, null, null);
+                    meal = new Meal(null, dishname, null,  null, null, null, ingredients, null, null);
                     dishesList.add(meal);
                 }
                 date.withField(DateTimeFieldType.dayOfWeek(), weekday + 1);

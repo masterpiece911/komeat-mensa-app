@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -95,6 +94,8 @@ public class MealDetailActivity extends AppCompatActivity {
                 imageUploadActivityIntent.putExtra("meal_path", mMealPlanReferencePath);
                 imageUploadActivityIntent.putExtra("day", mDay);
                 startActivity(imageUploadActivityIntent);
+
+                //TODO bei der Rückkehr ImageListe neu laden
             }
         });
 
@@ -136,13 +137,7 @@ public class MealDetailActivity extends AppCompatActivity {
                         //Toast.makeText(MealDetailActivity.this, documentSnapshot.getId(), Toast.LENGTH_SHORT).show();
                         Log.d("mealDetailActivity", documentSnapshot.getId());
 
-                        mMeal = new Meal(
-                                documentSnapshot.getId(),
-                                documentSnapshot.getString("name"),
-                                documentSnapshot.getDouble("price"),
-                                (List<String>) documentSnapshot.get("ingredients"),
-                                (ArrayList<String>) documentSnapshot.get("comments"),
-                                (ArrayList<String>) documentSnapshot.get("imagePaths"));
+                        mMeal = new Meal(documentSnapshot);
                         setDataToView();
                         setImageToView();
 

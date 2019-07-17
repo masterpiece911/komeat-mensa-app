@@ -1,7 +1,6 @@
 package com.pem.mensa_app.image_upload_activity;
 
 import android.Manifest;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -41,9 +40,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.pem.mensa_app.BuildConfig;
 import com.pem.mensa_app.R;
-import com.pem.mensa_app.models.imageUpoald.Image;
 import com.pem.mensa_app.models.imageUpoald.MealSelected;
 import com.pem.mensa_app.models.meal.Meal;
 
@@ -52,7 +49,6 @@ import org.joda.time.LocalDate;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileStore;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -196,9 +192,8 @@ public class ImageUploadActivity extends AppCompatActivity {
     private void uploadImage() {
         if (mSelectedImageUri != null) {
 
-            final DocumentReference imageReference = FirebaseFirestore.getInstance().collection("Image").document();
-            
-            final String fileName = imageReference.getId();
+            //final DocumentReference imageReference = FirebaseFirestore.getInstance().collection("Image").document();
+            final String fileName = mSelectedImageUri.getLastPathSegment();
 
             StorageReference fileReference = mStorageRef.child(fileName);
 
@@ -222,7 +217,7 @@ public class ImageUploadActivity extends AppCompatActivity {
                             List<String> uids = new ArrayList<>();
                             uids.add(mMealUid);
 
-                            uploadImageMetaData(imageReference, fileName, uids);
+                            uploadImageMetaData(fileName, uids);
 
                         }
                     })
@@ -252,44 +247,11 @@ public class ImageUploadActivity extends AppCompatActivity {
      * @param fileName Path to image in FirebaseStorage
      * @param uids List with all dishes, which are represented on the image
      */
-    private void uploadImageMetaData(final DocumentReference imageReference, String fileName, List<String> uids) {
+    private void uploadImageMetaData(final String fileName, final List<String> uids) {
         uids.addAll(getAllSelectedMeals());
         List<DocumentReference> documentReferences = parseToDocumentReference(uids);
-        String uid = mMealPlanReferencePath.substring(mMealPlanReferencePath.indexOf('/'));
-        DocumentReference mealplanReference = FirebaseFirestore.getInstance().collection(uid).document();
-        //TODO get the date from query before
-        Image image = new Image(documentReferences, fileName, LocalDate.now(), mealplanReference);
 
-        // Prepare Upload
-        Map<String, Object> imageMetadata = new HashMap<>();
-        imageMetadata.put("dayOfMonth", image.getDayOfMonth());
-        imageMetadata.put("month", image.getMonth());
-        imageMetadata.put("year", image.getYear());
-        imageMetadata.put("image_path", image.getImagePath());
-        imageMetadata.put("meal_reference", image.getMealReferences());
-        imageMetadata.put("mealplan_reference", image.getMealPlanReference());
-
-//        final DocumentReference imageReference = FirebaseFirestore.getInstance().collection("Image").document();
-        imageReference.set(imageMetadata)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "Successfully loaded image metadata to firebase.");
-                            //Toast.makeText(ImageUploadActivity.this, "Upload metadata success", Toast.LENGTH_SHORT);
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d(TAG, "Failed to load image metadata to firebase");
-                        //Toast.makeText(ImageUploadActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-        // Set data also in meal document
-        // Für jeden Essen Array holen, ergänzen und wieder updaten
+        // Set data in meal document
         for (final DocumentReference docRef : documentReferences) {
             docRef.get()
                     .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -298,23 +260,16 @@ public class ImageUploadActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 DocumentSnapshot documentSnapshot = task.getResult();
                                 if (documentSnapshot.exists()) {
-                                    //Toast.makeText(MealDetailActivity.this, documentSnapshot.getId(), Toast.LENGTH_SHORT).show();
-                                    Log.d("IamgeUploadActivity", documentSnapshot.getId());
+                                    Log.d(TAG, String.format("Get meal which should be updated: %s", documentSnapshot.getId()));
 
-                                    Meal meal = new Meal(
-                                            documentSnapshot.getId(),
-                                            documentSnapshot.getString("name"),
-                                            documentSnapshot.getDouble("price"),
-                                            (ArrayList<String>) documentSnapshot.get("ingredients"),
-                                            (ArrayList<String>) documentSnapshot.get("comments"),
-                                            (ArrayList<String>) documentSnapshot.get("imagePaths"));
+                                    Meal meal = new Meal(documentSnapshot);
 
                                     if (meal.getImages() == null) {
                                         ArrayList<String> imagePaths = new ArrayList<>();
-                                        imagePaths.add(imageReference.getPath());
+                                        imagePaths.add(fileName);
                                         meal.setImages(imagePaths);
                                     } else {
-                                        meal.getImages().add(imageReference.getPath());
+                                        meal.getImages().add(fileName);
                                     }
                                     updateMealMetaData(meal, docRef);
                                 } else {
@@ -330,14 +285,7 @@ public class ImageUploadActivity extends AppCompatActivity {
     }
 
     private void updateMealMetaData(Meal meal, DocumentReference mealDocumentReference) {
-        Map<String, Object> mealMetadata = new HashMap<>();
-        mealMetadata.put("name", meal.getName());
-        mealMetadata.put("price", meal.getPrice());
-        mealMetadata.put("ingredients", meal.getIngredients());
-        mealMetadata.put("comments", meal.getComments());
-        mealMetadata.put("imagePaths", meal.getImages());
-
-        mealDocumentReference.set(mealMetadata, SetOptions.merge())
+        mealDocumentReference.set(meal.toMap(), SetOptions.merge())
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -359,7 +307,7 @@ public class ImageUploadActivity extends AppCompatActivity {
     private List<String> getAllSelectedMeals() {
         List<String> uids = new ArrayList<>();
         for (MealSelected mealSelected : mealSelectedList) {
-            if (mealSelected.ismSelected()) {
+            if (mealSelected.ismIsSelected()) {
                 uids.add(mealSelected.getUid());
             }
         }
@@ -524,7 +472,7 @@ public class ImageUploadActivity extends AppCompatActivity {
                     Toast.makeText(ImageUploadActivity.this, "Permission was granted, yay!",Toast.LENGTH_SHORT).show();
                     dispatchTakePictureIntent();
                 } else {
-                    Toast.makeText(ImageUploadActivity.this, "Do the picture without croping the image.",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ImageUploadActivity.thgit is, "Do the picture without croping the image.",Toast.LENGTH_SHORT).show();
 
                 }
             }
@@ -532,9 +480,7 @@ public class ImageUploadActivity extends AppCompatActivity {
     }
 
     private void addSelectedMeal(DocumentSnapshot documentSnapshot) {
-        Meal meal = new Meal();
-        meal.setUid(documentSnapshot.getId());
-        MealSelected mealSelected = new MealSelected(documentSnapshot.getId(), documentSnapshot.getString(getString(R.string.meal_field_name)), false);
+        MealSelected mealSelected = new MealSelected(documentSnapshot, false);
         mealSelectedList.add(mealSelected);
     }
 }

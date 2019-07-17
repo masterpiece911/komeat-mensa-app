@@ -1,8 +1,11 @@
 package com.pem.mensa_app.models.meal;
 
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,97 +25,117 @@ public class Meal {
 
     private Double price;
 
-    private List<String> ingredients;
+    private Date timestamp;
+
+    private Long weekday;
+
+    private DocumentReference mealPlanReference;
+
+    private DocumentReference mensaReference;
+
+    private ArrayList<String> ingredients;
 
     private ArrayList<String> comments;
 
     private ArrayList<String> images;
 
-    private String mealplanID;
-
-    private int weekday;
-
-    public Meal(String uid, String name, Double price, List<String> ingredients, ArrayList<String> comments, ArrayList<String> images) {
+    public Meal(String uid, String name, Date timestamp,  Long weekday, DocumentReference mealplanReference, DocumentReference mensaReference, ArrayList<String> ingredients, ArrayList<String> comments, ArrayList<String> images) {
         this.uid = uid;
         this.name = name;
-        this.price = price;
+        this.timestamp = timestamp;
+        this.weekday = weekday;
+        this.mealPlanReference = mealplanReference;
+        this.mensaReference = mensaReference;
         this.ingredients = ingredients;
         this.comments = comments;
         this.images = images;
+    }
+
+    public Meal(DocumentSnapshot documentSnapshot) {
+        this.uid = documentSnapshot.getId();
+        this.name = documentSnapshot.getString("name");
+        this.timestamp = documentSnapshot.getDate("date");
+        this.weekday = documentSnapshot.getLong("weekday");
+        this.mealPlanReference = documentSnapshot.getDocumentReference("mealplan");
+        this.mensaReference = documentSnapshot.getDocumentReference("mensa");
+        this.ingredients = (ArrayList<String>) documentSnapshot.get("ingredients");
+        this.comments = (ArrayList<String>) documentSnapshot.get("comments");
+        this.images = (ArrayList<String>) documentSnapshot.get("imagePaths");
     }
 
     public Meal() {
 
     }
 
-    public void setUid(String uid) {
-        this.uid = uid;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setIngredients(List<String> ingredients) {
-        this.ingredients = ingredients;
-    }
-
-    public void setComments(ArrayList<String> comments) {
-        this.comments = comments;
-    }
-
-    public void setImages(ArrayList<String> images) {
-        this.images = images;
-    }
-
-    public void setMealplanID(String id) {
-        this.mealplanID = id;
-    }
-
-    public void setWeekday(int weekday) {
-        this.weekday = weekday;
-    }
-
     public String getUid() {
         return uid;
     }
 
-    public ArrayList<String> getComments() {
-        return comments;
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
-    public ArrayList<String> getImages() {
-        return images;
-    }
+    public String getName() { return name; }
 
-    public String getName() {
-        return name;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Double getPrice() {
         return price;
     }
 
-    public List<String> getIngredients() {
+    public Date getTimestamp() { return this.timestamp; }
+
+    public void setTimestamp(Date timestamp) { this.timestamp =  timestamp; }
+
+    public Long getWeekday() { return this.weekday; }
+
+    public void setWeekday (Long weekday) { this.weekday = weekday; }
+
+    public DocumentReference getMealPlanReference() { return this.mealPlanReference; }
+
+    public void setMealPlanReference(DocumentReference mealPlanReference) { this.mealPlanReference = mealPlanReference; }
+
+    public DocumentReference getMensaReference() { return mensaReference; }
+
+    public void setMensaReference(DocumentReference mensaReference) { this.mensaReference = mensaReference; }
+
+    public ArrayList<String> getIngredients() {
         return ingredients;
     }
 
-    public String getMealplanID() {
-        return mealplanID;
+    public void setIngredients(ArrayList<String> ingredients) {
+        this.ingredients = ingredients;
     }
 
-    public int getWeekday() {
-        return weekday;
+    public ArrayList<String> getComments() {
+        return comments;
+    }
+
+    public void setComments(ArrayList<String> comments) {
+        this.comments = comments;
+    }
+
+    public ArrayList<String> getImages() {
+        return images;
+    }
+
+    public void setImages(ArrayList<String> images) {
+        this.images = images;
     }
 
     public Map<String, Object> toMap() {
         Map<String, Object> mealMetadata = new HashMap<>();
         mealMetadata.put("name", getName());
         mealMetadata.put("price", getPrice());
+        mealMetadata.put("date", getTimestamp());
+        mealMetadata.put("weekday", getWeekday());
+        mealMetadata.put("mealplan", getMealPlanReference());
+        mealMetadata.put("mensa", getMensaReference());
         mealMetadata.put("ingredients", getIngredients());
         mealMetadata.put("comments", getComments());
         mealMetadata.put("imagePaths", getImages());
-
         return mealMetadata;
     }
 }

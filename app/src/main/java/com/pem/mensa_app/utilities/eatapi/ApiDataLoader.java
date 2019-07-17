@@ -99,7 +99,7 @@ public class ApiDataLoader implements Runnable {
         Map<String, Object> dayMap;
         JSONObject day, dish; String dishname;
         JSONArray dishes, ingredientsJson;
-        LinkedList<String> ingredients;
+        ArrayList<String> ingredients;
         String ingredient;
         try {
             JSONArray daysArray = mealPlanData.getJSONArray("days");
@@ -115,13 +115,13 @@ public class ApiDataLoader implements Runnable {
                 for(int j = 0; j < dishes.length(); j++) {
                     dish = dishes.getJSONObject(j);
                     dishname = dish.getString("name");
-                    ingredients = new LinkedList<>();
+                    ingredients = new ArrayList<>();
                     ingredientsJson = dish.getJSONArray("ingredients");
                     for(int k = 0; k < ingredientsJson.length(); k++){
                         ingredient = ingredientsJson.getString(k);
                         ingredients.add(ingredient);
                     }
-                    meal = new Meal(null, dishname, null, ingredients, null, null);
+                    meal = new Meal(null, dishname, null,  null, null, null, ingredients, null, null);
                     dishesList.add(meal);
                 }
                 dayMap.put("meals", getReferenceListFromMeals(dishesList, newMealplanRef, dayDate, weekday));
