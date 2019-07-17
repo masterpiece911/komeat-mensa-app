@@ -9,13 +9,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:liftOnScroll="true"
-        app:title="komeat"
+        android:elevation="8dp"
         >
 
         <androidx.appcompat.widget.Toolbar
+            android:id="@+id/home_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            app:liftOnScroll="true"
+            app:titleTextAppearance="@style/Komeat.Text.Header"
+
             />
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/home_tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabTextAppearance="@style/Komeat.Text.Subheader"
+            app:liftOnScroll="true"
+            app:tabMode="fixed"/>
 
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -23,14 +35,10 @@
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/home_viewpager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+        >
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/home_tabs"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:tabTextAppearance="@style/Komeat.Text.Subheader"
-            app:tabMode="fixed"/>
 
     </androidx.viewpager.widget.ViewPager>
 

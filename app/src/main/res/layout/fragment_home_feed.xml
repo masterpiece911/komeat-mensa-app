@@ -15,8 +15,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/feed_customize_button"
+        android:clipToPadding="false"
+        android:clipChildren="false"
         tools:itemCount="10"
-        tools:listitem="@layout/item_mensa" />
+        tools:listitem="@layout/item_mensa_expanded"
+        />
+
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/feed_customize_button"
@@ -32,4 +36,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/feed_frag_recyclerview"
         app:layout_constraintBottom_toBottomOf="parent"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
