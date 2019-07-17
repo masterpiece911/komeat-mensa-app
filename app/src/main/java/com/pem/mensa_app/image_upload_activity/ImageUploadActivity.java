@@ -446,18 +446,23 @@ public class ImageUploadActivity extends AppCompatActivity {
 
     private void loadMealDescription(List<DocumentReference> mealDocumentReferenceList) {
         for (DocumentReference mealDocumentReference : mealDocumentReferenceList) {
+            String string = mealDocumentReference.getId();
             FirebaseFirestore.getInstance().collection("Meal").document(mealDocumentReference.getId())
-                    .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if(task.isSuccessful() && task.getResult().exists()) {
                         DocumentSnapshot documentSnapshot = task.getResult();
 
-                        Meal meal = new Meal();
-                        meal.setUid(documentSnapshot.getId());
-                        MealSelected mealSelected = new MealSelected(documentSnapshot.getId(), documentSnapshot.getString(getString(R.string.meal_field_name)), false);
-                        mealSelectedList.add(mealSelected);
+                        addSelectedMeal(documentSnapshot);
                     }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(ImageUploadActivity.this, e.getMessage(), Toast.LENGTH_LONG);
+
                 }
             });
         }
@@ -524,5 +529,12 @@ public class ImageUploadActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    private void addSelectedMeal(DocumentSnapshot documentSnapshot) {
+        Meal meal = new Meal();
+        meal.setUid(documentSnapshot.getId());
+        MealSelected mealSelected = new MealSelected(documentSnapshot.getId(), documentSnapshot.getString(getString(R.string.meal_field_name)), false);
+        mealSelectedList.add(mealSelected);
     }
 }
