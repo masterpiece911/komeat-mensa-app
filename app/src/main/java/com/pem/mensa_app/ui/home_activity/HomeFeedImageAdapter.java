@@ -21,11 +21,13 @@ import com.pem.mensa_app.models.mensa.Mensa;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 
 public class HomeFeedImageAdapter extends ListAdapter<Meal, HomeFeedImageAdapter.ImageViewHolder> {
 
     private final HomeFeedAdapter.MensaDetailClickListener mListener;
     private Mensa mensa;
+    private Random random = new Random();
 
     public HomeFeedImageAdapter(HomeFeedAdapter.MensaDetailClickListener listener) {
         super(DIFF_CALLBACK);
@@ -91,7 +93,8 @@ public class HomeFeedImageAdapter extends ListAdapter<Meal, HomeFeedImageAdapter
                         .load(R.drawable.placeholder)
                         .into(mMealImage);
             } else {
-                String path = data.getImages().get(0).split("/")[1];
+
+                String path = data.getImages().get(random.nextInt(data.getImages().size()));
                 StorageReference storageRef = FirebaseStorage.getInstance().getReference("images/" + path);
                 GlideApp.with(itemView)
                         .load(storageRef)

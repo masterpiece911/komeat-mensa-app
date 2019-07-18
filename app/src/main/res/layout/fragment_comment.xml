@@ -14,7 +14,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="4dp"
         android:text="TESTCOMMMENT"
-        android:textAppearance="?attr/textAppearanceListItem"
+        android:textAppearance="@style/Komeat.Text.Subheader"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

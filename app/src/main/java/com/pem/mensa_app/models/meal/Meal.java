@@ -27,7 +27,7 @@ public class Meal {
 
     private Date timestamp;
 
-    private Long weekday;
+    private int weekday;
 
     private DocumentReference mealPlanReference;
 
@@ -43,7 +43,7 @@ public class Meal {
         this.uid = uid;
         this.name = name;
         this.timestamp = timestamp;
-        this.weekday = weekday;
+        this.weekday = weekday.intValue();
         this.mealPlanReference = mealplanReference;
         this.mensaReference = mensaReference;
         this.ingredients = ingredients;
@@ -55,7 +55,7 @@ public class Meal {
         this.uid = documentSnapshot.getId();
         this.name = documentSnapshot.getString("name");
         this.timestamp = documentSnapshot.getDate("date");
-        this.weekday = documentSnapshot.getLong("weekday");
+        this.weekday = documentSnapshot.getLong("weekday").intValue();
         this.mealPlanReference = documentSnapshot.getDocumentReference("mealplan");
         this.mensaReference = documentSnapshot.getDocumentReference("mensa");
         this.ingredients = (ArrayList<String>) documentSnapshot.get("ingredients");
@@ -89,9 +89,9 @@ public class Meal {
 
     public void setTimestamp(Date timestamp) { this.timestamp =  timestamp; }
 
-    public Long getWeekday() { return this.weekday; }
+    public int getWeekday() { return this.weekday; }
 
-    public void setWeekday (Long weekday) { this.weekday = weekday; }
+    public void setWeekday (int weekday) { this.weekday = weekday; }
 
     public DocumentReference getMealPlanReference() { return this.mealPlanReference; }
 
