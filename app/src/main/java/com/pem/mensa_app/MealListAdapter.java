@@ -17,6 +17,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.pem.mensa_app.models.meal.Meal;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -102,9 +103,14 @@ public class MealListAdapter extends ListAdapter<Meal, MealListAdapter.MealViewH
                     mClickListener.onMealClick(getAdapterPosition());
                 }
             });
+             ArrayList<String> imagelist= data.getImages();
+             if (imagelist==null || imagelist.isEmpty()){
+                 mImageView.setImageResource(R.drawable.placeholder);
+             }else {
+                 StorageReference reference = FirebaseStorage.getInstance().getReference("/images/"+imagelist.get(0));
+                 GlideApp.with(this.mItemView).load(reference).into(mImageView);
+             }
 
-            StorageReference reference = FirebaseStorage.getInstance().getReference("/images/halbeshendl.png");
-            GlideApp.with(this.mItemView).load(reference).into(mImageView);
         }
 
     }
