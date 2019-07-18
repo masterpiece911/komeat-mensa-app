@@ -72,9 +72,10 @@ public class MealListModel extends AndroidViewModel {
     public void informationSet(){
         LocalDate date = new LocalDate(DateTimeZone.forID("Europe/Berlin"));
         if(selectedWeekday == -1) {
-            selectedWeekday = date.dayOfWeek().get();
-            if (selectedWeekday > 5) {
-                selectedWeekday = 5;
+            // Starts with monday = 0, therefore subtract 1
+            selectedWeekday = date.dayOfWeek().get() -1 ;
+            if (selectedWeekday > 4) {
+                selectedWeekday = 4;
             }
         }
         if (mensaEatApiUrl != null) {
@@ -103,7 +104,7 @@ public class MealListModel extends AndroidViewModel {
         }
 
         weekMealData = meals;
-        mealData.postValue(weekMealData.get(this.selectedWeekday -1));
+        mealData.postValue(weekMealData.get(this.selectedWeekday));
     }
 
     private void loadDataFromFirebase(LocalDate date) {
@@ -199,7 +200,7 @@ public class MealListModel extends AndroidViewModel {
                         ingredient = ingredientsJson.getString(k);
                         ingredients.add(ingredient);
                     }
-                    meal = new Meal(null, dishname, null,  null, null, null, ingredients, null, null);
+                    meal = new Meal(null, dishname, null,  weekday, null, null, ingredients, null, null);
                     dishesList.add(meal);
                 }
                 date.withField(DateTimeFieldType.dayOfWeek(), weekday + 1);

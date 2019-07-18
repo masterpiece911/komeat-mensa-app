@@ -43,6 +43,8 @@ import com.google.firebase.storage.UploadTask;
 import com.pem.mensa_app.R;
 import com.pem.mensa_app.models.imageUpoald.MealSelected;
 import com.pem.mensa_app.models.meal.Meal;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
@@ -145,7 +147,7 @@ public class ImageUploadActivity extends AppCompatActivity {
     private void loadData() {
         //TODO
         final LocalDate date = new LocalDate(DateTimeZone.forID("Europe/Berlin"));
-        final LocalDate newDate = date.minusDays(date.getDayOfWeek()).plusDays(mDay);
+        final LocalDate newDate = date.minusDays(date.getDayOfWeek()).plusDays(mDay + 1);
 
         Log.d(TAG, String.format("old date %s, new date %s", date.toString(), newDate.toString()));
 
@@ -166,7 +168,7 @@ public class ImageUploadActivity extends AppCompatActivity {
 
                             // TODO day of week
                             for (int i = 0; i < days.size(); i++) {
-                                if (i == newDate.getDayOfWeek()-1) {
+                                if (i == mDay) {
                                     HashMap<String, ArrayList<DocumentReference>> meals = days.get(i);
                                     Iterator iterator = meals.entrySet().iterator();
                                     ArrayList<DocumentReference> mealDocumentReferenceList = new ArrayList<>();
@@ -376,12 +378,14 @@ public class ImageUploadActivity extends AppCompatActivity {
                 // Crop the captured Image
                 performCrop();
             } else if (requestCode == PIC_CROP) {
-                Bundle extras = data.getExtras();
-                Bitmap cropedImage = extras.getParcelable("data");
-                //retrieve a reference to the ImageView
-                //display the returned cropped image
-                mImageView.setImageBitmap(cropedImage);
-
+                CropImage.ActivityResult result = CropImage.getActivityResult(data);
+                if (resultCode == RESULT_OK) {
+                    Uri resultUri = result.getUri();
+                    mImageView.setImageURI(result.getUri());
+                } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                    Exception error = result.getError();
+                    mImageView.setImageURI(mSelectedImageUri);
+                }
             }
         } else if (resultCode == RESULT_CANCELED) {
             if (requestCode == REQUEST_TAKE_PHOTO) {
@@ -418,28 +422,12 @@ public class ImageUploadActivity extends AppCompatActivity {
     }
 
     private void performCrop() {
-        Intent cropIntent = new Intent("com.android.camera.action.CROP");
-        cropIntent.setType("image/*");
-        List<ResolveInfo> resolveInfo = ImageUploadActivity.this.getPackageManager().queryIntentActivities(cropIntent, 0);
-
-        if (resolveInfo.isEmpty()) {
-            Toast.makeText(this, "Device doesn't support a crop action!", Toast.LENGTH_SHORT);
-        } else {
-            ResolveInfo res = resolveInfo.get(0);
-            cropIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            cropIntent.setDataAndType(mSelectedImageUri, "image/*");
-            cropIntent.setClassName(res.activityInfo.packageName, res.activityInfo.name);
-            cropIntent.putExtra("crop", "true");
-            cropIntent.putExtra("aspectX", 1);
-            cropIntent.putExtra("aspectY", 1);
-            //indicate output X and Y
-            cropIntent.putExtra("outputX", 256);
-            cropIntent.putExtra("outputY", 256);
-            //retrieve data on return
-            cropIntent.putExtra("return-data", true);
-            //start the activity - we handle returning in onActivityResult
-            startActivityForResult(cropIntent, PIC_CROP);
-        }
+        Intent intent = CropImage.activity(mSelectedImageUri)
+                .setAspectRatio(1, 2)
+                .setFixAspectRatio(true)
+                .setCropShape(CropImageView.CropShape.RECTANGLE)
+                .getIntent(this);
+        startActivityForResult(intent, PIC_CROP);
     }
 
     private void handlePermissionRequest() {

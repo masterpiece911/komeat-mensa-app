@@ -39,11 +39,11 @@ public class Meal {
 
     private ArrayList<String> images;
 
-    public Meal(String uid, String name, Date timestamp,  Long weekday, DocumentReference mealplanReference, DocumentReference mensaReference, ArrayList<String> ingredients, ArrayList<String> comments, ArrayList<String> images) {
+    public Meal(String uid, String name, Date timestamp,  int weekday, DocumentReference mealplanReference, DocumentReference mensaReference, ArrayList<String> ingredients, ArrayList<String> comments, ArrayList<String> images) {
         this.uid = uid;
         this.name = name;
         this.timestamp = timestamp;
-        this.weekday = weekday.intValue();
+        this.weekday = weekday;
         this.mealPlanReference = mealplanReference;
         this.mensaReference = mensaReference;
         this.ingredients = ingredients;
@@ -55,7 +55,7 @@ public class Meal {
         this.uid = documentSnapshot.getId();
         this.name = documentSnapshot.getString("name");
         this.timestamp = documentSnapshot.getDate("date");
-        this.weekday = documentSnapshot.getLong("weekday").intValue();
+        this.weekday = documentSnapshot.getLong("weekday") != null ? weekday = documentSnapshot.getLong("weekday").intValue() : 0; //TODO: Fix this
         this.mealPlanReference = documentSnapshot.getDocumentReference("mealplan");
         this.mensaReference = documentSnapshot.getDocumentReference("mensa");
         this.ingredients = (ArrayList<String>) documentSnapshot.get("ingredients");
