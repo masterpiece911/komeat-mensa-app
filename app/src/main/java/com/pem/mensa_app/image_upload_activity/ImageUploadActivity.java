@@ -233,9 +233,15 @@ public class ImageUploadActivity extends AppCompatActivity {
                     .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                            mProgressBar.setIndeterminate(false);
                             mUploadButtion.setEnabled(taskSnapshot.getBytesTransferred() == taskSnapshot.getTotalByteCount());
                             double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
-                            mProgressBar.setProgress((int) progress);
+                            if(progress <= 10.0) {
+                                mProgressBar.setIndeterminate(true);
+                            } else {
+                                mProgressBar.setIndeterminate(false);
+                                mProgressBar.setProgress((int) progress);
+                            }
                         }
                     });
         } else {
@@ -423,7 +429,7 @@ public class ImageUploadActivity extends AppCompatActivity {
 
     private void performCrop() {
         Intent intent = CropImage.activity(mSelectedImageUri)
-                .setAspectRatio(2, 1)
+                .setAspectRatio(3, 2)
                 .setFixAspectRatio(true)
                 .setCropShape(CropImageView.CropShape.RECTANGLE)
                 .getIntent(this);
