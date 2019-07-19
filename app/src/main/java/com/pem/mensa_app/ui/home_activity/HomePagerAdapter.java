@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-import com.pem.mensa_app.MapFragment;
 import com.pem.mensa_app.R;
 
 /**
