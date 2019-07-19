@@ -470,5 +470,7 @@ public class ImageUploadActivity extends AppCompatActivity {
     private void addSelectedMeal(DocumentSnapshot documentSnapshot) {
         MealSelected mealSelected = new MealSelected(documentSnapshot, false);
         mealSelectedList.add(mealSelected);
+        // -1 because it is the last item of the list.
+        mRecyclerView.getAdapter().notifyItemChanged(mealSelectedList.size()-1);
     }
 }
