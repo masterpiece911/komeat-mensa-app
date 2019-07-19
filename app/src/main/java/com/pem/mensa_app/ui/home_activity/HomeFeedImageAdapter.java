@@ -96,7 +96,7 @@ public class HomeFeedImageAdapter extends ListAdapter<Meal, HomeFeedImageAdapter
                 mMealName.setVisibility(View.VISIBLE);
                 GlideApp.with(itemView)
                         .load(R.drawable.placeholder)
-                        .transform(new CenterCrop(), new RoundedCorners(edge_radius))
+                        .transform(new RoundedCorners(edge_radius))
                         .into(mMealImage);
             } else {
                 mMealName.setVisibility(View.GONE);
@@ -104,7 +104,7 @@ public class HomeFeedImageAdapter extends ListAdapter<Meal, HomeFeedImageAdapter
                 StorageReference storageRef = FirebaseStorage.getInstance().getReference("images/" + path);
                 GlideApp.with(itemView)
                         .load(storageRef)
-                        .transform(new CenterCrop(), new RoundedCorners(edge_radius))
+                        .transform(new RoundedCorners(edge_radius))
                         .placeholder(R.drawable.placeholder)
                         .into(mMealImage);
             }
