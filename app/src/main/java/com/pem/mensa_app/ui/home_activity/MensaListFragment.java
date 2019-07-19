@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.pem.mensa_app.R;
 import com.pem.mensa_app.models.mensa.Mensa;
+import com.pem.mensa_app.viewmodels.HomeViewModel;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

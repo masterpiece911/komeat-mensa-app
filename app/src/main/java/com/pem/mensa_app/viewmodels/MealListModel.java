@@ -1,4 +1,4 @@
-package com.pem.mensa_app;
+package com.pem.mensa_app.viewmodels;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
@@ -25,6 +25,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
+import com.pem.mensa_app.R;
 import com.pem.mensa_app.models.meal.Meal;
 
 import org.joda.time.DateTimeFieldType;

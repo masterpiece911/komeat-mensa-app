@@ -1,4 +1,4 @@
-package com.pem.mensa_app.meal_detail_activity;
+package com.pem.mensa_app.viewmodels;
 
 import android.util.Log;
 

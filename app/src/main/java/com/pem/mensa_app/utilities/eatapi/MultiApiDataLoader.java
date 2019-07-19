@@ -23,7 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.WriteBatch;
 import com.pem.mensa_app.models.meal.Meal;
 import com.pem.mensa_app.models.mensa.Mensa;
-import com.pem.mensa_app.ui.home_activity.HomeViewModel;
+import com.pem.mensa_app.viewmodels.HomeViewModel;
 
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;

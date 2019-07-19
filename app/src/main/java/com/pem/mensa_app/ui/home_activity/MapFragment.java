@@ -2,11 +2,9 @@ package com.pem.mensa_app.ui.home_activity;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.VectorDrawable;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -33,10 +31,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.pem.mensa_app.R;
 import com.pem.mensa_app.models.mensa.Mensa;
 import com.pem.mensa_app.models.mensa.RestaurantType;
+import com.pem.mensa_app.viewmodels.HomeViewModel;
 
 import java.util.List;
-
-import io.opencensus.internal.Utils;
 
 
 /**
