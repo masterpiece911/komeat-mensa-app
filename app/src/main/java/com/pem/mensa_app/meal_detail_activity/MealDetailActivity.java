@@ -15,6 +15,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
@@ -45,8 +47,6 @@ public class MealDetailActivity extends AppCompatActivity {
     private String mMealPlanReferencePath;
     private int mDay;
 
-    private Meal mMeal;
-
     private ImageAdapter mImageAdapter;
     private ViewPager mViewPager;
     private Button mButtonTakeImage;
@@ -62,6 +62,8 @@ public class MealDetailActivity extends AppCompatActivity {
 
     private ArrayList<String> mCommentList;
 
+    private MealDetailViewModel mViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +76,9 @@ public class MealDetailActivity extends AppCompatActivity {
         }
         mMealPlanReferencePath = extras.getString("meal_path");
         mDay = extras.getInt("day");
+
+        mViewModel = ViewModelProviders.of(this).get(MealDetailViewModel.class);
+        mViewModel.setMeal(mMealUid);
 
         mViewPager = findViewById(R.id.view_pager);
         mButtonTakeImage = findViewById(R.id.add_picture_customize_button);
@@ -91,7 +96,13 @@ public class MealDetailActivity extends AppCompatActivity {
         mCommentRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mCommentRecyclerView.hasFixedSize();
 
-        getMealDataFromFirebase();
+        mViewModel.getMealData().observe(this, new Observer<Meal>() {
+            @Override
+            public void onChanged(Meal meal) {
+                setDataToView(meal);
+                setImageToView(meal);
+            }
+        });
 
 
         mButtonTakeImage.setOnClickListener(new View.OnClickListener() {
@@ -141,34 +152,6 @@ public class MealDetailActivity extends AppCompatActivity {
         });
     }
 
-
-
-    private void getMealDataFromFirebase() {
-        final DocumentReference docRef = db.collection(getString(R.string.meal_collection_identifier)).document(mMealUid);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot documentSnapshot = task.getResult();
-                    if (documentSnapshot.exists()) {
-                        //Toast.makeText(MealDetailActivity.this, documentSnapshot.getId(), Toast.LENGTH_SHORT).show();
-                        Log.d("mealDetailActivity", documentSnapshot.getId());
-
-                        mMeal = new Meal(documentSnapshot);
-                        setDataToView();
-                        setImageToView();
-
-                    } else {
-                        Toast.makeText(MealDetailActivity.this, "Document is unknown.", Toast.LENGTH_SHORT).show();
-                        Log.d("mealDetailActivity", "Document is unknown");
-                    }
-                } else {
-                    Log.d("mealDetailActivity", "get failed with: ", task.getException());
-                }
-            }
-        });
-    }
-
     private void insertComment(String comment) {
         mCommentList.add(comment);
         mCommentAdapter.notifyItemInserted(mCommentList.size()-1);
@@ -177,31 +160,31 @@ public class MealDetailActivity extends AppCompatActivity {
         updateCommentToFirebase();
     }
 
-    private void setDataToView() {
-        mTextViewMealDescription.setText(mMeal.getName());
+    private void setDataToView(Meal meal) {
+        mTextViewMealDescription.setText(meal.getName());
 
         StringBuilder stringBuilderIngredients = new StringBuilder();
-        for (String ingredient : mMeal.getIngredients()) {
+        for (String ingredient : meal.getIngredients()) {
             stringBuilderIngredients.append(ingredient);
             stringBuilderIngredients.append(", ");
         }
         mTextViewMealIncredients.setText(stringBuilderIngredients.toString());
 
-        mCommentList = mMeal.getComments();
+        mCommentList = meal.getComments();
         if (mCommentList == null) {
             mCommentList = new ArrayList<>();
         }
         mCommentAdapter = new CommentAdapter(mCommentList);
         mCommentRecyclerView.setAdapter(mCommentAdapter);
 
-        mTextViewLikeCounter.setText(String.valueOf(mMeal.getLikeCounter()));
-        mButtonLike.setIcon(mMeal.getLikeCounter() > 0 ? getResources().getDrawable(ic_round_favorite_24px, getTheme()) : getResources().getDrawable(ic_round_favorite_border_24px, getTheme()));
+        mTextViewLikeCounter.setText(String.valueOf(meal.getLikeCounter()));
+        mButtonLike.setIcon(meal.getLikeCounter() > 0 ? getResources().getDrawable(ic_round_favorite_24px, getTheme()) : getResources().getDrawable(ic_round_favorite_border_24px, getTheme()));
     }
 
-    private void setImageToView() {
-        if (mMeal.getImages() == null)
-            mMeal.setImages(new ArrayList<String>());
-        mImageAdapter= new ImageAdapter(getSupportFragmentManager(), mMeal.getImages());
+    private void setImageToView(Meal meal) {
+        if (meal.getImages() == null)
+            meal.setImages(new ArrayList<String>());
+        mImageAdapter= new ImageAdapter(getSupportFragmentManager(), meal.getImages());
         mViewPager.setAdapter(mImageAdapter);
     }
 
@@ -227,25 +210,8 @@ public class MealDetailActivity extends AppCompatActivity {
     }
 
     private void increaseLikeCounter() {
-        mMeal.setLikeCounter(mMeal.getLikeCounter()+1);
-        mButtonLike.setIcon(mMeal.getLikeCounter() > 0 ? getResources().getDrawable(ic_round_favorite_24px, getTheme()) : getResources().getDrawable(ic_round_favorite_border_24px, getTheme()));
-        final DocumentReference docRef = db.collection(getString(R.string.meal_collection_identifier)).document(mMealUid);
-        docRef.update("likeCounter", mMeal.getLikeCounter())
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "Successfully updated like counter to firebase.");
-                            Toast.makeText(MealDetailActivity.this, "Upload like counter success", Toast.LENGTH_SHORT);
-                        }
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d(TAG, "Failure updated like counter to firebase.");
-
-                    }
-                });
+//        mTextViewLikeCounter.setText()
+        mViewModel.incrementLikes();
     }
 
 }
