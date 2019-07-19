@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -22,15 +23,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.pem.mensa_app.R;
 import com.pem.mensa_app.image_upload_activity.ImageUploadActivity;
 import com.pem.mensa_app.models.meal.Meal;
+import com.pem.mensa_app.viewmodels.MealDetailViewModel;
 
 import java.util.ArrayList;
 
@@ -77,8 +77,6 @@ public class MealDetailActivity extends AppCompatActivity {
         mMealPlanReferencePath = extras.getString("meal_path");
         mDay = extras.getInt("day");
 
-        mViewModel = ViewModelProviders.of(this).get(MealDetailViewModel.class);
-        mViewModel.setMeal(mMealUid);
 
         mViewPager = findViewById(R.id.view_pager);
         mButtonTakeImage = findViewById(R.id.add_picture_customize_button);
@@ -95,15 +93,6 @@ public class MealDetailActivity extends AppCompatActivity {
         mCommentRecyclerView = findViewById(R.id.recycler_view_comment_list);
         mCommentRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mCommentRecyclerView.hasFixedSize();
-
-        mViewModel.getMealData().observe(this, new Observer<Meal>() {
-            @Override
-            public void onChanged(Meal meal) {
-                setDataToView(meal);
-                setImageToView(meal);
-            }
-        });
-
 
         mButtonTakeImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,12 +141,19 @@ public class MealDetailActivity extends AppCompatActivity {
         });
     }
 
-    private void insertComment(String comment) {
-        mCommentList.add(comment);
-        mCommentAdapter.notifyItemInserted(mCommentList.size()-1);
-        mEditTextComment.getText().clear();
+    @Override
+    protected void onResume() {
+        super.onResume();
+            mViewModel = ViewModelProviders.of(this).get(MealDetailViewModel.class);
+            mViewModel.setMeal(mMealUid);
 
-        updateCommentToFirebase();
+            mViewModel.getMealData().observe(this, new Observer<Meal>() {
+                @Override
+                public void onChanged(Meal meal) {
+                    setDataToView(meal);
+                    setImageToView(meal);
+                }
+            });
     }
 
     private void setDataToView(Meal meal) {
@@ -184,23 +180,26 @@ public class MealDetailActivity extends AppCompatActivity {
     private void setImageToView(Meal meal) {
         if (meal.getImages() == null)
             meal.setImages(new ArrayList<String>());
-        mImageAdapter= new ImageAdapter(getSupportFragmentManager(), meal.getImages());
-        mViewPager.setAdapter(mImageAdapter);
+        if(mImageAdapter == null){
+            mImageAdapter= new ImageAdapter(getSupportFragmentManager(), meal.getImages());
+            mViewPager.setAdapter(mImageAdapter);
+        } else {
+            mImageAdapter.setImagePaths(meal.getImages());
+        }
     }
 
-    private void updateCommentToFirebase() {
-        final DocumentReference docRef = db.collection(getString(R.string.meal_collection_identifier)).document(mMealUid);
-        docRef.update("comments", mCommentList).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    Log.d(TAG, "Successfully loaded comments to firebase.");
-                    Toast.makeText(MealDetailActivity.this, "Upload comments success", Toast.LENGTH_SHORT);
-                }
-            }
-        });
+    private void insertComment(String comment) {
+//        mCommentList.add(comment);
+//        mCommentAdapter.notifyItemInserted(mCommentList.size()-1);
+//        mEditTextComment.getText().clear();
+//
+//        updateCommentToFirebase();
+
+        mEditTextComment.getText().clear();
+        mViewModel.addComment(comment);
     }
 
+    
     private void closeKeyboard() {
         View view = this.getCurrentFocus();
         if (view != null) {

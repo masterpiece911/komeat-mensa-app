@@ -54,4 +54,8 @@ public class ImageFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
     }
 
+    public String getImagePath() {
+        return this.imagePath;
+    }
+
  }
