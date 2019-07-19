@@ -20,11 +20,6 @@ import java.util.LinkedList;
 
 public class MensaListAdapter extends ListAdapter<Mensa, MensaListAdapter.MensaViewHolder> {
 
-    private static final String MENSA = "#76AD40";
-    private static final String STUBISTRO = "#B90748";
-    private static final String STUCAFE = "#F18800";
-    private static final String STULOUNGE = "#5D2F00";
-
     private final boolean hasArrow;
     private final boolean hasCheckbox;
 
@@ -100,22 +95,7 @@ public class MensaListAdapter extends ListAdapter<Mensa, MensaListAdapter.MensaV
             mTextName.setText(data.getName());
             mTextType.setText(data.getType().toString());
 
-            int color = 0x000000;
-
-            switch (data.getType()) {
-                case MENSA:
-                    color = Color.parseColor(MENSA);
-                    break;
-                case STUCAFE:
-                    color = Color.parseColor(STUCAFE);
-                    break;
-                case STUBISTRO:
-                    color = Color.parseColor(STUBISTRO);
-                    break;
-                case STULOUNGE:
-                    color = Color.parseColor(STULOUNGE);
-                    break;
-            }
+            int color = Color.parseColor(data.getType().toColor());
 
             mTextType.setTextColor(color);
 
