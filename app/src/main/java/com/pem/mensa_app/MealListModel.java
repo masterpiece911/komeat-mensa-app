@@ -102,7 +102,7 @@ public class MealListModel extends AndroidViewModel {
             meal.setImages((ArrayList<String>) snapshot.get("imagePaths"));
             meal.setUid(snapshot.getId());
             meals.get(weekday).add(meal);
-            meal.setImages((ArrayList<String>) snapshot.get("image_path"));
+
         }
 
         weekMealData = meals;
