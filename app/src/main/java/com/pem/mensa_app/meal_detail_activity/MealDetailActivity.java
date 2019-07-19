@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -29,7 +30,6 @@ import com.pem.mensa_app.image_upload_activity.ImageUploadActivity;
 import com.pem.mensa_app.models.meal.Meal;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MealDetailActivity extends AppCompatActivity {
 
@@ -46,6 +46,8 @@ public class MealDetailActivity extends AppCompatActivity {
     private ImageAdapter mImageAdapter;
     private ViewPager mViewPager;
     private Button mButtonTakeImage;
+    private Button mButtonLike;
+    private TextView mTextViewLikeCounter;
     private EditText mEditTextComment;
     private Button mButtonAddComment;
     private TextView mTextViewMealDescription;
@@ -71,6 +73,8 @@ public class MealDetailActivity extends AppCompatActivity {
 
         mViewPager = findViewById(R.id.view_pager);
         mButtonTakeImage = findViewById(R.id.add_picture_customize_button);
+        mButtonLike = findViewById(R.id.add_like_customize_button);
+        mTextViewLikeCounter = findViewById(R.id.textView_like_counter);
 
         mTextViewMealDescription = findViewById(R.id.textView_meal_dishes);
         mTextViewMealIncredients = findViewById(R.id.textView_ingredients);
@@ -124,7 +128,16 @@ public class MealDetailActivity extends AppCompatActivity {
                closeKeyboard();
             }
         });
+
+        mButtonLike.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                increaseLikeCounter();
+            }
+        });
     }
+
+
 
     private void getMealDataFromFirebase() {
         final DocumentReference docRef = db.collection(getString(R.string.meal_collection_identifier)).document(mMealUid);
@@ -176,6 +189,8 @@ public class MealDetailActivity extends AppCompatActivity {
         }
         mCommentAdapter = new CommentAdapter(mCommentList);
         mCommentRecyclerView.setAdapter(mCommentAdapter);
+
+        mTextViewLikeCounter.setText(String.valueOf(mMeal.getLikeCounter()));
     }
 
     private void setImageToView() {
@@ -204,6 +219,29 @@ public class MealDetailActivity extends AppCompatActivity {
             InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
+    }
+
+    private void increaseLikeCounter() {
+        mMeal.setLikeCounter(mMeal.getLikeCounter()+1);
+
+
+        final DocumentReference docRef = db.collection(getString(R.string.meal_collection_identifier)).document(mMealUid);
+        docRef.update("likeCounter", mMeal.getLikeCounter())
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "Successfully updated like counter to firebase.");
+                            Toast.makeText(MealDetailActivity.this, "Upload like counter success", Toast.LENGTH_SHORT);
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "Failure updated like counter to firebase.");
+
+                    }
+                });
     }
 
 }

@@ -121,7 +121,7 @@ public class ApiDataLoader implements Runnable {
                         ingredient = ingredientsJson.getString(k);
                         ingredients.add(ingredient);
                     }
-                    meal = new Meal(null, dishname, null,  weekday, null, null, ingredients, null, null);
+                    meal = new Meal(null, dishname, null,  weekday, null, null, ingredients, null, null, 0);
                     dishesList.add(meal);
                 }
                 dayMap.put("meals", getReferenceListFromMeals(dishesList, newMealplanRef, dayDate, weekday));

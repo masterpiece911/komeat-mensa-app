@@ -1,8 +1,12 @@
 package com.pem.mensa_app.models.meal;
 
+import com.google.android.gms.common.wrappers.InstantApps;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 
+import org.joda.time.Instant;
+
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -39,7 +43,9 @@ public class Meal {
 
     private ArrayList<String> images;
 
-    public Meal(String uid, String name, Date timestamp,  int weekday, DocumentReference mealplanReference, DocumentReference mensaReference, ArrayList<String> ingredients, ArrayList<String> comments, ArrayList<String> images) {
+    private int likeCounter;
+
+    public Meal(String uid, String name, Date timestamp,  int weekday, DocumentReference mealplanReference, DocumentReference mensaReference, ArrayList<String> ingredients, ArrayList<String> comments, ArrayList<String> images, int likeCounter) {
         this.uid = uid;
         this.name = name;
         this.timestamp = timestamp;
@@ -49,18 +55,20 @@ public class Meal {
         this.ingredients = ingredients;
         this.comments = comments;
         this.images = images;
+        this.likeCounter = likeCounter;
     }
 
     public Meal(DocumentSnapshot documentSnapshot) {
         this.uid = documentSnapshot.getId();
         this.name = documentSnapshot.getString("name");
         this.timestamp = documentSnapshot.getDate("date");
-        this.weekday = documentSnapshot.getLong("weekday") != null ? weekday = documentSnapshot.getLong("weekday").intValue() : 0; //TODO: Fix this
+        this.weekday = documentSnapshot.getLong("weekday") != null ? documentSnapshot.getLong("weekday").intValue() : calculateWeekday();
         this.mealPlanReference = documentSnapshot.getDocumentReference("mealplan");
         this.mensaReference = documentSnapshot.getDocumentReference("mensa");
         this.ingredients = (ArrayList<String>) documentSnapshot.get("ingredients");
         this.comments = (ArrayList<String>) documentSnapshot.get("comments");
         this.images = (ArrayList<String>) documentSnapshot.get("imagePaths");
+        this.likeCounter = documentSnapshot.getLong("likeCounter") != null ? documentSnapshot.getLong("likeCounter").intValue() : 0;
     }
 
     public Meal() {
@@ -137,5 +145,17 @@ public class Meal {
         mealMetadata.put("comments", getComments());
         mealMetadata.put("imagePaths", getImages());
         return mealMetadata;
+    }
+
+    public int getLikeCounter() {
+        return likeCounter;
+    }
+
+    public void setLikeCounter(int likeCounter) {
+        this.likeCounter = likeCounter;
+    }
+
+    private int calculateWeekday() {
+        return Instant.ofEpochMilli(timestamp.getTime()).toDateTime().getDayOfWeek() -1;
     }
 }
