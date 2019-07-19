@@ -27,15 +27,23 @@ public class HomeFeedAdapter extends ListAdapter<MensaDay, HomeFeedAdapter.Mensa
     private static final String STUCAFE = "#F18800";
     private static final String STULOUNGE = "#5D2F00";
 
+    private final EdgeDecorator DECORATOR;
+
+
     private final MensaDetailClickListener listener;
     private final RecyclerView.RecycledViewPool viewPool;
     private Context context;
+    private int corner_radius;
 
-    public HomeFeedAdapter(Context context, MensaDetailClickListener listener) {
+    public HomeFeedAdapter(Context context, MensaDetailClickListener listener, int corner_radius, int edge_padding, int padding) {
         super(DIFF_CALLBACK);
         this.context = context;
         this.listener = listener;
         this.viewPool = new RecyclerView.RecycledViewPool();
+        this.corner_radius = corner_radius;
+
+        DECORATOR = new EdgeDecorator(edge_padding, padding);
+
     }
 
     public static final DiffUtil.ItemCallback<MensaDay> DIFF_CALLBACK =
@@ -83,8 +91,9 @@ public class HomeFeedAdapter extends ListAdapter<MensaDay, HomeFeedAdapter.Mensa
             mRecyclerView = itemView.findViewById(R.id.mensa_item_expanded_image_recyclerview);
             mRecyclerView.setLayoutManager(new GridLayoutManager(context, 1, RecyclerView.HORIZONTAL, false));
             mRecyclerView.setRecycledViewPool(viewPool);
-            mAdapter = new HomeFeedImageAdapter(listener);
+            mAdapter = new HomeFeedImageAdapter(listener, corner_radius);
             mRecyclerView.setAdapter(mAdapter);
+            mRecyclerView.addItemDecoration(DECORATOR);
         }
 
         public void bindData(final MensaDay data) {

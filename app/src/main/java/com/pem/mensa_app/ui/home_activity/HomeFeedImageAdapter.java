@@ -1,6 +1,5 @@
 package com.pem.mensa_app.ui.home_activity;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +11,8 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.pem.mensa_app.GlideApp;
@@ -28,10 +29,12 @@ public class HomeFeedImageAdapter extends ListAdapter<Meal, HomeFeedImageAdapter
     private final HomeFeedAdapter.MensaDetailClickListener mListener;
     private Mensa mensa;
     private Random random = new Random();
+    private int edge_radius;
 
-    public HomeFeedImageAdapter(HomeFeedAdapter.MensaDetailClickListener listener) {
+    public HomeFeedImageAdapter(HomeFeedAdapter.MensaDetailClickListener listener, int edge_radius) {
         super(DIFF_CALLBACK);
         mListener = listener;
+        this.edge_radius = edge_radius;
     }
 
     public void setMensa(Mensa mensa) {
@@ -89,15 +92,19 @@ public class HomeFeedImageAdapter extends ListAdapter<Meal, HomeFeedImageAdapter
             mMealName.setText(data.getName());
 //            Log.d("imagelistbinder", String.format("Meal %s, id: %s, images: %s", data.getName(), data.getUid(), data.getImages()));
             if (data.getImages().equals(new ArrayList<String>())) {
+
+                mMealName.setVisibility(View.VISIBLE);
                 GlideApp.with(itemView)
                         .load(R.drawable.placeholder)
+                        .transform(new CenterCrop(), new RoundedCorners(edge_radius))
                         .into(mMealImage);
             } else {
-
+                mMealName.setVisibility(View.GONE);
                 String path = data.getImages().get(random.nextInt(data.getImages().size()));
                 StorageReference storageRef = FirebaseStorage.getInstance().getReference("images/" + path);
                 GlideApp.with(itemView)
                         .load(storageRef)
+                        .transform(new CenterCrop(), new RoundedCorners(edge_radius))
                         .placeholder(R.drawable.placeholder)
                         .into(mMealImage);
             }

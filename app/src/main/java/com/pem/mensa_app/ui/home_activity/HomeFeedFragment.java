@@ -67,7 +67,11 @@ public class HomeFeedFragment extends Fragment implements HomeFeedAdapter.MensaD
         homeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
         RecyclerView recyclerView = getView().findViewById(R.id.feed_frag_recyclerview);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
-        final HomeFeedAdapter adapter = new HomeFeedAdapter(getContext(), this);
+        int corner_radius = getContext().getResources().getDimensionPixelSize(R.dimen.corner_radius_homefeed);
+        int edge_padding = getContext().getResources().getDimensionPixelSize(R.dimen.edge_padding_homefeed);
+        int padding = getContext().getResources().getDimensionPixelSize(R.dimen.padding_homefeed);
+
+        final HomeFeedAdapter adapter = new HomeFeedAdapter(getContext(), this, corner_radius, edge_padding, padding);
         recyclerView.setAdapter(adapter);
 
         MaterialButton button = getView().findViewById(R.id.feed_customize_button);
