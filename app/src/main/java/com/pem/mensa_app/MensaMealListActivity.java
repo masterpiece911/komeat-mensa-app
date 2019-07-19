@@ -82,7 +82,13 @@ public class MensaMealListActivity extends AppCompatActivity implements MealList
 
         mRadioGroup = findViewById(R.id.meal_list_control);
         int rBtoCheck = 0;
-        switch(viewModel.getSelectedWeekday()){
+        // magic number because of some friggin yoda time thing. I don't know.
+        // I just debugged and this is what I got.
+        // I hate working with time objects.
+        // Why can't time just work.
+        // I hate this.
+        switch(viewModel.getSelectedWeekday() + 1){
+
             case 1: rBtoCheck = R.id.radioButton; break;
             case 2: rBtoCheck = R.id.radioButton2; break;
             case 3: rBtoCheck = R.id.radioButton3; break;
