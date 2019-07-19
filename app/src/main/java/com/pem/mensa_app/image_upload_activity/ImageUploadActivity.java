@@ -380,8 +380,8 @@ public class ImageUploadActivity extends AppCompatActivity {
             } else if (requestCode == PIC_CROP) {
                 CropImage.ActivityResult result = CropImage.getActivityResult(data);
                 if (resultCode == RESULT_OK) {
-                    Uri resultUri = result.getUri();
-                    mImageView.setImageURI(result.getUri());
+                    mSelectedImageUri= result.getUri();
+                    mImageView.setImageURI(mSelectedImageUri);
                 } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                     Exception error = result.getError();
                     mImageView.setImageURI(mSelectedImageUri);
@@ -423,7 +423,7 @@ public class ImageUploadActivity extends AppCompatActivity {
 
     private void performCrop() {
         Intent intent = CropImage.activity(mSelectedImageUri)
-                .setAspectRatio(1, 2)
+                .setAspectRatio(2, 1)
                 .setFixAspectRatio(true)
                 .setCropShape(CropImageView.CropShape.RECTANGLE)
                 .getIntent(this);
