@@ -22,6 +22,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -30,6 +31,9 @@ import com.pem.mensa_app.image_upload_activity.ImageUploadActivity;
 import com.pem.mensa_app.models.meal.Meal;
 
 import java.util.ArrayList;
+
+import static com.pem.mensa_app.R.drawable.ic_round_favorite_24px;
+import static com.pem.mensa_app.R.drawable.ic_round_favorite_border_24px;
 
 public class MealDetailActivity extends AppCompatActivity {
 
@@ -46,7 +50,7 @@ public class MealDetailActivity extends AppCompatActivity {
     private ImageAdapter mImageAdapter;
     private ViewPager mViewPager;
     private Button mButtonTakeImage;
-    private Button mButtonLike;
+    private MaterialButton mButtonLike;
     private TextView mTextViewLikeCounter;
     private EditText mEditTextComment;
     private Button mButtonAddComment;
@@ -191,6 +195,7 @@ public class MealDetailActivity extends AppCompatActivity {
         mCommentRecyclerView.setAdapter(mCommentAdapter);
 
         mTextViewLikeCounter.setText(String.valueOf(mMeal.getLikeCounter()));
+        mButtonLike.setIcon(mMeal.getLikeCounter() > 0 ? getResources().getDrawable(ic_round_favorite_24px, getTheme()) : getResources().getDrawable(ic_round_favorite_border_24px, getTheme()));
     }
 
     private void setImageToView() {
@@ -223,8 +228,7 @@ public class MealDetailActivity extends AppCompatActivity {
 
     private void increaseLikeCounter() {
         mMeal.setLikeCounter(mMeal.getLikeCounter()+1);
-
-
+        mButtonLike.setIcon(mMeal.getLikeCounter() > 0 ? getResources().getDrawable(ic_round_favorite_24px, getTheme()) : getResources().getDrawable(ic_round_favorite_border_24px, getTheme()));
         final DocumentReference docRef = db.collection(getString(R.string.meal_collection_identifier)).document(mMealUid);
         docRef.update("likeCounter", mMeal.getLikeCounter())
                 .addOnCompleteListener(new OnCompleteListener<Void>() {

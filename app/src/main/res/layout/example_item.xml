@@ -6,7 +6,6 @@
     android:layout_margin="8dp"
     app:cardCornerRadius="8dp">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -17,31 +16,39 @@
             android:id="@+id/image_view"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:src="@drawable/ic_launcher_background"/>
-        <Button
+            app:layout_constraintDimensionRatio="2:1"
+            app:srcCompat="@drawable/placeholder"/>
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/button_take_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="PICTURE"/>
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:textAppearance="@style/Komeat.Text.Subheader"
+            app:backgroundTint="#FFFFFF"
+            app:icon="@drawable/ic_round_camera_enhance_24px"
+            app:iconGravity="textStart"
+            app:iconTint="@color/onPrimary" />
+
         <TextView
             android:id="@+id/text_view_dishes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="dishes name"
+            android:textAppearance="@style/Komeat.Text.Header"
             android:textColor="@android:color/black"
-            android:textSize="20sp"/>
+            android:textSize="20sp" />
+
         <TextView
             android:id="@+id/text_view_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="price: "/>
+            android:text="price: N/A"
+            android:textAppearance="@style/Komeat.Text.Subheader" />
         <TextView
             android:id="@+id/text_view_ingredients"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-
-
-
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>
