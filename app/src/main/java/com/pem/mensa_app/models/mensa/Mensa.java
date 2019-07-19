@@ -2,7 +2,7 @@ package com.pem.mensa_app.models.mensa;
 
 import java.util.Objects;
 
-public class Mensa {
+public class Mensa implements Comparable {
 
     private String uID;
     private String name;
@@ -38,6 +38,14 @@ public class Mensa {
 
     public Mensa() {
 
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if (o == null || getClass() != o.getClass()) {throw new ClassCastException();}
+        if (this.equals(o)) {
+            return 0;
+        } else return this.getName().compareTo(((Mensa) o).getName());
     }
 
     @Override

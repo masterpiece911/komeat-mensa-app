@@ -20,6 +20,9 @@ import com.google.firebase.firestore.Transaction;
 import com.pem.mensa_app.models.meal.Meal;
 import com.pem.mensa_app.utilities.firebase.FirebaseDocumentLiveData;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 public class MealDetailViewModel extends ViewModel {
 
     private static final String TAG = MealDetailViewModel.class.getSimpleName();
@@ -53,21 +56,10 @@ public class MealDetailViewModel extends ViewModel {
     public void addComment(final String commentToAdd) {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-
         final Meal newMeal = meal.getValue();
-        final DocumentReference mealRef = db.collection("Meal").document(newMeal.getUid());
 
-        FirebaseFirestore.getInstance().runTransaction(new Transaction.Function<Void>() {
-            @Nullable
-            @Override
-            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
-
-                transaction.get(mealRef);
-                transaction.update(mealRef, "comments", newMeal.getComments().add(commentToAdd));
-
-                return null;
-            }
-        });
+        db.collection("Meal").document(newMeal.getUid())
+                .update("comments", FieldValue.arrayUnion(commentToAdd));
 
     }
 

@@ -38,6 +38,8 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -244,9 +246,12 @@ public class HomeViewModel extends AndroidViewModel {
                 mensa.setMealPlanReference(mPRef == null ? null : mPRef.getPath());
                 mMensaList.add(mensa);
             }
+            Collections.sort(mMensaList);
             mensaList.postValue(mMensaList);
         }
     }
+
+
 
     class MensaSortData extends MediatorLiveData<Pair<List<Mensa>, List<String>>> {
         public MensaSortData (final LiveData<List<Mensa>> mensas, final LiveData<List<String>> favoriteIDs) {
