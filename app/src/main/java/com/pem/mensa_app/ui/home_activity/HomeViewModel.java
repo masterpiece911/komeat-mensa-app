@@ -23,19 +23,20 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.WriteBatch;
 import com.pem.mensa_app.R;
 import com.pem.mensa_app.models.meal.Meal;
 import com.pem.mensa_app.models.mensa.Mensa;
 import com.pem.mensa_app.models.mensa.MensaDay;
 import com.pem.mensa_app.models.mensa.RestaurantType;
-import com.pem.mensa_app.utilities.eatapi.ApiDataLoader;
+import com.pem.mensa_app.utilities.eatapi.MultiApiDataLoader;
 import com.pem.mensa_app.utilities.firebase.FirebaseQueryLiveData;
 
 import org.joda.time.DateTimeFieldType;
+import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -51,6 +52,8 @@ public class HomeViewModel extends AndroidViewModel {
 
     private final Executor executor = Executors.newSingleThreadExecutor();
 
+    private final DatabaseState databaseState;
+
     private static final String PREFERENCES_FAVORITES_IDENTIFIER = "mensa_favorites_new";
     private static final String[] DEFAULT_FAVORITES = {
             "1zWkH9T1gKOE9wEWFpng", //mensa akademie weihenstephan
@@ -63,7 +66,8 @@ public class HomeViewModel extends AndroidViewModel {
     private final SharedPreferences preferences;
     private SharedPreferences.OnSharedPreferenceChangeListener listener;
 
-    private final Query mensaListQuery = FirebaseFirestore.getInstance().collection(getApplication().getString(R.string.mensa_collection_identifier));
+    private final Query mensaListQuery = FirebaseFirestore.getInstance().collection(getApplication().getString(R.string.mensa_collection_identifier))
+            .whereGreaterThan("url", "");
 
     private final MutableLiveData<List<String>> favoriteMensaIDs = new MutableLiveData<>();
     private final MediatorLiveData<List<Mensa>> mensaList = new MediatorLiveData<>();
@@ -73,6 +77,7 @@ public class HomeViewModel extends AndroidViewModel {
 
     public HomeViewModel(Application app) {
         super(app);
+        this.databaseState = new DatabaseState();
         preferences = PreferenceManager.getDefaultSharedPreferences(app);
         listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
@@ -97,14 +102,23 @@ public class HomeViewModel extends AndroidViewModel {
         mensaList.observeForever(new Observer<List<Mensa>>() {
             @Override
             public void onChanged(List<Mensa> mensas) {
-                LinkedList<Mensa> emptyMensas = new LinkedList<>();
-                for (Mensa m : mensas) {
-                    if (m.getUrl() != null && m.getMealPlanReference() == null) {
-                        emptyMensas.add(m);
+                if (!databaseState.creatingMealplan) {
+                    databaseState.creatingMealplan = true;
+                    LinkedList<Mensa> emptyMensas = new LinkedList<>();
+                    for (Mensa m : mensas) {
+                        if (m.getUrl() != null && m.getMealPlanReference() == null) {
+                            emptyMensas.add(m);
+                        }
                     }
+                    if (emptyMensas.isEmpty()) {
+                        databaseState.creatingMealplan = false;
+                        mensaList.removeObserver(this);
+                        return;
+                    }
+
+                    Executors.defaultThreadFactory().newThread(new MensaMealPlanCreator(emptyMensas, databaseState)).run();
+                    mensaList.removeObserver(this);
                 }
-                Executors.defaultThreadFactory().newThread(new MensaMealPlanCreator(emptyMensas)).run();
-                mensaList.removeObserver(this);
             }
         });
 
@@ -132,7 +146,7 @@ public class HomeViewModel extends AndroidViewModel {
             }
         });
 
-        mensaMealsSnapshots.addSource(favoriteMensaList, new MensaFavoritesObserver());
+        mensaMealsSnapshots.addSource(favoriteMensaList, new MensaFavoritesObserver(databaseState));
 
         mensaMealDetails.addSource(mensaMealsSnapshots, new Observer<List<Pair<Mensa, QuerySnapshot>>>() {
             @Override
@@ -195,9 +209,9 @@ public class HomeViewModel extends AndroidViewModel {
 //        return Arrays.asList(preferences.getStringSet(PREFERENCES_FAVORITES_IDENTIFIER, defaults).toArray(new String[0]));
         Set<String> favorites = preferences.getStringSet(PREFERENCES_FAVORITES_IDENTIFIER, defaults);
 
-        for(String fav : favorites.toArray(new String[0])) {
-            Log.d(TAG, fav);
-        }
+//        for(String fav : favorites.toArray(new String[0])) {
+//            Log.d(TAG, fav);
+//        }
 
         return Arrays.asList(favorites.toArray(new String[0]));
 
@@ -254,8 +268,12 @@ public class HomeViewModel extends AndroidViewModel {
     class MensaMealPlanCreator implements Runnable {
 
         final List<Mensa> mensas;
+        final DatabaseState state;
 
-        MensaMealPlanCreator(List<Mensa> mensas) {this.mensas = mensas;}
+        MensaMealPlanCreator(List<Mensa> mensas, DatabaseState state) {
+            this.mensas = mensas;
+            this.state = state;
+        }
 
         @Override
         public void run() {
@@ -266,25 +284,46 @@ public class HomeViewModel extends AndroidViewModel {
 
             for (Mensa mensa : mensas) {
                 mensaRef = instance.collection("Mensa").document(mensa.getuID());
-                mealPlanRef = instance.collection("Mealplan").document();
+                mealPlanRef = instance.collection("Mealplan").document(mensa.getuID());
                 HashMap<String, Object> mealplan = new HashMap<>();
                 mealplan.put("mensa", mensaRef);
                 mealPlanRef.set(mealplan);
-                batch.set(mealPlanRef, mealplan);
+                batch.set(mealPlanRef, mealplan, SetOptions.merge());
                 batch.update(mensaRef, "mealplan", mealPlanRef);
             }
 
-            batch.commit();
+            batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    databaseState.creatingMealplan = false;
+                }
+            });
+
+        }
+    }
+
+    public class DatabaseState {
+        boolean creatingMealplan = false;
+        boolean runningApiLoader = false;
+
+        public void apiLoaderComplete() {
+            runningApiLoader = false;
         }
     }
 
     class MensaFavoritesObserver implements Observer<List<Mensa>> {
 
+        final DatabaseState state;
+
+        MensaFavoritesObserver(DatabaseState state){
+            this.state = state;
+        };
+
         @Override
         public void onChanged(final List<Mensa> mensas) {
 
             final LocalDate localdate;
-            LocalDate temp = new LocalDate();
+            LocalDate temp = new LocalDate(DateTimeZone.forID("Europe/Berlin"));
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             Task<QuerySnapshot> mealplanTask;
             final LinkedList<Task<QuerySnapshot>> allMealplanTasks = new LinkedList<>();
@@ -295,18 +334,21 @@ public class HomeViewModel extends AndroidViewModel {
 
             if (temp.getDayOfWeek() > 5) {
                 localdate = temp.withField(DateTimeFieldType.dayOfWeek(), 5);
-            } else {localdate = new LocalDate();}
+            } else {localdate = new LocalDate(DateTimeZone.forID("Europe/Berlin"));}
 
             for (Mensa m : mensas) {
                 if(m.getMealPlanReference() == null) {
                     continue;
                 }
-                mealplanTask = db.collection(m.getMealPlanReference() + "/items")
-                        .whereEqualTo("year", localdate.getYear())
-                        .whereEqualTo("week", localdate.getWeekOfWeekyear())
-                        .get();
-                allMealplanTasks.add(mealplanTask);
-                mensaMealplanTaskPairs.add(new Pair<>(m, mealplanTask));
+                if(! state.runningApiLoader) {
+                    mealplanTask = db.collection(m.getMealPlanReference() + "/items")
+                            .whereEqualTo("year", localdate.getYear())
+                            .whereEqualTo("week", localdate.getWeekOfWeekyear())
+                            .get();
+                    allMealplanTasks.add(mealplanTask);
+                    mensaMealplanTaskPairs.add(new Pair<>(m, mealplanTask));
+                }
+
                 mealsTask = db.collection("Meal")
                         .whereEqualTo("date", localdate.toDate())
                         .whereEqualTo("mensa", db.collection("Mensa").document(m.getuID()))
@@ -315,29 +357,39 @@ public class HomeViewModel extends AndroidViewModel {
                 mensaMealTaskPairs.add(new Pair<>(m, mealsTask));
             }
 
-            Tasks.whenAll(allMealplanTasks).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
+            if (!state.runningApiLoader) {
+                Tasks.whenAll(allMealplanTasks).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
 
-                    Mensa m;
-                    Task<QuerySnapshot> fTask;
-                    for (Pair<Mensa, Task<QuerySnapshot>> mtPair : mensaMealplanTaskPairs) {
-                        m = mtPair.first;
-                        fTask = mtPair.second;
-                        Log.d(TAG, String.format("Task successful? %b", fTask.isSuccessful()));
-                        if (fTask.isSuccessful()) {
-                            if (fTask.getResult().getDocuments().size() == 0) {
-//                                Log.d(TAG, String.format("Task with %s was empty.", fTask.getResult().getQuery().toString()));
-                                Executors.defaultThreadFactory().newThread(new ApiDataLoader(getApplication().getBaseContext(), m)).run();
-                            } else {
-                                for (DocumentSnapshot e : fTask.getResult().getDocuments()) {
-//                                    Log.d(TAG, String.format("Mealplan %s was found.", e.getId()));
+                        Mensa m;
+                        Task<QuerySnapshot> fTask;
+                        LinkedList<Mensa> generateMealplans = new LinkedList<>();
+                        for (Pair<Mensa, Task<QuerySnapshot>> mtPair : mensaMealplanTaskPairs) {
+                            m = mtPair.first;
+                            fTask = mtPair.second;
+    //                        Log.d(TAG, String.format("Task successful? %b", fTask.isSuccessful()));
+                            if (fTask.isSuccessful()) {
+                                if (fTask.getResult().getDocuments().size() == 0) {
+    //                                Log.d(TAG, String.format("Task with %s was empty.", fTask.getResult().getQuery().toString()));
+                                    generateMealplans.add(m);
+                                } else {
+                                    for (DocumentSnapshot e : fTask.getResult().getDocuments()) {
+    //                                    Log.d(TAG, String.format("Mealplan %s was found.", e.getId()));
+                                    }
                                 }
                             }
                         }
+                        if (!generateMealplans.isEmpty()) {
+                            databaseState.runningApiLoader = true;
+                            for (Mensa mensa : generateMealplans) {
+                                Log.d(TAG, String.format("Generated mensa mealplan for %s", mensa.getName()));
+                            }
+                            Executors.defaultThreadFactory().newThread(new MultiApiDataLoader(getApplication().getBaseContext(), generateMealplans, state)).run();
+                        }
                     }
-                }
-            });
+                });
+            }
 
             Tasks.whenAll(allMealTasks).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override

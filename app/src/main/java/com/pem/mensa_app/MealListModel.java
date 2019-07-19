@@ -24,6 +24,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.pem.mensa_app.models.meal.Meal;
 
 import org.joda.time.DateTimeFieldType;
@@ -250,10 +251,10 @@ public class MealListModel extends AndroidViewModel {
     private void createMealplanReferenceOnFirebase(String mensaID) {
         FirebaseFirestore instance = FirebaseFirestore.getInstance();
         final DocumentReference mensaRef = instance.collection(getString(R.string.mensa_collection_identifier)).document(mensaID);
-        final DocumentReference mealplanRef = instance.collection(getString(R.string.mealplan_collection_identifier)).document();
+        final DocumentReference mealplanRef = instance.collection(getString(R.string.mealplan_collection_identifier)).document(mensaID);
         HashMap<String, Object> mealplan = new HashMap<>();
         mealplan.put("mensa", mensaRef);
-        mealplanRef.set(mealplan).addOnCompleteListener(new OnCompleteListener<Void>() {
+        mealplanRef.set(mealplan, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
