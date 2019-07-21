@@ -1,4 +1,4 @@
-package com.pem.mensa_app.image_upload_activity;
+package com.pem.mensa_app.ui.image_upload_activity;
 
 import android.view.LayoutInflater;
 import android.view.View;

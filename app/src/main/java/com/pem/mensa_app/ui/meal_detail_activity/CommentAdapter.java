@@ -1,4 +1,4 @@
-package com.pem.mensa_app.meal_detail_activity;
+package com.pem.mensa_app.ui.meal_detail_activity;
 
 import android.view.LayoutInflater;
 import android.view.View;

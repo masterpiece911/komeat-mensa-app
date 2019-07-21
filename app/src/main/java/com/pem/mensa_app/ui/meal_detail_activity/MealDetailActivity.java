@@ -1,4 +1,4 @@
-package com.pem.mensa_app.meal_detail_activity;
+package com.pem.mensa_app.ui.meal_detail_activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,10 +11,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -22,13 +19,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.pem.mensa_app.R;
-import com.pem.mensa_app.image_upload_activity.ImageUploadActivity;
+import com.pem.mensa_app.ui.image_upload_activity.ImageUploadActivity;
 import com.pem.mensa_app.models.meal.Meal;
 import com.pem.mensa_app.viewmodels.MealDetailViewModel;
 

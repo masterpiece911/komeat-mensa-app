@@ -1,4 +1,4 @@
-package com.pem.mensa_app;
+package com.pem.mensa_app.ui.meal_list;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
@@ -13,8 +13,9 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
-import com.pem.mensa_app.image_upload_activity.ImageUploadActivity;
-import com.pem.mensa_app.meal_detail_activity.MealDetailActivity;
+import com.pem.mensa_app.R;
+import com.pem.mensa_app.ui.image_upload_activity.ImageUploadActivity;
+import com.pem.mensa_app.ui.meal_detail_activity.MealDetailActivity;
 import com.pem.mensa_app.models.meal.Meal;
 import com.pem.mensa_app.viewmodels.MealListModel;
 

@@ -1,4 +1,4 @@
-package com.pem.mensa_app;
+package com.pem.mensa_app.ui.meal_list;
 
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.pem.mensa_app.GlideApp;
+import com.pem.mensa_app.R;
 import com.pem.mensa_app.models.meal.Meal;
 
 import java.util.ArrayList;
@@ -46,7 +48,7 @@ public class MealListAdapter extends ListAdapter<Meal, MealListAdapter.MealViewH
     @NonNull
     @Override
     public MealViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View V = LayoutInflater.from(parent.getContext()).inflate(R.layout.example_item, parent, false);
+        View V = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_meal_list, parent, false);
         return new MealViewHolder(V, listener);
     }
 

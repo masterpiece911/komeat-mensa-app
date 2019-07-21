@@ -1,4 +1,4 @@
-package com.pem.mensa_app.meal_detail_activity;
+package com.pem.mensa_app.ui.meal_detail_activity;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
