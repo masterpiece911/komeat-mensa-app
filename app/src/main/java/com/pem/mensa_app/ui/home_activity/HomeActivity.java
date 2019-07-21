@@ -1,4 +1,4 @@
-package com.pem.mensa_app;
+package com.pem.mensa_app.ui.home_activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -9,11 +9,11 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.google.android.material.tabs.TabLayout;
-import com.pem.mensa_app.meal_detail_activity.MealDetailActivity;
+import com.pem.mensa_app.R;
+import com.pem.mensa_app.ui.meal_detail_activity.MealDetailActivity;
+import com.pem.mensa_app.ui.meal_list.MensaMealListActivity;
 import com.pem.mensa_app.models.meal.Meal;
 import com.pem.mensa_app.models.mensa.Mensa;
-import com.pem.mensa_app.ui.home_activity.HomePagerAdapter;
-import com.pem.mensa_app.ui.home_activity.HomeFeedItemsListener;
 
 public class HomeActivity extends AppCompatActivity implements HomeFeedItemsListener {
 

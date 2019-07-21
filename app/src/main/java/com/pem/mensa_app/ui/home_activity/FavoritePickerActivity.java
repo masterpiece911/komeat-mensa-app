@@ -1,4 +1,4 @@
-package com.pem.mensa_app;
+package com.pem.mensa_app.ui.home_activity;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentActivity;
@@ -7,9 +7,8 @@ import androidx.viewpager.widget.ViewPager;
 import android.os.Bundle;
 import android.view.View;
 
+import com.pem.mensa_app.R;
 import com.pem.mensa_app.models.mensa.Mensa;
-import com.pem.mensa_app.ui.home_activity.FavoritePickerPagerAdapter;
-import com.pem.mensa_app.ui.home_activity.OnMensaItemSelectedListener;
 
 public class FavoritePickerActivity extends FragmentActivity implements OnMensaItemSelectedListener {
 
