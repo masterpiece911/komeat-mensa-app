@@ -22,6 +22,7 @@ import com.google.firebase.firestore.WriteBatch;
 import com.pem.mensa_app.models.meal.Meal;
 import com.pem.mensa_app.models.mensa.Mensa;
 
+import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.json.JSONArray;
@@ -56,7 +57,7 @@ public class ApiDataLoader implements Runnable {
     public ApiDataLoader(Context context, Mensa mensa) {
         this.context = context;
         this.mensa = mensa;
-        this.date = new LocalDate();
+        this.date = new LocalDate(DateTimeZone.forID("Europe/Berlin"));
 
     }
 

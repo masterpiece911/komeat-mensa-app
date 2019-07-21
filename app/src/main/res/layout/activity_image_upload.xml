@@ -9,12 +9,9 @@
 
     <ImageView
         android:id="@+id/imageView_meal_image"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintDimensionRatio="2:1"
+        android:layout_width="0dp"
+        android:layout_height="300dp"
+        app:layout_constraintDimensionRatio="3:2"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -53,7 +50,10 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:text="Upload"
-        android:textAppearance="@style/Komeat.Text.Header"
+        android:textAppearance="@style/Komeat.Text.Meal.Comment"
+        android:background="@drawable/textview_pill_background"
+        android:textColor="@color/onSecondary"
+        android:backgroundTint="@color/stuwerkblue"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

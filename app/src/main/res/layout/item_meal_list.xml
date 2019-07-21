@@ -3,10 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/tools"
+    app:cardCornerRadius="8dp"
     android:layout_margin="8dp"
-    app:cardCornerRadius="8dp">
+    android:clickable="true"
+    android:focusable="false"
+    android:foreground="?android:attr/selectableItemBackground"
+    card_view:contentPadding="0">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -14,41 +20,59 @@
 
         <ImageView
             android:id="@+id/image_view"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            app:layout_constraintDimensionRatio="2:1"
-            app:srcCompat="@drawable/placeholder"/>
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintDimensionRatio="3:2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_view_dishes"
+            app:srcCompat="@drawable/placeholder" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_take_image"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            style="@style/IconOnlyButton"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="0dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
             android:gravity="center"
-            android:textAppearance="@style/Komeat.Text.Subheader"
-            app:backgroundTint="#FFFFFF"
-            app:icon="@drawable/ic_round_camera_enhance_24px"
+            android:textAppearance="@style/Komeat.Text.Mensa.Subtitle"
+            app:icon="@drawable/ic_add_image"
             app:iconGravity="textStart"
-            app:iconTint="@color/onPrimary" />
+            app:iconTint="@color/onPrimary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/image_view"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
 
         <TextView
             android:id="@+id/text_view_dishes"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/nunito_semibold"
             android:text="dishes name"
-            android:textAppearance="@style/Komeat.Text.Header"
+            android:textAlignment="center"
+            android:textAppearance="@style/Komeat.Text.Meal.Title"
             android:textColor="@android:color/black"
-            android:textSize="20sp" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/text_view_price"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="price: N/A"
-            android:textAppearance="@style/Komeat.Text.Subheader" />
         <TextView
             android:id="@+id/text_view_ingredients"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+            android:layout_height="32dp"
+            android:layout_marginTop="8dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+
+            android:background="@drawable/textview_pill_background"
+            android:textAppearance="@style/Komeat.Text.Meal.Pill"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/image_view" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>

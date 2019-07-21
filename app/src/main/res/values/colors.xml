@@ -5,6 +5,7 @@
     <color name="colorAccent">@color/stuwerkblue</color>
 
     <color name="onPrimary">#000000</color>
+    <color name="onSecondary">#FFFFFF</color>
 
     <color name="stucafeorange">#F18800</color>
     <color name="mensagreen">#76AD40</color>

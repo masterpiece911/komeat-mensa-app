@@ -1,6 +1,10 @@
 package com.pem.mensa_app.ui.meal_list;
 
+import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.text.TextUtils;
+import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +22,7 @@ import com.google.firebase.storage.StorageReference;
 import com.pem.mensa_app.GlideApp;
 import com.pem.mensa_app.R;
 import com.pem.mensa_app.models.meal.Meal;
+import com.pem.mensa_app.utilities.eatapi.MealIngredientParser;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -65,7 +70,6 @@ public class MealListAdapter extends ListAdapter<Meal, MealListAdapter.MealViewH
         private View mItemView;
         private ImageView mImageView;
         private TextView mTextViewName;
-        private TextView mTextViewPrice;
         private TextView mTextViewIngredients;
         private Button mButtonImageUpload;
         MealClickEventListener mClickListener;
@@ -76,21 +80,21 @@ public class MealListAdapter extends ListAdapter<Meal, MealListAdapter.MealViewH
             mClickListener = listener;
             mImageView=itemView.findViewById(R.id.image_view);
             mTextViewName=itemView.findViewById(R.id.text_view_dishes);
-            mTextViewPrice=itemView.findViewById(R.id.text_view_price);
             mTextViewIngredients= itemView.findViewById(R.id.text_view_ingredients);
             mButtonImageUpload = itemView.findViewById(R.id.button_take_image);
         }
 
         public void bindData(Meal data) {
             mTextViewName.setText(data.getName());
-            mTextViewPrice.setText("Price: " + data.getPrice());
             List<String> ingredientIds = new LinkedList<>();
             // TODO: Refactor
             for (String i : data.getIngredients()) {
                 ingredientIds.add(i);
             }
-            String ingredientString = TextUtils.join(", ", ingredientIds);
-            mTextViewIngredients.setText(ingredientString);
+            Log.d("mealadapter", data.getName() + ingredientIds.toString());
+            Pair<String, Integer> pillInfo = MealIngredientParser.getPillFromIngredients(ingredientIds);
+            mTextViewIngredients.setText(pillInfo.first);
+            mTextViewIngredients.getBackground().setTint(pillInfo.second);
 
             mButtonImageUpload.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -107,8 +111,10 @@ public class MealListAdapter extends ListAdapter<Meal, MealListAdapter.MealViewH
             });
              ArrayList<String> imagelist= data.getImages();
              if (imagelist==null || imagelist.isEmpty()){
-                 mImageView.setImageResource(R.drawable.placeholder);
+                 mImageView.setVisibility(View.GONE);
+//                 mImageView.setImageResource(R.drawable.placeholder);
              }else {
+                 mImageView.setVisibility(View.VISIBLE);
                  StorageReference reference = FirebaseStorage.getInstance().getReference("/images/"+imagelist.get(0));
                  GlideApp.with(this.mItemView).load(reference).into(mImageView);
              }
@@ -116,6 +122,7 @@ public class MealListAdapter extends ListAdapter<Meal, MealListAdapter.MealViewH
         }
 
     }
+
 
     interface MealClickEventListener {
        void onMealClick(int position);

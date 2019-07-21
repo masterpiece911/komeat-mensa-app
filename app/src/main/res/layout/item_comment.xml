@@ -8,13 +8,16 @@
 
     <TextView
         android:id="@+id/textView_fragment_comment_list"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="4dp"
+        android:background="@drawable/textview_comment"
+        android:fontFamily="@font/nunito"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         android:text="TESTCOMMMENT"
-        android:textAppearance="@style/Komeat.Text.Subheader"
+        android:textAppearance="@style/Komeat.Text.Meal.Comment"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

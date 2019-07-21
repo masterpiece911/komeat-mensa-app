@@ -1,23 +1,36 @@
 package com.pem.mensa_app.ui.meal_list;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
+import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.tabs.TabLayout;
 import com.pem.mensa_app.R;
+import com.pem.mensa_app.models.mensa.RestaurantType;
 import com.pem.mensa_app.ui.image_upload_activity.ImageUploadActivity;
 import com.pem.mensa_app.ui.meal_detail_activity.MealDetailActivity;
 import com.pem.mensa_app.models.meal.Meal;
 import com.pem.mensa_app.viewmodels.MealListModel;
+
+import org.joda.time.DateTimeFieldType;
+import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDate;
 
 import java.util.LinkedList;
 
@@ -28,12 +41,7 @@ public class MensaMealListActivity extends AppCompatActivity implements MealList
     private MealListModel viewModel;
     private RecyclerView mRecyclerView;
     private MealListAdapter mMealListAdapter;
-    private RadioGroup mRadioGroup;
-    private ImageView mImageView;
-
-    static final int REQUEST_TAKE_PHOTO = 1;
-    String currentPhotoPath;
-
+    private TabLayout mTabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +53,7 @@ public class MensaMealListActivity extends AppCompatActivity implements MealList
         viewModel = ViewModelProviders.of(this).get(MealListModel.class);
         viewModel.setData(extras);
 
-        mRecyclerView = findViewById(R.id.recycler_view);
+        mRecyclerView = findViewById(R.id.meal_list_recycler_view);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -62,35 +70,73 @@ public class MensaMealListActivity extends AppCompatActivity implements MealList
 
         viewModel.informationSet();
 
-        mRadioGroup = findViewById(R.id.meal_list_control);
-        int rBtoCheck = 0;
-        // magic number because of some friggin yoda time thing. I don't know.
-        // I just debugged and this is what I got.
-        // I hate working with time objects.
-        // Why can't time just work.
-        // I hate this.
-        switch(viewModel.getSelectedWeekday() + 1){
-
-            case 1: rBtoCheck = R.id.radioButton; break;
-            case 2: rBtoCheck = R.id.radioButton2; break;
-            case 3: rBtoCheck = R.id.radioButton3; break;
-            case 4: rBtoCheck = R.id.radioButton4; break;
-            case 5: rBtoCheck = R.id.radioButton5; break;
-        }
-        mRadioGroup.check(rBtoCheck);
-        mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        Toolbar toolbar = findViewById(R.id.meal_list_toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                RadioButton clickedButton = findViewById(i);
-                int weekday = 0;
-                switch(clickedButton.getText().toString()) {
-                    case "Mo": weekday = 1; break;
-                    case "Tue": weekday = 2; break;
-                    case "Wed": weekday = 3; break;
-                    case "Thu": weekday = 4; break;
-                    case "Fr": weekday = 5; break;
-                }
-                viewModel.setSelectedWeekday(weekday);
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+//        View title = getLayoutInflater().inflate(R.layout.item_mensa, toolbar);
+//        TextView textViewTitle = title.findViewById(R.id.mensa_item_name);
+//        TextView textViewType = title.findViewById(R.id.mensa_item_type);
+//        CheckBox box = title.findViewById(R.id.mensa_item_checkbox);
+//        ImageView arrow = title.findViewById(R.id.mensa_item_arrow);
+//        box.setVisibility(View.GONE);
+//        arrow.setVisibility(View.GONE);
+//        textViewTitle.setText(extras.getString(getString(R.string.intent_mensa_name)));
+//        RestaurantType type = RestaurantType.fromString(extras.getString(getString(R.string.intent_mensa_type)));
+//        textViewType.setText(type.toString());
+//        textViewType.setTextColor(Color.parseColor(type.toColor()));
+
+        TextView textViewTitle = findViewById(R.id.meal_list_mensa_name);
+        TextView textViewType = findViewById(R.id.meal_list_mensa_type);
+        textViewTitle.setText(extras.getString(getString(R.string.intent_mensa_name)));
+        RestaurantType type = RestaurantType.fromString(extras.getString(getString(R.string.intent_mensa_type)));
+        textViewType.setText(type.toString());
+        textViewType.setTextColor(Color.parseColor(type.toColor()));
+
+
+        LocalDate date = new LocalDate(DateTimeZone.forID("Europe/Berlin"));
+        LocalDate today = new LocalDate(date);
+        if (today.getDayOfWeek() > 5) {
+            today = today.withField(DateTimeFieldType.dayOfWeek(), 5);
+        }
+        boolean selected = false;
+        String full, compact;
+
+        mTabLayout = findViewById(R.id.meal_list_tabs);
+        for (int i = 0; i < 5; i++) {
+            TabLayout.Tab tab = mTabLayout.newTab();
+            date = date.withField(DateTimeFieldType.dayOfWeek(), i+1);
+            full = date.toString("EEE\n dd.MM");
+            compact = date.toString("EEE");
+            selected = date.compareTo(today) == 0;
+            mTabLayout.addTab(tab, i, selected);
+            tab.setText(selected ? full : compact);
+            tab.setTag(new Pair<>(full, compact));
+        }
+        mTabLayout.setTabMode(TabLayout.MODE_FIXED);
+
+        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewModel.setSelectedWeekday(tab.getPosition() + 1);
+                Pair<String, String> tag = (Pair<String, String>) tab.getTag();
+                tab.setText(tag.first);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                Pair<String, String> tag = (Pair<String, String>) tab.getTag();
+                tab.setText(tag.second);
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                // do nothing
             }
         });
 

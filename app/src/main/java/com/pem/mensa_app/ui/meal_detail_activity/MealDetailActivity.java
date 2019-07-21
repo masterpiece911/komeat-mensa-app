@@ -4,12 +4,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +27,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.pem.mensa_app.R;
 import com.pem.mensa_app.ui.image_upload_activity.ImageUploadActivity;
 import com.pem.mensa_app.models.meal.Meal;
+import com.pem.mensa_app.utilities.EdgeDecorator;
+import com.pem.mensa_app.utilities.eatapi.MealIngredientParser;
 import com.pem.mensa_app.viewmodels.MealDetailViewModel;
 
 import java.util.ArrayList;
@@ -43,8 +48,9 @@ public class MealDetailActivity extends AppCompatActivity {
 
     private ImageAdapter mImageAdapter;
     private ViewPager mViewPager;
-    private Button mButtonTakeImage;
+    private MaterialButton mButtonTakeImage;
     private MaterialButton mButtonLike;
+    private MaterialButton mButtonBack;
     private TextView mTextViewLikeCounter;
     private EditText mEditTextComment;
     private Button mButtonAddComment;
@@ -75,6 +81,7 @@ public class MealDetailActivity extends AppCompatActivity {
         mViewPager = findViewById(R.id.view_pager);
         mButtonTakeImage = findViewById(R.id.add_picture_customize_button);
         mButtonLike = findViewById(R.id.add_like_customize_button);
+        mButtonBack = findViewById(R.id.back_button);
         mTextViewLikeCounter = findViewById(R.id.textView_like_counter);
 
         mTextViewMealDescription = findViewById(R.id.textView_meal_dishes);
@@ -86,6 +93,8 @@ public class MealDetailActivity extends AppCompatActivity {
 
         mCommentRecyclerView = findViewById(R.id.recycler_view_comment_list);
         mCommentRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        int padding = getResources().getDimensionPixelSize(R.dimen.padding_homefeed);
+        mCommentRecyclerView.addItemDecoration(new EdgeDecorator(padding, padding));
         mCommentRecyclerView.hasFixedSize();
 
         mButtonTakeImage.setOnClickListener(new View.OnClickListener() {
@@ -133,6 +142,13 @@ public class MealDetailActivity extends AppCompatActivity {
                 increaseLikeCounter();
             }
         });
+
+        mButtonBack.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     @Override
@@ -153,12 +169,10 @@ public class MealDetailActivity extends AppCompatActivity {
     private void setDataToView(Meal meal) {
         mTextViewMealDescription.setText(meal.getName());
 
-        StringBuilder stringBuilderIngredients = new StringBuilder();
-        for (String ingredient : meal.getIngredients()) {
-            stringBuilderIngredients.append(ingredient);
-            stringBuilderIngredients.append(", ");
-        }
-        mTextViewMealIncredients.setText(stringBuilderIngredients.toString());
+        Pair<String, Integer> ingredientFormat = MealIngredientParser.getPillFromIngredients(meal.getIngredients());
+
+        mTextViewMealIncredients.setText(ingredientFormat.first);
+        mTextViewMealIncredients.getBackground().setTint(ingredientFormat.second);
 
         mCommentList = meal.getComments();
         if (mCommentList == null) {
@@ -168,7 +182,9 @@ public class MealDetailActivity extends AppCompatActivity {
         mCommentRecyclerView.setAdapter(mCommentAdapter);
 
         mTextViewLikeCounter.setText(String.valueOf(meal.getLikeCounter()));
+//        mButtonLike.setImageDrawable(meal.getLikeCounter() > 0 ? getDrawable(ic_round_favorite_24px) : getDrawable(ic_round_favorite_border_24px));
         mButtonLike.setIcon(meal.getLikeCounter() > 0 ? getResources().getDrawable(ic_round_favorite_24px, getTheme()) : getResources().getDrawable(ic_round_favorite_border_24px, getTheme()));
+//        mButtonLike.set
     }
 
     private void setImageToView(Meal meal) {

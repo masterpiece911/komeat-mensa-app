@@ -2,6 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:clipToPadding="false"
+    android:elevation="8dp"
     android:layout_width="192dp"
     android:layout_height="128dp"
     >
@@ -10,8 +12,9 @@
         android:id="@+id/item_mensa_expanded_subitem_image"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:scaleType="center"
         android:elevation="8dp"
+        android:background="@drawable/textview_comment"
+        android:padding="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,20 +23,20 @@
 
     <TextView
         android:id="@+id/item_mensa_expanded_subitem_meal_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
         android:elevation="10dp"
         android:singleLine="false"
         android:text="NAME OF MEAL"
+        android:background="@drawable/textview_background"
         android:textAlignment="center"
-        android:textAppearance="@style/Komeat.Text.Subheader"
+        android:textAppearance="@style/Komeat.Text.Mensa.Subtitle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.6666" />
+        app:layout_constraintVertical_bias="1" />
 </androidx.constraintlayout.widget.ConstraintLayout>

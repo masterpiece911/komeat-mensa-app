@@ -44,7 +44,7 @@ public class ImageFragment extends Fragment {
             imageView.setImageResource(R.drawable.placeholder);
         } else {
             StorageReference reference = FirebaseStorage.getInstance().getReference("images/" + imagePath);
-            GlideApp.with(view).load(reference).into(imageView);
+            GlideApp.with(view).load(reference).fitCenter().into(imageView);
         }
         return view;
     }

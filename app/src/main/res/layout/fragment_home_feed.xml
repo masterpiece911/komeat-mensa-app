@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:clipToPadding="false"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.home_activity.HomeFeedFragment" >
@@ -17,7 +18,6 @@
         app:layout_constraintBottom_toTopOf="@id/feed_customize_button"
         android:clipToPadding="false"
         android:clipChildren="false"
-        tools:itemCount="10"
         tools:listitem="@layout/item_mensa_expanded"
         />
 
@@ -28,7 +28,7 @@
         android:layout_height="40dp"
         android:paddingTop="8dp"
         android:text="Customize favorite feed"
-        android:textAppearance="@style/Komeat.Text.Subheader"
+        android:textAppearance="@style/Komeat.Text.Mensa.Subtitle"
         app:backgroundTint="#FFFFFF"
         app:icon="@drawable/ic_add_circle"
         app:iconTint="@color/onPrimary"

@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.FitCenter;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -93,18 +94,16 @@ public class HomeFeedImageAdapter extends ListAdapter<Meal, HomeFeedImageAdapter
 //            Log.d("imagelistbinder", String.format("Meal %s, id: %s, images: %s", data.getName(), data.getUid(), data.getImages()));
             if (data.getImages().equals(new ArrayList<String>())) {
 
-                mMealName.setVisibility(View.VISIBLE);
                 GlideApp.with(itemView)
                         .load(R.drawable.placeholder)
-                        .transform(new RoundedCorners(edge_radius))
+                        .transform(new RoundedCorners(edge_radius), new FitCenter())
                         .into(mMealImage);
             } else {
-                mMealName.setVisibility(View.GONE);
                 String path = data.getImages().get(random.nextInt(data.getImages().size()));
                 StorageReference storageRef = FirebaseStorage.getInstance().getReference("images/" + path);
                 GlideApp.with(itemView)
                         .load(storageRef)
-                        .transform(new RoundedCorners(edge_radius))
+                        .transform(new RoundedCorners(edge_radius), new FitCenter())
                         .placeholder(R.drawable.placeholder)
                         .into(mMealImage);
             }

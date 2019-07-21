@@ -94,6 +94,8 @@ public class MensaListAdapter extends ListAdapter<Mensa, MensaListAdapter.MensaV
         public void bindData(final Mensa data) {
             mTextName.setText(data.getName());
             mTextType.setText(data.getType().toString());
+            mTextName.setTextAppearance(R.style.Komeat_Text_Mensa_Title);
+            mTextType.setTextAppearance(R.style.Komeat_Text_Mensa_Subtitle);
 
             int color = Color.parseColor(data.getType().toColor());
 

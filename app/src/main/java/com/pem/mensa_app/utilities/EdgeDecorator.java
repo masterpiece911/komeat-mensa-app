@@ -1,4 +1,4 @@
-package com.pem.mensa_app.ui.home_activity;
+package com.pem.mensa_app.utilities;
 
 import android.graphics.Rect;
 import android.view.View;

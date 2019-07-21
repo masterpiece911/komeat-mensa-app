@@ -49,6 +49,7 @@ public class HomeActivity extends AppCompatActivity implements HomeFeedItemsList
         Intent intent = new Intent(HomeActivity.this, MensaMealListActivity.class);
         intent.putExtra(getString(R.string.intent_mensa_uid), mensa.getuID());
         intent.putExtra(getString(R.string.intent_mensa_name), mensa.getName());
+        intent.putExtra(getString(R.string.intent_mensa_type), mensa.getType().toString());
         if(mensa.getMealPlanReference() != null) {
             intent.putExtra(getString(R.string.intent_mensa_meal_plan_reference_path), mensa.getMealPlanReference());
         }

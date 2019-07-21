@@ -6,6 +6,7 @@
 
 
     <string name="intent_mensa_name">INTENT_MENSA_NAME</string>
+    <string name="intent_mensa_type">INTENT_MENSA_TYPE</string>
     <string name="intent_mensa_uid">INTENT_MENSA_UID</string>
     <string name="intent_mensa_meal_plan_reference_path">INTENT_MENSA_REFERENCE_PATH</string>
     <string name="intent_mensa_eatapi_url">INTENT_MENSA_URL</string>

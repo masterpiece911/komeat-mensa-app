@@ -17,6 +17,7 @@ import com.pem.mensa_app.R;
 import com.pem.mensa_app.models.meal.Meal;
 import com.pem.mensa_app.models.mensa.Mensa;
 import com.pem.mensa_app.models.mensa.MensaDay;
+import com.pem.mensa_app.utilities.EdgeDecorator;
 
 import java.util.ArrayList;
 

@@ -17,21 +17,49 @@
         <item name="android:windowTranslucentNavigation">true</item>
     </style>
 
-    <style name="Komeat.Text.Subheader" parent="android:TextAppearance">
+    <style name="Komeat.Text.Mensa.Subtitle" parent="android:TextAppearance">
         <item name="android:textSize">12sp</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:fontFamily">@font/nunito_extrabold</item>
         <item name="android:textColor">@color/onPrimary</item>
     </style>
 
-    <style name="Komeat.Text.Header" parent="android:TextAppearance">
+    <style name="Komeat.Text.Mensa.Title" parent="android:TextAppearance">
         <item name="android:textSize">18sp</item>
         <item name="android:fontFamily">@font/nunito_extrabold</item>
         <item name="android:textColor">@color/onPrimary</item>
+        <item name="android:spacing">24sp</item>
+    </style>
+
+    <style name="Komeat.Text.Meal.Title" parent="android:TextAppearance">
+        <item name="android:textSize">20sp</item>
+        <item name="android:fontFamily">@font/nunito_semibold</item>
+        <item name="android:textColor">@color/onPrimary</item>
+
+    </style>
+
+    <style name="Komeat.Text.Meal.Pill" parent="android:TextAppearance">
+        <item name="android:textSize">12sp</item>
+        <item name="android:fontFamily">@font/nunito_extrabold</item>
+        <item name="android:textColor">@color/onSecondary</item>
     </style>
     
-    <style name="Komeat.Text.Title" parent="TextAppearance.Design.CollapsingToolbar.Expanded">
+    <style name="Komeat.Text.Meal.Comment" parent="android:TextAppearance">
+        <item name="android:textSize">18sp</item>
+        <item name="android:fontFamily">@font/nunito</item>
+        <item name="android:textColor">@color/onPrimary</item>
+        <item name="android:spacing">24sp</item>
+    </style>
 
+    <style name="IconOnlyButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:textAppearance">@style/Komeat.Text.Mensa.Title</item>
+        <item name="iconPadding">0dp</item>
+        <item name="iconGravity">textStart</item>
+        <item name="rippleColor">@android:color/transparent</item>
+        <item name="android:shadowColor">@android:color/transparent</item>
+        <item name="strokeColor">@android:color/transparent</item>
+        <item name="android:background">@drawable/textview_background</item>
+        <item name="backgroundTint">@color/onSecondary</item>
     </style>
 
 </resources>
