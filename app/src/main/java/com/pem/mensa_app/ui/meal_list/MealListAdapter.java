@@ -84,7 +84,7 @@ public class MealListAdapter extends ListAdapter<Meal, MealListAdapter.MealViewH
             mButtonImageUpload = itemView.findViewById(R.id.button_take_image);
         }
 
-        public void bindData(Meal data) {
+        public void bindData(final Meal data) {
             mTextViewName.setText(data.getName());
             List<String> ingredientIds = new LinkedList<>();
             // TODO: Refactor
@@ -99,14 +99,14 @@ public class MealListAdapter extends ListAdapter<Meal, MealListAdapter.MealViewH
             mButtonImageUpload.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mClickListener.onImageButtonClick(getAdapterPosition());
+                    mClickListener.onImageButtonClick(data);
                 }
             });
 
             mItemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mClickListener.onMealClick(getAdapterPosition());
+                    mClickListener.onMealClick(data);
                 }
             });
              ArrayList<String> imagelist= data.getImages();
@@ -125,7 +125,7 @@ public class MealListAdapter extends ListAdapter<Meal, MealListAdapter.MealViewH
 
 
     interface MealClickEventListener {
-       void onMealClick(int position);
-       void onImageButtonClick(int position);
+       void onMealClick(Meal meal);
+       void onImageButtonClick(Meal meal);
     }
 }

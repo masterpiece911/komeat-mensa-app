@@ -143,8 +143,7 @@ public class MensaMealListActivity extends AppCompatActivity implements MealList
     }
 
     @Override
-    public void onMealClick(int position) {
-        Meal clickedMeal = viewModel.getMealData().getValue().get(position);
+    public void onMealClick(Meal clickedMeal) {
 
         Intent mealDetailIntent = new Intent(MensaMealListActivity.this, MealDetailActivity.class);
         mealDetailIntent.putExtra(getString(R.string.intent_meal_uid), clickedMeal.getUid());
@@ -155,12 +154,12 @@ public class MensaMealListActivity extends AppCompatActivity implements MealList
     }
 
     @Override
-    public void onImageButtonClick(int position) {
-        Log.d(TAG, "onImageButtonClick: " + position);
+    public void onImageButtonClick(Meal clickedMeal) {
+        Log.d(TAG, "onImageButtonClick: " + clickedMeal.getName());
 
         Intent imageUploadActivityIntent = new Intent(MensaMealListActivity.this, ImageUploadActivity.class);
-        // TODO get the exact meal uid at this point
-        imageUploadActivityIntent.putExtra("meal_uid", viewModel.getMealData().getValue().getFirst().getUid());
+
+        imageUploadActivityIntent.putExtra("meal_uid", clickedMeal.getUid());
         imageUploadActivityIntent.putExtra("meal_path", viewModel.getMealPlanReferencePath());
         imageUploadActivityIntent.putExtra("day", viewModel.getSelectedWeekday());
         startActivity(imageUploadActivityIntent);
