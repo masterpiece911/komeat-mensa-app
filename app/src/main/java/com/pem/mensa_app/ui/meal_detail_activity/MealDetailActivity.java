@@ -25,6 +25,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.pem.mensa_app.R;
+import com.pem.mensa_app.models.meal.Comment;
 import com.pem.mensa_app.ui.image_upload_activity.ImageUploadActivity;
 import com.pem.mensa_app.models.meal.Meal;
 import com.pem.mensa_app.utilities.EdgeDecorator;
@@ -32,6 +33,7 @@ import com.pem.mensa_app.utilities.eatapi.MealIngredientParser;
 import com.pem.mensa_app.viewmodels.MealDetailViewModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.pem.mensa_app.R.drawable.ic_round_favorite_24px;
 import static com.pem.mensa_app.R.drawable.ic_round_favorite_border_24px;
@@ -60,7 +62,8 @@ public class MealDetailActivity extends AppCompatActivity {
     private RecyclerView mCommentRecyclerView;
     private CommentAdapter mCommentAdapter;
 
-    private ArrayList<String> mCommentList;
+    private ArrayList<Comment> mCommentList;
+    private ArrayList<String> mCommentTimestampList;
 
     private MealDetailViewModel mViewModel;
 
@@ -93,7 +96,7 @@ public class MealDetailActivity extends AppCompatActivity {
 
         mCommentRecyclerView = findViewById(R.id.recycler_view_comment_list);
         mCommentRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        int padding = getResources().getDimensionPixelSize(R.dimen.padding_homefeed);
+        int padding = getResources().getDimensionPixelSize(R.dimen.padding_comments);
         mCommentRecyclerView.addItemDecoration(new EdgeDecorator(padding, padding));
         mCommentRecyclerView.hasFixedSize();
 
@@ -160,8 +163,15 @@ public class MealDetailActivity extends AppCompatActivity {
             mViewModel.getMealData().observe(this, new Observer<Meal>() {
                 @Override
                 public void onChanged(Meal meal) {
+                    Log.d(TAG, "onChanged: " + meal.getUid());
                     setDataToView(meal);
                     setImageToView(meal);
+                }
+            });
+            mViewModel.getCommentData().observe(this, new Observer<List<Comment>>() {
+                @Override
+                public void onChanged(List<Comment> comments) {
+                    setCommentsToView(comments);
                 }
             });
     }
@@ -174,17 +184,21 @@ public class MealDetailActivity extends AppCompatActivity {
         mTextViewMealIncredients.setText(ingredientFormat.first);
         mTextViewMealIncredients.getBackground().setTint(ingredientFormat.second);
 
-        mCommentList = meal.getComments();
-        if (mCommentList == null) {
-            mCommentList = new ArrayList<>();
-        }
-        mCommentAdapter = new CommentAdapter(mCommentList);
-        mCommentRecyclerView.setAdapter(mCommentAdapter);
+
 
         mTextViewLikeCounter.setText(String.valueOf(meal.getLikeCounter()));
 //        mButtonLike.setImageDrawable(meal.getLikeCounter() > 0 ? getDrawable(ic_round_favorite_24px) : getDrawable(ic_round_favorite_border_24px));
         mButtonLike.setIcon(meal.getLikeCounter() > 0 ? getResources().getDrawable(ic_round_favorite_24px, getTheme()) : getResources().getDrawable(ic_round_favorite_border_24px, getTheme()));
 //        mButtonLike.set
+    }
+
+    private void setCommentsToView(List<Comment> comments) {
+        mCommentList = new ArrayList<>(comments);
+        if (mCommentList == null) {
+            mCommentList = new ArrayList<>();
+        }
+        mCommentAdapter = new CommentAdapter(mCommentList);
+        mCommentRecyclerView.setAdapter(mCommentAdapter);
     }
 
     private void setImageToView(Meal meal) {

@@ -9,24 +9,30 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.pem.mensa_app.R;
+import com.pem.mensa_app.models.meal.Comment;
+
+import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
 
-    ArrayList<String> mCommentList;
+    ArrayList<Comment> mCommentList;
 
     public static class CommentViewHolder extends RecyclerView.ViewHolder {
 
         public TextView comment;
+        public TextView timestamp;
 
         public CommentViewHolder(@NonNull View itemView) {
             super(itemView);
             comment = itemView.findViewById(R.id.textView_fragment_comment_list);
+            timestamp = itemView.findViewById(R.id.textView_timestamp);
+
         }
     }
 
-    public CommentAdapter(ArrayList<String> commentList) {
+    public CommentAdapter(ArrayList<Comment> commentList) {
         this.mCommentList = commentList;
     }
 
@@ -40,8 +46,9 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
     @Override
     public void onBindViewHolder(@NonNull CommentViewHolder holder, int position) {
-        String currentComment = mCommentList.get(position);
-        holder.comment.setText(currentComment);
+        Comment currentComment = mCommentList.get(position);
+        holder.comment.setText(currentComment.getContent());
+        holder.timestamp.setText(currentComment.getTimestamp());
     }
 
     @Override

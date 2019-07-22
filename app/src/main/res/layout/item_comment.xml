@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="42dp">
+    android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/textView_fragment_comment_list"
@@ -12,14 +12,22 @@
         android:layout_height="wrap_content"
         android:background="@drawable/textview_comment"
         android:fontFamily="@font/nunito"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
         android:text="TESTCOMMMENT"
         android:textAppearance="@style/Komeat.Text.Meal.Comment"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView_timestamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView_fragment_comment_list"
+        android:text="09.09.2009 - 00:00"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

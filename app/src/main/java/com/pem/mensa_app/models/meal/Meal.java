@@ -41,6 +41,8 @@ public class Meal {
 
     private ArrayList<String> comments;
 
+    private ArrayList<String> commentTimestamps;
+
     private ArrayList<String> images;
 
     private int likeCounter;
@@ -69,6 +71,7 @@ public class Meal {
         this.comments = (ArrayList<String>) documentSnapshot.get("comments");
         this.images = (ArrayList<String>) documentSnapshot.get("imagePaths");
         this.likeCounter = documentSnapshot.getLong("likeCounter") != null ? documentSnapshot.getLong("likeCounter").intValue() : 0;
+        this.commentTimestamps = (ArrayList<String>) documentSnapshot.get("comment_timestamps");
     }
 
     public Meal() {
@@ -131,6 +134,14 @@ public class Meal {
 
     public void setImages(ArrayList<String> images) {
         this.images = images;
+    }
+
+    public ArrayList<String> getCommentTimestamps() {
+        return commentTimestamps;
+    }
+
+    public void setCommentTimestamps(ArrayList<String> commentTimestamps) {
+        this.commentTimestamps = commentTimestamps;
     }
 
     public Map<String, Object> toMap() {
