@@ -19,11 +19,11 @@ public class ImageAdapter extends FragmentStatePagerAdapter {
     public ImageAdapter(FragmentManager fm, ArrayList<String> imagePathList) {
         super(fm);
         this.defaultPath.add(PLACEHOLDER);
-        this.imagePaths = imagePathList == null || (imagePathList != null && imagePathList.isEmpty()) ? defaultPath : imagePathList;
+        this.imagePaths = imagePathList == null || (imagePathList.isEmpty()) ? defaultPath : imagePathList;
     }
 
     public void setImagePaths(ArrayList<String> imagePaths) {
-        this.imagePaths = imagePaths;
+        this.imagePaths = imagePaths == null || (imagePaths.isEmpty()) ? defaultPath : imagePaths;
         this.notifyDataSetChanged();
     }
 

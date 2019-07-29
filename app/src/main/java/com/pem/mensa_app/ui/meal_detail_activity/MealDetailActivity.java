@@ -33,6 +33,7 @@ import com.pem.mensa_app.utilities.eatapi.MealIngredientParser;
 import com.pem.mensa_app.viewmodels.MealDetailViewModel;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.pem.mensa_app.R.drawable.ic_round_favorite_24px;
@@ -202,7 +203,7 @@ public class MealDetailActivity extends AppCompatActivity {
     }
 
     private void setImageToView(Meal meal) {
-        if (meal.getImages() == null)
+        if (meal.getImages() == null || meal.getImages().equals(Collections.EMPTY_LIST))
             meal.setImages(new ArrayList<String>());
         if(mImageAdapter == null){
             mImageAdapter= new ImageAdapter(getSupportFragmentManager(), meal.getImages());
