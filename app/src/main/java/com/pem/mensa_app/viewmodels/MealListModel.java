@@ -107,9 +107,21 @@ public class MealListModel extends AndroidViewModel {
 
         }
 
+        Meal emptyMeal = new Meal();
+        emptyMeal.setUid(null);
+        emptyMeal.setName("Currently no data available.");
+
+        for(LinkedList<Meal> mealsOnWeekday : meals) {
+            if(mealsOnWeekday.isEmpty()) {
+                mealsOnWeekday.add(emptyMeal);
+            }
+        }
+
         weekMealData = meals;
         mealData.postValue(weekMealData.get(this.selectedWeekday));
     }
+
+
 
     private void loadDataFromFirebase(LocalDate date) {
         final LocalDate mDate = new LocalDate(date);
@@ -163,10 +175,28 @@ public class MealListModel extends AndroidViewModel {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.d(TAG, String.format("Error retrieving data from %s", requestUrl));
+                        setNoMealplanData();
                     }
                 });
         Volley.newRequestQueue(getApplication()).add(jsonObjectRequest);
 
+    }
+
+    private void setNoMealplanData() {
+        ArrayList<LinkedList<Meal>> meals = new ArrayList<>(Arrays.asList(new LinkedList<Meal>(), new LinkedList<Meal>(), new LinkedList<Meal>(), new LinkedList<Meal>(), new LinkedList<Meal>()));
+
+        Meal emptyMeal = new Meal();
+        emptyMeal.setUid(null);
+        emptyMeal.setName("Currently no data available");
+
+        for(LinkedList<Meal> mealsOnWeekday : meals) {
+            if(mealsOnWeekday.isEmpty()) {
+                mealsOnWeekday.add(emptyMeal);
+            }
+        }
+
+        weekMealData = meals;
+        mealData.postValue(weekMealData.get(this.selectedWeekday));
     }
 
     private void createMealplanOnFirebase(LocalDate date, JSONObject mealPlanData){

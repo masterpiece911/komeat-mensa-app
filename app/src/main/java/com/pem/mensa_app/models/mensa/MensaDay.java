@@ -18,6 +18,12 @@ public class MensaDay {
 
     public MensaDay(Mensa mensa, List<Meal> meals) {
         this.mensa = mensa;
+        if (meals.isEmpty()) {
+            Meal emptyMeal = new Meal();
+            emptyMeal.setUid(null);
+            emptyMeal.setName("Currently no data available");
+            meals.add(emptyMeal);
+        }
         this.meals = meals;
     }
 

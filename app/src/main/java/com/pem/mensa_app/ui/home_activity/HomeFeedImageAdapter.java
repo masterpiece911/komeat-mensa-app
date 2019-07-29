@@ -91,7 +91,13 @@ public class HomeFeedImageAdapter extends ListAdapter<Meal, HomeFeedImageAdapter
 
         public void bindData(final Meal data) {
             mMealName.setText(data.getName());
-//            Log.d("imagelistbinder", String.format("Meal %s, id: %s, images: %s", data.getName(), data.getUid(), data.getImages()));
+            if (data.getUid() == null) {
+                mMealImage.setVisibility(View.INVISIBLE);
+                mItemView.setOnClickListener(null);
+                return;
+            } else {
+                mMealImage.setVisibility(View.VISIBLE);
+            }
             if (data.getImages().equals(new ArrayList<String>())) {
 
                 GlideApp.with(itemView)

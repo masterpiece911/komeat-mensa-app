@@ -86,6 +86,20 @@ public class MealListAdapter extends ListAdapter<Meal, MealListAdapter.MealViewH
 
         public void bindData(final Meal data) {
             mTextViewName.setText(data.getName());
+
+            if (data.getUid() == null) {
+                mImageView.setVisibility(View.GONE);
+                mTextViewIngredients.setVisibility(View.GONE);
+                mButtonImageUpload.setVisibility(View.GONE);
+                mButtonImageUpload.setOnClickListener(null);
+                mItemView.setOnClickListener(null);
+                return;
+            } else {
+                mImageView.setVisibility(View.VISIBLE);
+                mTextViewIngredients.setVisibility(View.VISIBLE);
+                mButtonImageUpload.setVisibility(View.VISIBLE);
+            }
+
             List<String> ingredientIds = new LinkedList<>();
             // TODO: Refactor
             for (String i : data.getIngredients()) {
