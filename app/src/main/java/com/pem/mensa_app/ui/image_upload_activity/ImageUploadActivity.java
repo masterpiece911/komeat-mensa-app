@@ -57,7 +57,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class ImageUploadActivity extends AppCompatActivity {
+public class ImageUploadActivity extends AppCompatActivity implements MealAdapter.MealClickedListener {
 
     private static final String TAG = ImageUploadActivity.class.getName();
 
@@ -180,7 +180,6 @@ public class ImageUploadActivity extends AppCompatActivity {
                             }
                         } else if (task.getResult().isEmpty()) {
                             Log.d(TAG, "No mealplan for selected week found. Generating.");
-                            Toast.makeText(ImageUploadActivity.this, "No data avaiable!", Toast.LENGTH_LONG);
                         }
                     }
                 });
@@ -279,7 +278,6 @@ public class ImageUploadActivity extends AppCompatActivity {
                                     }
                                     updateMealMetaData(meal, docRef);
                                 } else {
-                                    Toast.makeText(ImageUploadActivity.this, "Document is unknown.", Toast.LENGTH_SHORT).show();
                                     Log.d("ImageUploadActivity", "Document is unknown");
                                 }
                             } else {
@@ -297,7 +295,6 @@ public class ImageUploadActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
                             Log.d(TAG, "Successfully loaded image metadata to firebase.");
-                            //Toast.makeText(ImageUploadActivity.this, "Upload metadata success", Toast.LENGTH_SHORT);
                         }
                     }
                 })
@@ -305,7 +302,6 @@ public class ImageUploadActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.d(TAG, "Failed to load image metadata to firebase");
-                        //Toast.makeText(ImageUploadActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -422,7 +418,7 @@ public class ImageUploadActivity extends AppCompatActivity {
                 }
             });
         }
-        mRecyclerView.setAdapter(new MealAdapter(mealSelectedList));
+        mRecyclerView.setAdapter(new MealAdapter(mealSelectedList, this));
     }
 
     private void performCrop() {
@@ -440,16 +436,16 @@ public class ImageUploadActivity extends AppCompatActivity {
 
             if (ActivityCompat.shouldShowRequestPermissionRationale(ImageUploadActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                 // Show an explanation to the user *asynchronously* -- don't block
-                Toast.makeText(ImageUploadActivity.this, "The external storage permission is needed to crop the taken picture",Toast.LENGTH_LONG).show();
+                Log.d(TAG, "handlePermissionRequest: " + "The external storage permission is needed to crop the taken picture");
 
             } else {
                 // No explanation needed; request the permission
                 ActivityCompat.requestPermissions(ImageUploadActivity.this, PERMISSIONS_ARRAY, REQUEST_PERMISSION);
-                Toast.makeText(ImageUploadActivity.this, "Request for permission",Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "handlePermissionRequest: " + "Request for permission");
             }
         } else {
             // Permission has already been granted
-            Toast.makeText(ImageUploadActivity.this, "Permission has already been granted.",Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "handlePermissionRequest: " + "Permission has already been granted.");
             dispatchTakePictureIntent();
         }
     }
@@ -476,5 +472,11 @@ public class ImageUploadActivity extends AppCompatActivity {
         mealSelectedList.add(mealSelected);
         // -1 because it is the last item of the list.
         mRecyclerView.getAdapter().notifyItemChanged(mealSelectedList.size()-1);
+    }
+
+    @Override
+    public void mealClicked(MealSelected meal, boolean selected) {
+        int i = mealSelectedList.indexOf(meal);
+        mealSelectedList.get(i).setmIsSelected(selected);
     }
 }
