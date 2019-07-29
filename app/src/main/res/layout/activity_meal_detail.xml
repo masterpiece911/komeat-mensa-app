@@ -86,7 +86,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/editText_comment"
+        app:layout_constraintBottom_toTopOf="@id/comment_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
@@ -131,33 +131,45 @@
             app:layout_constraintTop_toBottomOf="@id/textView_meal_dishes" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <EditText
-        android:id="@+id/editText_comment"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/comment_container"
         android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="4dp"
-        android:hint="Your comment..."
-        android:inputType="textCapSentences"
-        android:textAppearance="@style/Komeat.Text.Mensa.Subtitle"
+        android:layout_height="wrap_content"
+        android:background="@drawable/solid_background"
+        android:elevation="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/add_comment_customize_button"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
+        <EditText
+            android:id="@+id/editText_comment"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="8dp"
+            android:hint="Your comment..."
+            android:inputType="textCapSentences"
+            android:textAppearance="@style/Komeat.Text.Mensa.Subtitle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/add_comment_customize_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/add_comment_customize_button"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:enabled="false"
-        android:gravity="center"
-        android:textAppearance="@style/Komeat.Text.Mensa.Subtitle"
-        app:backgroundTint="#FFFFFF"
-        app:icon="@drawable/ic_round_send_24px"
-        app:iconGravity="textStart"
-        app:iconTint="@color/onPrimary"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/add_comment_customize_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:enabled="false"
+            android:gravity="center"
+            android:textAppearance="@style/Komeat.Text.Mensa.Subtitle"
+            app:backgroundTint="#FFFFFF"
+            app:icon="@drawable/ic_round_send_24px"
+            app:iconGravity="textStart"
+            app:iconTint="@color/onPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/editText_comment"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

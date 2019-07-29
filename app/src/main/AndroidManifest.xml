@@ -37,7 +37,9 @@
                 tools:replace="android:resource"/>
         </provider>
 
-        <activity android:name=".ui.meal_detail_activity.MealDetailActivity" />
+        <activity android:name=".ui.meal_detail_activity.MealDetailActivity"
+            android:windowSoftInputMode="adjustPan"
+            />
 
         <activity android:name=".ui.image_upload_activity.ImageUploadActivity">
             <intent-filter>
