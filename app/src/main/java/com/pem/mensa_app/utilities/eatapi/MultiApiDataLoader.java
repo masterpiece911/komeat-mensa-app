@@ -84,7 +84,6 @@ public class MultiApiDataLoader implements Runnable {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Log.d(TAG, String.format("Error retrieving data from %s", requestUrl));
-                    Log.d(TAG, error.getCause().getLocalizedMessage());
                 }
             }
             );

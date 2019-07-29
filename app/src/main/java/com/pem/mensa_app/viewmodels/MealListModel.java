@@ -163,7 +163,6 @@ public class MealListModel extends AndroidViewModel {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.d(TAG, String.format("Error retrieving data from %s", requestUrl));
-
                     }
                 });
         Volley.newRequestQueue(getApplication()).add(jsonObjectRequest);
